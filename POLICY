@@ -11,12 +11,13 @@ Please, don't do that - both of you. Thank you.
 
 "version not supported" issues are no more. Particular NIF version "support" is
 not an issue of this project. There are wizards out there that can create file
-format description from binary data; I'm not one of them. The monolithic
-"nif.xml" is no more, so if you want to study a particular NIF variant, you
-can create a project for its description and find a wizard willing to help
-you. Then you could use your XML/FFD with "nifwind", to learn. Of course, I hope
-that the big AAA would decide to publish their NIF file format descriptions.
-Who knows. Have you tried asking them?
+format description from binary data; I'm not one of them. There will be no
+monolithic file format description, like "nif.xml", at this project, so if you
+want to study a particular NIF variant, you can create a project for its
+description and find a wizard willing to help you. Then you could use your
+XML/FFD with "nifwind", to learn. Of course, I hope that the big AAA would
+decide to publish their NIF file format descriptions. Who knows. Have you tried
+asking them?
 
 
 
