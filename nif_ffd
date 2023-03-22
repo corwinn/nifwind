@@ -1,0 +1,103 @@
+/**** BEGIN LICENSE BLOCK ****
+
+BSD 3-Clause License
+
+Copyright (c) 2023, the wind.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+**** END LICENCE BLOCK ****/
+
+// Highlighter: C#
+
+// Describe a .nif. This is the common ground from which the different variants
+// shall be formed.
+
+// Origin: "nif.xml" checkout f265c56482c728c6877e45d5b5993d3bff83670a at
+//         https://github.com/niftools/nifxml.git
+//
+// Later modifications are ineligible and plain wrong IMHO. You could create
+// independent projects for each one of the new versions you're interested in.
+
+// Machine types ...............................................................
+type uint 4
+//TODO this is used at 3 places at Header for no apparent reason;
+//     the endianess shall not be decided by names
+type ulittle32 uint
+type int -4
+type short -2
+type ushort 2
+type byte 1
+type bool byte (Version > 0x04010001)
+type bool int  (Version <= 0x04010001)
+/* "A 16-bit (signed?) integer, which is used in the header to refer to a
+  particular object type in a object type string array.
+  The upper bit appears to be a flag used for PhysX block types." */
+type BlockTypeIndex ushort
+type char byte
+/* "A 32-bit integer that stores the version in hexadecimal format with each
+  byte representing a number in the version string.
+  Some widely-used versions and their hex representation:
+    4.0.0.2:    0x04000002
+    4.1.0.12:   0x0401000C
+    4.2.0.2:    0x04020002
+    4.2.1.0:    0x04020100
+    4.2.2.0:    0x04020200
+    10.0.1.0:   0x0A000100
+    10.1.0.0:   0x0A010000
+    10.2.0.0:   0x0A020000
+    20.0.0.4:   0x14000004
+    20.0.0.5:   0x14000005" */
+type FileVersion uint
+// "A 16-bit integer, used for bit flags. Function varies by object type."
+type Flags ushort
+type float .4 //TODO implement me
+/* "A signed 32-bit integer, referring to a object before this one in the
+  hierarchy. Examples: Bones, gravity objects." */
+type Ptr int
+/* "A signed 32-bit integer, used to refer to another object; -1 means no
+  reference. These should always point down the hierarchy. Other types are used
+  for indexes that point to objects higher up." */
+type Ref int
+// "A 32-bit unsigned integer, used to refer to strings in a NiStringPalette."
+type StringOffset uint
+// "A 32-bit unsigned integer, used to refer to strings in the header."
+type StringIndex uint
+
+// enum ........................................................................
+
+// struct ......................................................................
+
+/* "A variable length string that ends with a newline character (0x0A). The
+  string starts as follows depending on the version:
+    Version <= 10.0.1.0:  "NetImmerse File Format"
+    Version >= 10.1.0.0:  "Gamebryo File Format"" */
+HeaderString
+    char Chars[-10] //TODO read until char[i] == 10
+
+LineString HeaderString //TODO use one type please
+
