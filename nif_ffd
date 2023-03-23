@@ -32,16 +32,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-// Highlighter: C#
-
-// Describe a .nif. This is the common ground from which the different variants
-// shall be formed.
-
 // Origin: "nif.xml" checkout f265c56482c728c6877e45d5b5993d3bff83670a at
 //         https://github.com/niftools/nifxml.git
 //
 // Later modifications are ineligible and plain wrong IMHO. You could create
 // independent projects for each one of the new versions you're interested in.
+
+// Highlighter: C#
+
+// Describe a .nif. This is the common ground from which the different variants
+// shall be formed.
+// The purpose of this file is to test the correctness of the "nif.xml"
+// translation and to update my libffd to deal with the new constructs
+// required (or even make it more scalable by updating its design for custom
+// extensions).
+// Then this file shall be split to different .nif versions to the best of my
+// abilities. Then you can get these, or the big mess, and create projects for
+// them; they shall remain as templates in this project.
 
 // Machine types ...............................................................
 
@@ -69,10 +76,8 @@ type FileVersion uint // each byte is a number: 0x0a010203 = "10.1.2.3"
 type Flags ushort // bit-flags
 type Ptr int // -ptr
 type Ref int // +ptr
-type StringPalletteOffset uint //REPLACES {StringOffset}
-type HeaderStringIndex uint //REPLACES {StringIndex}
 
-// enum ........................................................................
+// enum .......................................................................
 
 enum TextureAlphaFormat uint
     NONE    0 //
@@ -885,7 +890,13 @@ enum hkConstraintType uint
 const NIF_HEADER_STRING_1 "NetImmerse File Format" (Version <= 0x0a000100)
 const NIF_HEADER_STRING_2 "Gamebryo File Format" (Version >= 0x0a010000)
 
-// struct ......................................................................
+// I could do this:
+const VER_FOO (Version == 34)
+// and re-create the same mess with (VER_FOO); I'm not doing this - the idea
+// is to decouple FFD from this program, and let different communities manage
+// their favorite FFDs
+
+// struct - "compound" ........................................................
 
 // "A variable length string that ends with a newline character (0x0A)."
 struct HeaderString
@@ -893,3 +904,133 @@ struct HeaderString
 
 LineString HeaderString //TODO use one type please
 
+struct SizedString
+    char Value[uint]
+
+struct String
+    SizedString        Value (Version <= 0x14000005)
+    int<>SizedString[] Value (Version >= 0x14010003) // Header.Strings Index
+
+struct ByteArray
+    byte Data[uint]
+
+struct ByteMatrix
+    byte Data[uint][uint] //TODO handle >1 implicit N; or not
+
+struct Color3
+    float Value[3] // r,g,b
+
+struct ByteColor3
+    byte Value[3] // r,g,b
+
+struct Color4
+    float Value[4] // r,g,b,a
+
+struct ByteColor4
+    byte Value[4] // r,g,b,a
+
+struct FilePath
+    SizedString        Value (Version <= 0x14000005)
+    int<>SizedString[] Value (Version >= 0x14010003) // Header.Strings index
+
+struct Footer
+    // "If there is a camera, for 1st person view, then this NIF object is
+    //  referred to as well in this list"
+    Ref Root[uint] (Version >= 0x0303000D)
+
+// "The distance range where a specific level of detail applies."
+struct LODRange
+    float Near
+    float Far
+    uint  Unknown[3] (Version <= 0x03010000)
+
+struct MatchGroup // "Group of vertex indices of vertices that match"
+    ushort Indices[ushort]
+
+struct Vector3
+    float Value[3] // x,y,z
+
+struct Vector4
+    float Value[4] // x,y,z,w
+
+struct Quaternion
+    float Value[4] // w,x,y,z
+
+struct QuaternionXYZW
+    float Value[4] // x,y,z,w
+
+struct Matrix22
+    float Value[2][2] // matrices are NxM - it is as simple as that
+
+struct Matrix33
+    float Value[3][3]
+
+struct Matrix44
+    float Value[4][4]
+
+//TODO all these "struct" with one field - do something about it, after the
+//     split
+
+struct MipMap // NiPixelData
+    uint Width  // [?] - pixels/apples/pears ?
+    uint Height // [?]
+    uint Offset // [?]
+
+struct NodeGroup // NiNodes
+    Ptr Nodes[uint]
+
+struct ShortString
+    char Value[byte] // 0-terminated (its length includes the 0)
+
+struct SkinShape
+    Ptr Shape        // NiTriBasedGeom
+    Ref SkinInstance // NiSkinInstance
+
+struct SkinShapeGroup
+    // "First link is a NiTriShape object"
+    // "Second link is a NiSkinInstance object"
+    SkinShape LinkPairs[uint]
+
+struct SkinWeight // "A weighted vertex" TODO rename-me
+    ushort Index
+    float  Weight
+
+struct AVObject
+    SizedString Name
+    Ptr         AVObject // NiAVObject
+
+/* "In a .kf file, this links to a controllable object, via its name (or for
+ version 10.2.0.0 and up, a link and offset to a NiStringPalette that
+ contains the name), and a sequence of interpolators that apply to this
+ controllable object, via links." */
+struct ControllerLink
+    // "Name of a controllable object in another NIF file"
+    String TargetName (Version <= 0x0a010000)
+    Ref    Controller (Version <= 0x0a010000) // NiTimeController
+    Ref    Interpolator (Version >= 0x0a01006a) // NiInterpolator
+    Ref    Controller (Version >= 0x0a01006a) // NiTimeController
+    Ref    Unknown1 (Version == 0x0a01006a)
+    ushort Unknown2 (Version == 0x0a01006a)
+    // Idle animations tend to have low values for this, and NIF objects that
+    // have high values tend to correspond with the important parts of the
+    // animation
+    byte   Priority (Version >= 0x0a01006a && UVersion2 >= 10)
+    // NiStringPalette; this like this one demand split by version; this is just
+    // the tip of the iceberg - there are truly scary things below: read on
+    Ref    StringPalette ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    //
+    // -/__ Such walls of text shall cease to exist with the split _/--
+    //
+    // The name of the animated node
+    String NodeName ((Version == 0x0a01006a) || (Version >= 0x14010003))
+    // index at the above StringPalette; StringPalette had a SizedString
+    // containing a set of zero-terminated strings
+    int<>String[] NodeName ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    String        PropType ((Version == 0x0a01006a) || (Version >= 0x14010003))
+    int<>String[] PropType ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    String        CtllrType ((Version == 0x0a01006a) || (Version >= 0x14010003))
+    int<>String[] CtllrType ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    String        Variable1 ((Version == 0x0a01006a) || (Version >= 0x14010003))
+    int<>String[] Variable1 ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    String        Variable2 ((Version == 0x0a01006a) || (Version >= 0x14010003))
+    int<>String[] Variable2 ((Version >= 0x0a020000) && (Version <= 0x14000005))
