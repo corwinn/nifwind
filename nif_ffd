@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Describe a .nif. This is the common ground from which the different variants
 // shall be formed.
 // The purpose of this file is to test the correctness of the "nif.xml"
-// translation and to update my libffd to deal with the new constructs
+// transformation and to update my libffd to deal with the new constructs
 // required (or even make it more scalable by updating its design for custom
 // extensions).
 // Then this file shall be split to different .nif versions to the best of my
