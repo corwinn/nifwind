@@ -407,7 +407,7 @@ enum SkyrimLayer byte
     WATER
     TRIGGER
     TERRAIN
-    TRAP"
+    TRAP
     NONCOLLIDABLE
     CLOUD_TRAP
     GROUND
