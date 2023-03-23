@@ -69,8 +69,8 @@ type FileVersion uint // each byte is a number: 0x0a010203 = "10.1.2.3"
 type Flags ushort // bit-flags
 type Ptr int // -ptr
 type Ref int // +ptr
-type StringPalletteOffset uint // StringOffset
-type HeaderStringIndex uint // StringIndex
+type StringPalletteOffset uint //REPLACES {StringOffset}
+type HeaderStringIndex uint //REPLACES {StringIndex}
 
 // enum ........................................................................
 
@@ -86,6 +86,799 @@ enum TextureApplyMode uint
     MODULATE 2 // GL_MODULATE
     HILIGHT  3 // "PS2 Only. Function Unknown."
     HILIGHT2 4 // "Parallax Flag in some Oblivion meshes."
+
+enum TextureType uint //REPLACE {TexType}
+    BASE     0 // diffuse
+    DARK     1 // "Used to darken the model with false lighting."
+    DETAIL   2 // "Combined with base map for added detail."
+    GLOSS    3 // specular
+    GLOW     4
+    BUMP     5
+    NORMAL   6
+    UNKNOWN2 7
+    DECAL_0  8
+    DECAL_1  9
+    DECAL_2 10
+    DECAL_3 11
+
+enum AnimKeyTypeInterpolation uint //REPLACES {KeyType}
+    LINEAR       1
+    QUADRATIC    2
+    TBC          3 // "Tension Bias Continuity"
+    XYZ_ROTATION 4 // ! quaternion
+    CONST        5 // "Used for visibility keys in NiBoolData."
+
+// "how vertex colors influence lighting"
+enum LightMode uint
+    EMISSIVE    0
+    EMI_AMB_DIF 1 // "Emissive + Ambient + Diffuse."
+
+//TODO to nif_tes4_ffd
+enum OblivionHavokMaterial uint
+    STONE         0 //TODO the parser: code_repetition-- => pattern: table
+    CLOTH         1 //TODO these are sequential: its pointless to specify the
+    DIRT          2 //     obvious; besides no one cares if CLOTH is encoded as
+    GLASS         3 //     "uint" value of 4; make EnumItem.Value optional:
+    GRASS         4 //      - auto-value starts at 0
+    METAL         5 //      - auto-value gets invalidated to explicit Item.Value
+    ORGANIC       6 //      - you get exception reward for non-distinctiveness
+    SKIN          7
+    WATER         8
+    WOOD          9
+    ROCK         10
+    HEAVY_METAL  11
+    HEAVY_WOOD   12
+    CHAIN        13
+    SNOW         14
+    STONE_STAIRS       15 //LATER R&D: Whats with all the stairs? Check with the
+    CLOTH_STAIRS       16 //           mod creation tool (can't recall its name)
+    DIRT_STAIRS        17
+    GLASS_STAIRS       18
+    GRASS_STAIRS       19
+    METAL_STAIRS       20
+    ORGANIC_STAIRS     21
+    SKIN_STAIRS        22
+    WATER_STAIRS       23
+    WOOD_STAIRS        24
+    HEAVY_STONE_STAIRS 25
+    HEAVY_METAL_STAIRS 26
+    HEAVY_WOOD_STAIRS  27
+    CHAIN_STAIRS       28
+    SNOW_STAIRS        29
+    ELEVATOR 30
+    RUBBER   31
+
+//TODO to nif_fo3_ffd
+/* "Bit 5: flag for PLATFORM (for values 32-63 -32 to know material number)
+    Bit 6: flag for STAIRS (for values 64-95: -64)
+    Bit 5+6: flag for STAIRS+PLATFORM (for values 96-127: -96)" */
+enum Fallout3HavokMaterial uint
+    STONE
+    CLOTH
+    DIRT
+    GLASS
+    GRASS
+    METAL                5
+    ORGANIC
+    SKIN
+    WATER
+    WOOD
+    HEAVY_STONE         10
+    HEAVY_METAL
+    HEAVY_WOOD
+    CHAIN
+    BOTTLECAP
+    ELEVATOR            15
+    HOLLOW_METAL
+    SHEET_METAL
+    SAND
+    BROKEN_CONCRETE
+    VEHICLE_BODY        20
+    VEHICLE_PART_SOLID
+    VEHICLE_PART_HOLLOW
+    BARREL
+    BOTTLE
+    SODA_CAN            25
+    PISTOL
+    RIFLE
+    SHOPPING_CART
+    LUNCHBOX
+    BABY_RATTLE         30
+    RUBBER_BALL
+
+//TODO to nif_tes5_ffd
+enum SkyrimHavokMaterial uint
+    STONE          3741512247 // <- looks like a hash function; Dear, Wizards?
+    CLOTH          3839073443
+    DIRT           3106094762
+    GLASS          3739830338
+    GRASS          1848600814
+    // METAL ? //TODO FFD::SNode::ParseEnum(): skip comment lines
+    ORGANIC        2974920155
+    SKIN            591247106
+    WATER          1024582599
+    WOOD            500811281
+    // other 1-word ones
+    GRAVEL          428587608
+    BOTTLE          493553910
+    BARREL          732141076
+    BASKET          790784366
+    ICE             873356572
+    BOOK           1264672850
+    CARPET         1286705471
+    MUD            1486385281
+    SAND           2168343821
+    DRAGON         2518321175
+    BONE           3049421844
+    COIN           3589100606
+    ARROW          3725505938
+    HEAVY_STONE    1570821952
+    HEAVY_METAL    2229413539
+    HEAVY_WOOD     3070783559
+    CHAIN          3074114406
+    SNOW            398949039
+    STAIRS_STONE    899511101 // Interesting
+    STONE_STAIRS   1886078335 //
+    STAIRS_BROKEN_STONE 2892392795
+    STAIRS_WOOD    1461712277 // ??
+    WOOD_STAIRS    1803571212 //
+    STAIRS_SNOW    1560365355
+    // new
+    BROKEN_STONE    131151687
+    SOLID_METAL    1288358971
+    CHAIN_METAL     438912228
+    LIGHT_WOOD      365420259
+    BOTTLE_SMALL   2025794648
+    CERAMIC_MEDIUM  781661019
+    SKIN_SMALL     2632367422
+    SKIN_LARGE     2965929619
+    //
+    BOULDER_SMALL  1550912982
+    BOULDER_LARGE  1885326971
+    BOULDER_MEDIUM 4283869410
+    //
+    BOWS_STAVES    1607128641
+    AXE_1HAND      1305674443
+    BLUNT_2HAND    3969592277
+    BLADE_2HAND    2022742644
+    BLADE_1HAND    1060167844
+    BLADE_1HAND_SMALL 2617944780
+    //
+    SHIELD_LIGHT   3448167928
+    SHIELD_HEAVY   3702389584
+    ARMOR_LIGHT    3424720541
+    ARMOR_HEAVY    3708432437
+    //
+    UNKNOWN_1      1028101969 // "draugr\character assets\skeletons.nif"
+    UNKNOWN_2      1440721808 // "draugr\draugrbootsfemale_go.nif"
+    UNKNOWN_3      1574477864 // "dragon\character assets\skeleton.nif"
+    UNKNOWN_4      1591009235 // "deer\character assets\skeleton.nif"
+
+// Mesh color. "Anything higher than 57 is also null."
+//TODO to nif_tes4_ffd
+enum OblivionLayer byte
+    UNIDENTIFIED // white
+    STATIC       // red
+    ANIM_STATIC  // magenta
+    TRANSPARENT  // light pink
+    CLUTTER      // light blue
+    WEAPON       // orange
+    PROJECTILE   // light orange
+    SPELL        // cyan
+    BIPED        // green
+    TREES        // light brown
+    PROPS        // magenta
+    WATER        // cyan
+    TRIGGER      // light grey
+    TERRAIN      // light yellow
+    TRAP         // light grey
+    NONCOLLIDABLE   // white
+    CLOUD_TRAP      // greenish grey
+    GROUND          //TODO "none"? - what color is this ?
+    PORTAL          // green
+    STAIRS          // white
+    CHAR_CONTROLLER // yellow
+    AVOID_BOX       // dark yellow
+    UNKNOWN1        // white
+    UNKNOWN2        // white
+    CAMERA_PICK     // white
+    ITEM_PICK       // white
+    LINE_OF_SIGHT   // white
+    PATH_PICK       // white
+    CUSTOM_PICK_1   // white
+    CUSTOM_PICK_2   // white
+    SPELL_EXPLOSION // white
+    DROPPING_PICK   // white
+    OTHER           // white
+    HEAD
+    BODY
+    SPINE1
+    SPINE2
+    L_UPPER_ARM
+    L_FOREARM
+    L_HAND
+    L_THIGH
+    L_CALF
+    L_FOOT
+    R_UPPER_ARM
+    R_FOREARM
+    R_HAND
+    R_THIGH
+    R_CALF
+    R_FOOT
+    TAIL
+    SIDE_WEAPON
+    SHIELD
+    QUIVER
+    BACK_WEAPON
+    BACK_WEAPON2
+    PONYTAIL
+    WING
+    NULL // OblivionLayer
+
+//TODO to nif_fo3_ffd
+enum Fallout3Layer byte
+    UNIDENTIFIED   // white
+    STATIC         // red
+    ANIM_STATIC    // magenta
+    TRANSPARENT    // light pink
+    CLUTTER        // light blue
+    WEAPON         // orange
+    PROJECTILE     // light orange
+    SPELL          // cyan
+    BIPED          // green
+    TREES          // light brown
+    PROPS          // magenta
+    WATER          // cyan
+    TRIGGER        // light grey
+    TERRAIN        // light yellow
+    TRAP           // light grey
+    NONCOLLIDABLE  // white
+    CLOUD_TRAP     // greenish grey
+    GROUND         // none
+    PORTAL         // green
+    DEBRIS_SMALL   // white
+    DEBRIS_LARGE   // white
+    ACOUSTIC_SPACE // white
+    ACTORZONE      // white
+    PROJECTILEZONE // white
+    GASTRAP        // yellowish green
+    SHELLCASING    // white
+    TRANSPARENT_SMALL // white
+    INVISIBLE_WALL // white
+    TRANSPARENT_SMALL_ANIM // white
+    BIPED          // green
+    CHARCONTROLLER // yellow
+    AVOIDBOX       // orange
+    COLLISIONBOX   // white
+    CAMERASPHERE   // white
+    DOORDETECTION  // white
+    CAMERAPICK     // white
+    ITEMPICK       // white
+    LINEOFSIGHT    // white
+    PATHPICK       // white
+    CUSTOMPICK1    // white
+    CUSTOMPICK2    // white
+    SPELLEXPLOSION // white
+    DROPPINGPICK   // white
+    NULL           // white
+    OTHER          // white
+    HEAD
+    BODY
+    SPINE1
+    SPINE2
+    L_UPPER_ARM
+    L_FORE_ARM
+    L_HAND
+    L_THIGH
+    L_CALF
+    L_FOOT
+    R_UPPER_ARM
+    R_FORE_ARM
+    R_HAND
+    R_THIGH
+    R_CALF
+    R_FOOT
+    TAIL
+    SHIELD
+    QUIVER
+    WEAPON
+    PONYTAIL
+    WING
+    PACK
+    CHAIN
+    ADDONHEAD
+    ADDONCHEST
+    ADDONARM
+    ADDONLEG // Fallout3Layer
+
+enum SkyrimLayer byte
+    UNIDENTIFIED
+    STATIC
+    ANIMSTATIC
+    TRANSPARENT
+    CLUTTER // "Object with this layer will float on water surface."
+    WEAPON
+    PROJECTILE
+    SPELL
+    BIPED
+    TREES
+    PROPS
+    WATER
+    TRIGGER
+    TERRAIN
+    TRAP"
+    NONCOLLIDABLE
+    CLOUD_TRAP
+    GROUND
+    PORTAL
+    DEBRIS_SMALL
+    DEBRIS_LARGE
+    ACOUSTIC_SPACE
+    ACTORZONE
+    PROJECTILEZONE
+    GASTRAP
+    SHELLCASING
+    TRANSPARENT_SMALL
+    INVISIBLE_WALL
+    TRANSPARENT_SMALL_ANIM
+    WARD
+    CHARCONTROLLER
+    STAIRHELPER
+    DEADBIP
+    BIPED_NO_CC
+    AVOIDBOX
+    COLLISIONBOX
+    CAMERASHPERE
+    DOORDETECTION
+    CONEPROJECTILE
+    CAMERAPICK
+    ITEMPICK
+    LINEOFSIGHT
+    PATHPICK
+    CUSTOMPICK1
+    CUSTOMPICK2
+    SPELLEXPLOSION
+    DROPPINGPICK
+    NULL // SkyrimLayer
+
+// "if MOPP Data is organized into chunks (PS3) or not (PC)"
+enum MoppDataBuildType byte
+    CHUNK
+    NO_CHUNK
+    NOT_SET
+
+//REPLACE {MipMapFormat}
+enum MipMaps uint // Omitting "Texture" prefix, since the name implies it.
+    NO //TODO clarify: does this specify input or render texture state
+    YES
+    DEFAULT
+
+// NiPixelData
+enum PixelFormat uint
+    RGB8
+    RGBA8
+    PAL8     // NiPalette
+    DXT1 4
+    DXT5     // DXT3? - or some re-invented wheel?
+    DXT5_ALT //
+
+// NiSourceTexture
+enum PixelLayout uint
+    PAL8
+    HIGH_COLOR_16 // color-plane bits?
+    TRUE_COLOR_32 // color-plane bits?
+    COMPRESSED    // format?
+    BUMPMAP       // how many bits?
+    PAL4
+    DEFAULT
+
+enum TextureClampMode uint //REPLACE {TexClampMode}
+    CLAMP_S_CLAMP_T
+    CLAMP_S_WRAP_T
+    WRAP_S_CLAMP_T
+    WRAP_S_WRAP_T
+
+enum TextureFilter uint //REPLACE {TexFilterMode}
+     NEAREST  // GL_NEAREST
+     BILERP   // GL_LINEAR
+     TRILERP
+     NEAREST_MIPNEAREST // GL_NEAREST_MIPMAP_NEAREST
+     NEAREST_MIPLERP    // GL_NEAREST_MIPMAP_LINEAR
+     BILERP_MIPNEAREST  // GL_LINEAR_MIPMAP_LINEAR
+
+enum VertMode uint // vertex colors
+     IGNORE   // "Source Ignore"
+     EMISSIVE // "Source Emissive"
+     AMB_DIF  // "Source Ambient/Diffuse"
+
+enum CycleType uint // "animation cycle behavior"
+    LOOP
+    REVERSE
+    CLAMP
+
+enum FieldType uint // "force field's type"
+    WIND
+    POINT
+
+enum BillboardMode ushort // the way a billboard reacts to a camera
+    ALWAYS_FACE_CAMERA
+    ROTATE_ABOUT_UP
+    RIGID_FACE_CAMERA
+    ALWAYS_FACE_CENTER
+    RIGID_FACE_CENTER
+    BSROTATE_ABOUT_UP
+    ROTATE_ABOUT_UP2 9
+
+enum StencilCompareMode uint //TODO
+    NEVER
+    LESS
+    EQUAL
+    LEQUAL
+    GREATER
+    NEQUAL
+    GEQUAL
+    ALWAYS
+
+enum ZCompareMode uint // depth
+    ALWAYS
+    LESS
+    EQUAL
+    LEQUAL
+    GREATER
+    NEQUAL
+    GEQUAL
+    NEVER
+
+enum StencilAction uint
+    KEEP
+    ZERO
+    REPLACE
+    INCREMENT
+    DECREMENT
+    INVERT
+
+enum FaceDrawMode uint
+    CCW_OR_BOTH
+    CCW
+    CW
+    DOUBLE_SIDED
+
+/* "4 (Box) is used for everything movable.
+    7 (Keyframed) is used on statics and animated stuff." */
+enum MotionSystem byte
+    INVALID
+    DYNAMIC /* "A fully-simulated, movable rigid body. At construction time the
+            engine checks the input inertia and selects SPHERE_INERTIA or
+            BOX_INERTIA as appropriate" */
+    SPHERE // "Simulation is performed using a sphere inertia tensor"
+    SPHERE_INERTIA /* This is the same as SPHERE, except that simulation of the
+                   rigid body is "softened" */
+    BOX // "Simulation is performed using a box inertia tensor"
+    BOX_STABILIZED /* This is the same as BOX, except that simulation of the
+                   rigid body is "softened" */
+    KEYFRAMED /* "Simulation is not performed as a normal rigid body. The
+              keyframed rigid body has an infinite mass when viewed by the rest
+              of the system. (used for creatures)" */
+    FIXED /* "This motion type is used for the static elements of a game scene,
+          e.g. the landscape. Faster than MO_SYS_KEYFRAMED at velocity 0. (used
+          for weapons)" */
+    THIN_BOX /* "A box inertia motion which is optimized for thin boxes and has
+             less stability problems" */
+    CHARACTER /* "A specialized motion used for character controllers" */
+
+enum DeactivatorType byte
+    INVALID
+    NEVER   // "This will force the rigid body to never deactivate"
+    SPATIAL /* "Tells Havok to use a spatial deactivation scheme. This makes use
+            of high and low frequencies of positional motion to determine when
+            deactivation should occur" */
+
+/* "A list of possible solver deactivation settings. This value defines how the
+        solver deactivates objects. The solver works on a per object basis.
+        Note: Solver deactivation does not save CPU, but reduces creeping of
+        movable objects in a pile quite dramatically." */
+enum SolverDeactivation byte
+    INVALID
+    OFF
+    LOW // "Very conservative deactivation, typically no visible artifacts"
+    MEDIUM // "no serious visible artifacts in most cases"
+    HIGH // "visible artifacts"
+    MAX // "visible artifacts"
+
+enum MotionQuality byte
+    INVALID
+    FIXED     // "fixed bodies"
+    KEYFRAMED // "moving objects with infinite mass"
+    DEBRIS
+    MOVING    // "moving bodies, which should not leave the world"
+    CRITICAL  /* "all objects, which you cannot afford to tunnel through the
+              world at all" */
+    BULLET    // "very fast objects"
+    USER
+    CHARACTER // "character controllers"
+    KEYFRAMED_REPORT /* "Use this for moving objects with infinite mass which
+                     should report contact points and Toi-collisions against all
+                     other bodies, including other fixed and keyframed bodies"
+                     */
+
+enum ForceType uint
+    PLANAR
+    SPHERICAL
+    UNKNOWN
+
+// NiTextureTransformController
+enum TextureTransform uint //REPLACE {TexTransform}
+    TRANSLATE_U
+    TRANSLATE_V
+    ROTATE
+    SCALE_U
+    SCALE_V
+
+// NiPSysBombModifier
+enum DecayType uint
+    NONE
+    LINEAR
+    EXPONENTIAL
+
+// NiPSysBombModifier
+enum SymmetryType uint
+    SPHERICAL
+    CYLINDRICAL
+    PLANAR
+
+/* "Controls the way the a particle mesh emitter determines the starting speed
+ and direction of the particles that are emitted" */
+enum VelocityType uint
+    NORMALS
+    RANDOM
+    DIRECTION
+
+enum EmitFrom uint // mesh emitter
+    VERTICES
+    FACE_CENTER
+    EDGE_CENTER
+    FACE_SURFACE
+    EDGE_SURFACE
+
+// NiTextureEffect
+enum EffectType uint
+    PROJECTED_LIGHT
+    PROJECTED_SHADOW
+    ENVIRONMENT_MAP
+    FOG_MAP
+
+enum TextureCoordGenType uint //REPLACE {CoordGenType}
+    WORLD_PARALLEL // planar
+    WORLD_PERSPECTIVE
+    SPHERE_MAP
+    SPECULAR_CUBE_MAP
+    DIFFUSE_CUBE_MAP
+
+enum Endianess byte //REPLACE {EndianType}
+    BIG
+    LITTLE
+
+// NiPoint3InterpControllers
+enum TargetColor ushort
+    AMBIENT
+    DIFFUSE
+    SPECULAR
+    SELF_ILLUM
+
+// NiGeometryData
+enum ConsistencyType ushort
+    MUTABLE       0
+    STATIC   0x4000
+    VOLATILE 0x8000
+
+enum SortingMode uint
+    INHERIT
+    OFF
+
+enum PropagationMode uint
+    SUCCESS
+    FAILURE
+    ALWAYS
+    NEVER
+
+enum CollisionMode uint
+    BOUNDING_BOX
+    TRIANGLES
+    ALTERNATE_BOUNDING_VOLUMES
+    NO_TEST
+    NIBOUND
+
+enum BoundVolumeType int
+    BASE -1 //TODO EnumItem.Value could be < 0
+    SPHERE
+    BOX
+    CAPSULE
+    UNION
+    HALFSPACE
+
+enum hkResponseType byte
+    INVALID
+    SIMPLE_CONTACT // "Do normal collision resolution"
+    REPORTING // "No collision resolution is performed but listeners are called"
+    NONE
+
+//TODO to nif_tes5_ffd; to nif_fo3_ffd
+/* "Biped bodypart data used for visibility control of triangles.  Options are
+ Fallout 3, except where marked for Skyrim (uses SBP prefix)
+ Skyrim BP names are listed only for vanilla names, different creatures have
+ different defnitions for naming." */
+enum BSBodyPartType ushort //REPLACE {BSDismemberBodyPartType}
+    BP_TORSO
+    BP_HEAD
+    BP_HEAD2
+    BP_LEFTARM
+    BP_LEFTARM2
+    BP_RIGHTARM
+    BP_RIGHTARM2
+    BP_LEFTLEG
+    BP_LEFTLEG2
+    BP_LEFTLEG3
+    BP_RIGHTLEG
+    BP_RIGHTLEG2
+    BP_RIGHTLEG3
+    BP_BRAIN
+    SBP_HEAD 30
+    SBP_HAIR
+    SBP_BODY
+    SBP_HANDS
+    SBP_FOREARMS
+    SBP_AMULET
+    SBP_RING
+    SBP_FEET
+    SBP_CALVES
+    SBP_SHIELD
+    SBP_TAIL
+    SBP_LONGHAIR
+    SBP_CIRCLET
+    SBP_EARS
+    SBP_DRAGON_BLOODHEAD_OR_MOD_MOUTH
+    SBP_DRAGON_BLOODWINGL_OR_MOD_NECK
+    SBP_DRAGON_BLOODWINGR_OR_MOD_CHEST_PRIMARY
+    SBP_DRAGON_BLOODTAIL_OR_MOD_BACK
+    SBP_MOD_MISC1
+    SBP_MOD_PELVIS_PRIMARY
+    SBP_DECAPITATEDHEAD
+    SBP_DECAPITATE
+    SBP_MOD_PELVIS_SECONDARY
+    SBP_MOD_LEG_RIGHT
+    SBP_MOD_LEG_LEFT
+    SBP_MOD_FACE_JEWELRY
+    SBP_MOD_CHEST_SECONDARY
+    SBP_MOD_SHOULDER
+    SBP_MOD_ARM_LEFT
+    SBP_MOD_ARM_RIGHT
+    SBP_MOD_MISC2"
+    SBP_FX01
+    BP_SECTIONCAP_HEAD 101
+    BP_SECTIONCAP_HEAD2
+    BP_SECTIONCAP_LEFTARM
+    BP_SECTIONCAP_LEFTARM2
+    BP_SECTIONCAP_RIGHTARM
+    BP_SECTIONCAP_RIGHTARM2
+    BP_SECTIONCAP_LEFTLEG
+    BP_SECTIONCAP_LEFTLEG2
+    BP_SECTIONCAP_LEFTLEG3
+    BP_SECTIONCAP_RIGHTLEG
+    BP_SECTIONCAP_RIGHTLEG2
+    BP_SECTIONCAP_RIGHTLEG3
+    BP_SECTIONCAP_BRAIN
+    SBP_130_HEAD 130
+    SBP_131_HAIR
+    SBP_141_LONGHAIR 141
+    SBP_142_CIRCLET
+    SBP_143_EARS
+    SBP_150_DECAPITATEDHEAD 150
+    BP_TORSOCAP_HEAD 201
+    BP_TORSOCAP_HEAD2
+    BP_TORSOCAP_LEFTARM
+    BP_TORSOCAP_LEFTARM2
+    BP_TORSOCAP_RIGHTARM
+    BP_TORSOCAP_RIGHTARM2
+    BP_TORSOCAP_LEFTLEG
+    BP_TORSOCAP_LEFTLEG2
+    BP_TORSOCAP_LEFTLEG3
+    BP_TORSOCAP_RIGHTLEG
+    BP_TORSOCAP_RIGHTLEG2
+    BP_TORSOCAP_RIGHTLEG3
+    BP_TORSOCAP_BRAIN
+    SBP_230_HEAD 230
+    BP_TORSOSECTION_HEAD       1000
+    BP_TORSOSECTION_HEAD2      2000
+    BP_TORSOSECTION_LEFTARM    3000
+    BP_TORSOSECTION_LEFTARM2   4000
+    BP_TORSOSECTION_RIGHTARM   5000
+    BP_TORSOSECTION_RIGHTARM2  6000
+    BP_TORSOSECTION_LEFTLEG    7000
+    BP_TORSOSECTION_LEFTLEG2   8000
+    BP_TORSOSECTION_LEFTLEG3   9000
+    BP_TORSOSECTION_RIGHTLEG  10000
+    BP_TORSOSECTION_RIGHTLEG2 11000
+    BP_TORSOSECTION_RIGHTLEG3 12000
+    BP_TORSOSECTION_BRAIN     13000 // BSBodyPartType
+
+// <bitflags/>
+enum BSSegmentFlags uint //TODO reason?
+    BSSEG_WATER 9
+
+//TODO to nif_tes(3|4|5)_ffd
+// BSLightingShaderProperty
+//REPLACE {BSLightingShaderPropertyShaderType}
+enum name="BS_LS_ShaderType" uint
+    Default
+    EnvironmentMap // "EnvMap Mask(TS6), EnvMap Scale"
+    GlowShader // "Glow(TS3)"
+    Heightmap // "Height(TS4)"
+    FaceTint  // "SubSurface(TS3), Detail(TS4), Tint(TS7)"
+    SkinTint
+    HairTint
+    ParallaxOccMaterial // "Enables Height(TS4), Max Passes, Scale"
+    WorldMultitexture
+    WorldMap1
+    Unknown_10
+    MultiLayerParallax /* "Enables EnvMap Mask(TS6), Layer(TS7), Parallax Layer
+                       Thickness, Parallax Refraction Scale, Parallax Inner
+                       Layer U Scale, Parallax Inner Layer V Scale, EnvMap
+                       Scale" */
+    Unknown_12
+    WorldMap2
+    SparkleSnow // "SparkleParams"
+    WorldMap3
+    Eye Envmap // "EnvMap Mask(TS6), Eye EnvMap Scale"
+    Unknown_17
+    WorldMap4
+    WorldLODMultitexture
+
+// BSEffectShaderProperty animated variable
+enum EffectShaderControlledVariable uint
+    EmissiveMultiple
+    FalloffStartAngle // degress
+    FalloffStopAngle  // degrees
+    FalloffStartOpacity
+    FalloffStopOpacity
+    Alpha
+    UOffset
+    UScale
+    VOffset
+    VScale
+
+enum EffectShaderControlledColor uint
+    EmissiveColor
+
+// BSLightingShaderProperty
+enum LightingShaderControlledVariable uint
+    Refraction Strength
+    EnvironmentMapScale 8
+    Glossiness
+    SpecularStrength
+    EmissiveMultiple
+    Alpha
+    UOffset 20
+    UScale
+    VOffset
+    VScale
+
+// BSLightingShaderProperty
+enum LightingShaderControlledColor uint
+    Specular
+    Emissive
+
+enum ExtraVectorsFlags byte
+    None
+    Tangents_Bitangents 16
+
+enum hkConstraintType uint
+    BallAndSocket
+    Hinge
+    Limited Hinge
+    Prismatic 6
+    Ragdoll
+    StiffSpring
 
 // const ......................................................................
 
