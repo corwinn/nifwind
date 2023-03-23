@@ -47,7 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // required (or even make it more scalable by updating its design for custom
 // extensions).
 // Then this file shall be split to different .nif versions to the best of my
-// abilities. Then you can get these, or the big mess, and create projects for
+// ability. Then you can get these, or the big mess, and create projects for
 // them; they shall remain as templates in this project.
 
 // Machine types ...............................................................
@@ -893,8 +893,8 @@ const NIF_HEADER_STRING_2 "Gamebryo File Format" (Version >= 0x0a010000)
 // I could do this:
 const VER_FOO (Version == 34)
 // and re-create the same mess with (VER_FOO); I'm not doing this - the idea
-// is to decouple FFD from this program, and let different communities manage
-// their favorite FFDs
+// is to decouple the FFD from this program, and let different communities
+// manage their favorite FFDs
 
 // struct - "compound" ........................................................
 
