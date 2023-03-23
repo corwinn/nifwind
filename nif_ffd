@@ -1035,12 +1035,12 @@ struct Block
     //TODO implement variadic fields: hash[hash] a.k.a. dynamic value list:
     //     the value list is not at the FFD but at the file data; matching
     //     by struct name only
-    ... BlockName<>BlockHash // foreach key at BlockHash get BlockName[key]
+    ... struct<>BlockName<>BlockHash // for key at BlockHash get BlockName[key]
 
 // ((Version >= 0x0303000D) && (Version < 0x05000001))
 struct BlockX
     SizedString Name
-    ... struct<>Name //TODO for key=Name at . get struct[key]
+    ... struct<>Name
 
 format nif // this is a "Header" no more; this is the entire file
     [NifVersionString] // initialize Version TODO field attributes

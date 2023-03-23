@@ -51,7 +51,7 @@ Most objects are named, and their names are stored at the file.
  [ ] libnifwind
  [ ] plug-ins
  [ ] visual file format editor
- [ ] specify the entire file structure in the description
+ [x] specify the entire file structure in the description
  [ ] the code should match not by name, but by purpose
  [ ] thumbnail generator
 
