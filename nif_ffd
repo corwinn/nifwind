@@ -1846,3 +1846,47 @@ struct NiObjectNET //niobject
     Ref    ExtraData        ((Version >= 0x03000000) && (Version <= 0x04020200))
     Ref    ExtraDataList[uint] (Version >= 0x0a000100)
     Ref    Controller          (Version >= 0x03000000) // NiTimeController
+
+struct NiCollisionObject //niobject
+    Ptr Target // NiAVObject
+
+struct NiCollisionData //niobject
+    NiCollisionObject
+    PropagationMode PMode
+    CollisionMode   CMode (Version >= 0x0a010000)
+    byte            UseABV
+    BoundingVolume  BV (UseABV == 1) // can't be "bool" because it varies
+
+struct bhkNiCollisionObject //niobject
+    NiCollisionObject
+    Flags Flags //LATER docs pass
+    Ref   Body
+
+struct bhkCollisionObject //niobject
+    bhkNiCollisionObject //TODO implement recursive composition
+
+struct bhkBlendCollisionObject //niobject
+    bhkNiCollisionObject
+    float Unknown[2]
+
+struct bhkPCollisionObject //niobject
+    bhkNiCollisionObject
+
+struct bhkSPCollisionObject //niobject
+    bhkNiCollisionObject /*TODO these require something: they're the same thing
+                                named differently; value list of string literals
+                                perhaps */
+
+struct NiAVObject //niobject
+    NiObjectNET
+    Flags   Flags    (Version >= 0x03000000)
+    ushort  Unknown1 ((Version >= 0x14020007)
+                     && (UVersion >= 11) && (UVersion2 > 26))
+    Transform<Matrix33> Transform
+    Vector3 Velocity         (Version <= 0x04020200)
+    Ref     Properties[uint] ((Version < 0x14020007) || (UVersion <= 11))
+    uint    Unknown1[4]      (Version <= 0x02030000)
+    byte    Unknown2         (Version <= 0x02030000)
+    BoundingBox BB ((bool)
+                   && (Version >= 0x03000000) && (Version <= 0x04020200))
+    Ref CObject (Version >= 0x0a000100) // NiCollisionObject
