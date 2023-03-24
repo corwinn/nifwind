@@ -1830,3 +1830,19 @@ struct NiBSplineInterpolator //niobject
     float StopTime
     Ref   SplineX     // NiBSplineData TODO spline what?
     Ref   SplineBasis // NiBSplineBasisData
+
+// One object to rule them all
+struct NiObjectNET //niobject
+    // Not an issue after the split.
+    //TODO not implementing a bad idea: cond="BSLightingShaderProperty"
+    BSLightingShaderPropertyShaderType DetectMe (UVersion >= 123456781)
+    String Name
+    bool   HasOldExtraData    (Version <= 0x02030000)
+    String OldExtraPropName   (HasOldExtraData)
+    uint   OldExtraInternalId (HasOldExtraData)
+    String OldExtraString     (HasOldExtraData)
+    byte   Unknown1           (Version <= 0x02030000)
+    // NiExtraData
+    Ref    ExtraData        ((Version >= 0x03000000) && (Version <= 0x04020200))
+    Ref    ExtraDataList[uint] (Version >= 0x0a000100)
+    Ref    Controller          (Version >= 0x03000000) // NiTimeController
