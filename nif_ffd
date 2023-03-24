@@ -46,9 +46,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // transformation and to update my libffd to deal with the new constructs
 // required (or even make it more scalable by updating its design for custom
 // extensions).
-// Then this file shall be split to different .nif versions to the best of my
+// Then this file shall be split into different .nif versions to the best of my
 // ability. Then you can get these, or the big mess, and create projects for
-// them; they shall remain as templates in this project.
+// them; they shall remain as immutable templates in this project.
+// Its way better to manage simple files, and let the code merge them on the
+// fly - when needed: for example modifying version x FFD will no longer damage
+// version y FFD.
 
 // Machine types ...............................................................
 
@@ -94,7 +97,7 @@ enum TextureType uint //REPLACE {TexType}
     DECAL_2 10
     DECAL_3 11
 
-enum AnimKeyTypeInterpolation uint //REPLACES {KeyType}
+enum AnimInterpolation uint //REPLACES {KeyType}
     LINEAR       1
     QUADRATIC    2
     TBC          3 // "Tension Bias Continuity"
@@ -701,7 +704,7 @@ enum hkResponseType byte
  Fallout 3, except where marked for Skyrim (uses SBP prefix)
  Skyrim BP names are listed only for vanilla names, different creatures have
  different defnitions for naming." */
-enum BSBodyPartType ushort //REPLACE {BSDismemberBodyPartType}
+enum BSBodyPartType ushort
     BP_TORSO
     BP_HEAD
     BP_HEAD2
@@ -873,6 +876,32 @@ enum hkConstraintType uint
     Ragdoll
     StiffSpring
 
+// "Furniture entry points. It specifies the direction(s) from where the actor
+// is able to enter (and leave) the position."
+enum FurnitureEntryPoints ushort // bitflags
+    Front
+    Behind
+    Right
+    Left
+    Up
+
+// "Animation type used on this position. This specifies the function of this
+// position."
+enum AnimationType ushort
+    Sit   1
+    Sleep 2
+    Lean  4
+
+// "Determines how the raw image data is stored in NiRawImageData"
+enum ImageType uint
+    RGB  1
+    RGBA 2
+
+// "Editor flags for the Body Partitions"
+enum BSPartFlag ushort // bitflags
+    EDITOR_VISIBLE
+    START_NET_BONESET 8
+
 // const ......................................................................
 
 // These are incomplete. They shall be complete at their respective ffd.
@@ -1003,8 +1032,9 @@ struct ControllerLink
     // have high values tend to correspond with the important parts of the
     // animation
     byte   Priority (Version >= 0x0a01006a && UVersion2 >= 10)
-    // NiStringPalette; this like this one demand split by version; this is just
-    // the tip of the iceberg - there are truly scary things below: read on
+    // NiStringPalette; thigns like this one demand split by version; this is
+    // just the tip of the iceberg - there are truly scary things below (like
+    // conditions at HavokColFilter): read on
     Ref    StringPalette ((Version >= 0x0a020000) && (Version <= 0x14000005))
     //
     // -/__ Such walls of text shall cease to exist with the split _/--
@@ -1070,3 +1100,422 @@ format nif // this is a "Header" no more; this is the entire file
     BlockX Blocks[NumBlocks] ((Version >= 0x0303000D) && (Version < 0x05000001))
     Footer Footer            (Version >= 0x0303000D)
     //TODO (Version < 0x0303000D)
+
+struct StringPalette
+    SizedString Palette // 0-terminated strings list
+    uint        Length //TODO its total length or number of strings?
+
+struct TBC // "Tension, bias, continuity"
+    float Value[3] // t,b,c
+
+/* "A generic key with support for interpolation. Type 1 is normal linear
+ interpolation, type 2 has forward and backward tangents, and type 3 has
+ tension, bias and continuity arguments. Note that color4 and byte always seem
+ to be of type 1." */
+//TODO implement struct parameters: the parser should be able to transform it:
+// Key<float,Interpolation> becomes:
+// struct Key1
+//     float Time
+//     float Value
+//     float Forward  (Interpolation == 2)
+//     float Backward (Interpolation == 2)
+//     TBC   TBC      (Interpolation == 3),
+// but is it worth it?
+struct Key<T,A>
+    float Time
+    T     Value
+    T     Forward  (A == 2)
+    T     Backward (A == 2)
+    TBC   TBC      (A == 3)
+
+// "Array of vector keys (anything that can be interpolated, except rotations)"
+struct KeyGroup<T>
+    uint                 NumKeys
+    AnimInterpolation    Interpolation (NumKeys)
+    Key<T,Interpolation> Keys[NumKeys]
+
+// "A special version of the key type used for quaternions. Never has tangents"
+struct QuatKey<A>
+    float Time       (Version <= 0x0a010000)
+    float Time       ((Version >= 0x0a01006a) && (A != 4))
+    Quaternion Value (A != 4)
+    TBC        TBC   (A == 3)
+
+struct TextureCoord //REPLACE {TexCoord}
+    float Value[2] // u,v
+
+struct TDTextureTransform
+    TextureCoord Translation
+    TextureCoord Tiling
+    float        WRotation
+    uint         TType
+    TextureCoord Center
+
+struct TextureDesc  //REPLACE {TexDesc}
+    [NifRef(NiSourceTexture)] //PERHAPS
+    Ref Source // NiSourceTexture
+    TextureClampMode ClampMode  (Version <= 0x14000005)
+    TextureFilter    FilterMode (Version <= 0x14000005)
+    // "0xYZ00 = clamp mode Y, filter mode Z"
+    Flags Flags    (Version >= 0x14010003)
+    short Unknown1 (Version >= 0x14060000)
+    uint  UVSet    (Version <= 0x14000005) // NiGeometryData set
+    // "Freedom Force docs, &quot;L values can range from 0 to 3 and are used to
+    // specify how fast a texture gets blurry&quot;"
+    short PS2_L    (Version <= 0x0a040001)
+    // "Freedom Force docs, &quot;The K value is used as an offset into the
+    // mipmap levels and can range from -2047 to 2047. Positive values push the
+    // mipmap towards being blurry and negative values make the mipmap
+    // sharper.&quot;"
+    short PS2_K     (Version <= 0x0a040001)
+    ushort Unknown2 (Version <= 0x0401000C)
+    TDTextureTransform ((bool) && (Version >= 0x0a010000))
+
+struct ShaderTexDesc
+    bool        IsUsed
+    TextureDesc TextureData (IsUsed)
+    uint        MapIndex    (IsUsed)
+
+struct TexSource
+    byte UseExternal
+    FilePath FileName (UseExternal == 1)
+    Ref      Unknown1 ((UseExternal == 1) && (Version >= 0x0a010000))
+    byte     Unknown2 ((UseExternal == 0) && (Version <= 0x0a000100))
+    FilePath FileName ((UseExternal == 0) && (Version >= 0x0a010000))
+    Ref      Bitmap   (UseExternal == 0) // NiPixelData
+
+struct Triangle
+    ushort Value[3] // v1,v2,v3
+
+// "Skinning data for a submesh, optimized for hardware skinning. Part of
+// NiSkinPartition."
+struct SkinPartition
+    ushort VNum // Num Vertices
+    ushort TNum // Num Triangles
+    ushort BNum // Num Bones
+    ushort SNum // Num Strips
+    //"The Gamebryo engine seems to work well only if this number is equal to 4"
+    ushort WNum // Num Weights Per Vertex
+    ushort Bones[BNum]
+    bool   HasVertexMap         (Version >= 0x0a010000)
+    ushort VMap[VNum]           ((HasVertexMap) || (Version <= 0x0a000102))
+    bool   HasVertexWeights     (Version >= 0x0a010000)
+    float  VWeights[VNum][WNum] ((HasVertexWeights) || (Version <= 0x0a000102))
+    ushort StripLengths[SNum]
+    bool   HasFaces             (Version >= 0x0a010000)
+    //TODO implement jagged arrays
+    ushort Strips[SNum][StripLengths] ((SNum != 0) && ((HasFaces)
+                                       || (Version <= 0x0a000102)))
+    Triangle Triangles[TNum]          ((SNum == 0) && ((HasFaces)
+                                       || (Version <= 0x0a000102)))
+    byte   BoneIndices[VNum][WNum] (bool)
+    ushort Unknown1 (UVersion >= 12)
+
+struct Transform<T> // QTransform, MTransform
+    Vector3 Translation
+    T       Rotation
+    float   Scale
+
+struct SkinTransform
+    Matrix33 Rotation
+    Vector3  Translation
+    float    Scale
+
+struct BoundingBox
+    uint     Unknown1
+    Vector3  Translation
+    Matrix33 Rotation
+    Vector3  Radius
+
+struct FurniturePosition
+    Vector3 Offset
+    ushort  Orientation  (UVersion <= 11)
+    // "Refers to a furnituremarkerxx.nif file"
+    byte    PositionRef1 (UVersion <= 11)
+    byte    PositionRef2 (UVersion <= 11)
+    float         Heading  ((Version >= 0x14020007) && (UVersion >= 12))
+    AnimationType AType    ((Version >= 0x14020007) && (UVersion >= 12))
+    FurnitureEntryPoints F ((Version >= 0x14020007) && (UVersion >= 12))
+
+struct hkTriangle // "A triangle with extra data used for physics"
+    Triangle Triangle
+    ushort   WeldingInfo
+    Vector3  Normal (Version <= 0x14000005)
+
+struct Morph<A> // "Geometry morphing data component"
+    String                   Name          (Version >= 0x0a01006a)
+    uint                     KNum          (Version <= 0x0a010000)
+    AnimInterpolation        Interpolation (Version <= 0x0a010000)
+    Key<float,Interpolation> Keys[KNum]    (Version <= 0x0a010000)
+    uint Unknown1 ((Version >= 0x0a01006a) && (Version <= 0x0a020000))
+    uint Unknown2 ((Version >= 0x14000004) && (Version <= 0x14000005))
+    Vector3 Vectors[A]
+
+struct Particle
+    Vector3 Velocity
+    Vector3 Unknown1
+    float   Lifetime
+    float   Lifespan
+    float   Timestamp
+    ushort  Unknown2
+    ushort  VertexID
+
+struct SkinData<A>
+    // "Offset of the skin from this bone in bind position"
+    SkinTransform STransform
+    // "Translation offset of a bounding sphere holding all vertices. (Note that
+    // its a Sphere Containing Axis Aligned Box not a minimum volume Sphere)"
+    Vector3    BoundingSphereOffset
+    float      BoundingSphereRadius
+    short      Unknown[13] ((Version == 0x14030009) && (UVersion == 131072))
+    ushort     VNum
+    SkinWeight VertexWeights[VNum] ((Version <= 0x04020100)
+                                   || ((Version >= 0x04020200) && (A != 0)))
+
+struct SphereBV
+    Vector3 Center
+    float Radius
+
+// "ColFilter property for Havok. It contains Layer, Flags and Part Number"
+struct HavokColFilter
+    // scary; I'm not sure I want to program my parser to handle such
+    // expressions because writing them means you have an error in your design;
+    // I can hardly express the amount of pointless the next 3 fields represent.
+    OblivionLayer Layer ((Version != 0x14020007)
+                        || ((Version == 0x14020007)
+                            && (UVersion  != 11)
+                            && (UVersion  != 12)
+                            && (UVersion2 != 34)
+                            && (UVersion2 != 83)
+                           )
+                        )
+    Fallout3Layer Layer ((Version == 0x14020007) && (UVersion == 11)
+                        && (UVersion2 == 34))
+    SkyrimLayer   Layer ((Version == 0x14020007) && (UVersion == 12)
+                        && (UVersion2 == 83))
+    // 0xe - flags; 0x1f - part number; see the origin for more details
+    byte FlagsPartNumber
+    ushort Unknown1
+
+struct HavokMaterial
+    OblivionHavokMaterial Material ((Version != 0x14020007)
+                                   || ((Version == 0x14020007)
+                                       && (UVersion  != 11)
+                                       && (UVersion  != 12)
+                                       && (UVersion2 != 34)
+                                       && (UVersion2 != 83)
+                                      )
+                                   )
+    Fallout3HavokMaterial Material ((Version == 0x14020007) && (UVersion == 11)
+                                   && (UVersion2 == 34))
+    SkyrimHavokMaterial   Material ((Version == 0x14020007) && (UVersion == 12)
+                                   && (UVersion2 == 83))
+
+struct OblivionSubShape // "Havok Information for packed TriStrip shapes"
+    HavokColFilter HavokColFilter
+    uint           VNum
+    HavokMaterial  Material
+
+struct MotorDescriptor
+    float Unknown1[6]
+    byte  Unknown2
+
+// "This constraint defines a cone in which an object can rotate. The shape of
+// the cone can be controlled in two (orthogonal) directions"
+struct RagdollDescriptor
+    // "Oblivion"
+    // A{Pivot,Plane,Twist}, B{<-}
+    Vector4 Value[6] (Version <= 0x14000005)
+    // "Fallout 3"
+    // A{Twist,Plane,Motor,Pivot}, B{<-}
+    Vector4 Value[8] ((Version >= 0x14020007) && (UVersion2 > 16))
+    // A{Pivot,Plane,Twist}, B{<-}
+    Vector4 Value[6] ((Version >= 0x14020007) && (UVersion2 == 16))
+    float ConeMaxAngle
+    float PlaneMinAngle
+    float PlaneMaxAngle
+    float TwistMinAngle
+    float TwistMaxAngle
+    float MaxFriction
+    MotorDescriptor Md ((bool) && (Version >= 0x14020007) && (UVersion2 > 16))
+
+// "This constraint allows rotation about a specified axis, limited by specified
+// boundaries"
+struct LimitedHingeDescriptor
+    // "Oblivion"
+    // A{Pivot,Axle,Perp2 A1,Perp2 A2}, B{Pivot,Axle,Perp2 B2}
+    Vector4 Value[7] (Version <= 0x14000005)
+    // "Fallout 3"
+    // A{Axle,Perp2 A1,Perp2 A2,Pivot}, B{<-}
+    Vector4 Value[8]  ((Version >= 0x14020007) && (UVersion2 > 16))
+    Vector4 Value[7]  ((Version >= 0x14020007) && (UVersion2 == 16))
+    float MinAngle
+    float MaxAngle
+    float MaxFriction
+    MotorDescriptor Md ((bool) && (Version >= 0x14020007) && (UVersion2 > 16))
+
+// "This constraint allows rotation about a specified axis."
+struct HingeDescriptor
+    // "Oblivion"
+    // A{Pivot,Perp2 A1,Perp2 A2}, B{Pivot,Axle}
+    Vector4 Value[5] (Version <= 0x14000005)
+    // "Fallout 3"
+    // A{Axle,Perp2 A1,Perp2 A2,Pivot}, B{<-}
+    Vector4 Value[8] (Version >= 0x14020007)
+
+struct BallAndSocketDescriptor
+    byte    Unknown1
+    Vector3 Unknown2[2]
+    int     Unknown3
+
+struct PrismaticDescriptor
+    // "Oblivion"
+    // A{Pivot,RMatrix44}, B{Pivot,Sliding,Plane}
+    Vector4 Value[8] (Version <= 0x14000005)
+    // "Fallout 3"
+    // A{Sliding,Rotation,Plane,Pivot}, B{<-}
+    Vector4 Value[8] (Version >= 0x14020007)
+    float MinDistance
+    float MaxDistance
+    float Friction
+    byte  Unknown (Version >= 0x14020007)
+
+struct StiffSpringDescriptor
+    Vector4 Value[2] // PivotA, PivotB
+    float   Length
+
+struct OldSkinData // "Used to store skin weights in NiTriShapeSkinController"
+    float   VertexWeight
+    ushort  VertexIndex
+    Vector3 Unknown
+
+struct MultiTextureElement
+    bool HasImage
+    Ref               Image  (HasImage) // NiImage
+    TextureClampMode  Clamp  (HasImage)
+    TextureFilterMode Filter (HasImage)
+    uint              UVSet  (HasImage)
+    short PS2_L ((HasImage)
+                && (Version >= 0x03030000) && (Version <= 0x0a020000))
+    short PS2_K ((HasImage)
+                && (Version >= 0x03030000) && (Version <= 0x0a020000))
+    short Unknown ((HasImage) && (Version >= 0x03030000))
+
+struct BoxBV // "Box Bounding Volume"
+    Vector3 Center
+    Vector3 Axis[3]
+    float   Extent[3]
+
+struct CapsuleBV
+    Vector3 Center
+    Vector3 Origin
+    float Unknown[2]
+
+struct HalfSpaceBV
+    Vector3 Normal
+    Vector3 Center
+    float   Unknown
+
+struct BoundingVolume
+    BoundVolumeType CollisionType
+    SphereBV    BV (CollisionType == 0)
+    BoxBV       BV (CollisionType == 1)
+    CapsuleBV   BV (CollisionType == 2)
+    UnionBV     BV (CollisionType == 4) // <---.
+    HalfSpaceBV BV (CollisionType == 5) //     |
+
+struct UnionBV                          //     |
+    BoundingVolume BV[uint] //TODO be careful: circular symbol
+
+struct MorphWeight
+    Ref   Interpolator // NiInterpolator
+    float Weight
+
+struct ArkTexture // "A texture reference used by NiArkTextureExtraData"
+    String Name
+    int    Unknown1[2]
+    Ref    TexturingProperty // NiTexturingProperty
+    byte   Unknown2[9]
+
+struct InertiaMatrix
+    float Value[3][4]
+
+// "Array of Vectors for Decal placement in BSDecalPlacementVectorExtraData"
+struct DecalVectorArray
+    short   VNum
+    Vector3 Points[VNum]
+    Vector3 Normals[VNum]
+
+struct BodyPartList
+    BSPartFlag     PartFlag
+    BSBodyPartType BodyPart
+
+struct BSSegment // "Bethesda-specific node"
+    int            Index // "Index multiplied by 1536 (0x0600)"
+    BSSegmentFlags Flags // "Geometry present in the segment"
+    byte           Unknown
+
+struct BoneLOD
+    uint   Distance
+    String Name
+
+// "Per-chunk material, used in bhkCompressedMeshShapeData"
+struct bhkCMSDMaterial
+    SkyrimHavokMaterial Material
+    SkyrimLayer         Layer
+    byte                Unknown1
+    ushort              Unknown2
+
+// "Triangle indices used in pair with "Big Verts" in a
+// bhkCompressedMeshShapeData"
+struct bhkCMSDBigTris
+    ushort Triangles[3]
+    uint   Unknown1
+    ushort Unknown2
+
+struct bhkCMSDTransform
+    Vector4        Translation
+    QuaternionXYZW Rotation
+
+// "Defines subshape chunks in bhkCompressedMeshShapeData"
+struct bhkCMSDChunk
+    Vector4 Translation
+    uint    MaterialIndex
+    ushort  Unknown
+    ushort  TransformIndex
+    ushort  Vertices[uint]
+    ushort  Indices[uint]
+    ushort  Strips[uint]
+    ushort  Indices2[uint]
+
+struct SubConstraint
+    hkConstraintType Type
+    Ptr Entities[uint] // bhkEntity
+    uint Priority
+    BallAndSocketDescriptor BallAndSocket (Type == 0)
+    HingeDescriptor         Hinge         (Type == 1)
+    LimitedHingeDescriptor  LHinge        (Type == 2)
+    PrismaticDescriptor     Prismatic     (Type == 6)
+    RagdollDescriptor       Ragdoll       (Type == 7)
+    StiffSpringDescriptor   StiffSpring   (Type == 8)
+
+struct bhkRDTMalleableConstraint // A malleable constraint.""
+    uint Type
+    uint Unknown
+    Ref  EntityA // NiObject
+    Ref  EntityB //
+    uint Priority
+    HingeDescriptor        Hinge   (Type == 1)
+    RagdollDescriptor      Ragdoll (Type == 7)
+    LimitedHingeDescriptor LHinge  (Type == 2)
+
+struct bhkRDTConstraint
+    uint Type
+    uint Unknown
+    Ref  EntityA // NiObject
+    Ref  EntityB //
+    uint Priority
+    RagdollDescriptor         Ragdoll             (Type ==  7)
+    bhkRDTMalleableConstraint MalleableConstraint (Type == 13)
+
+// niobject ...................................................................
