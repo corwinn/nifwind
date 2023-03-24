@@ -1571,6 +1571,7 @@ NiPSysCollider //niobject
 
 // struct bhkRefObject //niobject
 // struct bhkSerializable //niobject
+// struct bhkShape //niobject
 
 struct bhkWorldObject //niobject
     Ref Shape // bhkShape
@@ -1581,6 +1582,7 @@ struct bhkWorldObject //niobject
 // struct bhkPhantom inherit="bhkWorldObject" //niobject
 // struct bhkShapePhantom inherit="bhkWorldObject" //niobject
 // struct bhkEntity" inherit="bhkWorldObject" //niobject
+// struct bhkRigidBodyT" inherit="bhkRigidBody" //niobject
 
 struct bhkSimpleShapePhantom //niobject
     bhkWorldObject
@@ -1625,3 +1627,146 @@ struct bhkRigidBody //niobject
     Ref    Constraints[uint] // bhkSerializable
     uint   Unknown9          (UVersion <= 11)
     ushort Unknown10         (UVersion >= 12)
+
+struct bhkConstraint //niobject // "Describes a physical constraint"
+    Ptr  Entities[uint] // bhkEntity
+    uint Priority
+
+struct bhkLimitedHingeConstraint //niobject
+    bhkConstraint
+    LimitedHingeDescriptor
+
+struct bhkMalleableConstraint //niobject
+    bhkConstraint
+    SubConstraint
+    float Tau      (Version <= 0x14000005)
+    float Damping  (Version <= 0x14000005)
+    float Strength (Version >= 0x14020007)
+
+struct bhkStiffSpringConstraint //niobject
+    bhkConstraint
+    StiffSpringDescriptor
+
+struct bhkRagdollConstraint //niobject
+    bhkConstraint
+    RagdollDescriptor
+
+struct bhkPrismaticConstraint //niobject
+    bhkConstraint
+    PrismaticDescriptor
+
+struct bhkHingeConstraint //niobject
+    bhkConstraint
+    HingeDescriptor
+
+struct bhkBallAndSocketConstraint //niobject
+    bhkConstraint
+    BallAndSocketDescriptor
+
+struct bhkBallSocketConstraintChain //niobject
+    Vector4 Floats[uint]
+    float   Unknown1
+    float   Unknown2
+    uint    Unknown3
+    uint    Unknown4
+    Ptr     Links[uint]
+    Ptr     Links2[uint]
+    uint    Unknown5
+
+struct bhkTransformShape //niobject
+    Ref           Shape // bhkShape
+    HavokMaterial Material
+    float         Unknown1
+    byte          Unknown2[8]
+    Matrix44      Transform
+
+struct bhkSphereRepShape //niobject
+    HavokMaterial Material
+    float         Radius
+
+// struct bhkConvexShape inherit="bhkSphereRepShape" //niobject
+// struct bhkSphereShape inherit="bhkConvexShape" //niobject
+
+struct bhkCapsuleShape //niobject
+    bhkSphereRepShape
+    byte Unknown[8]
+    Vector3 First
+    float   Radius
+    Vector3 Second
+    float   Radius2
+
+struct bhkBoxShape //niobject
+    bhkSphereRepShape
+    byte    Unknown[8]
+    Vector3 Dimensions
+    float   MinSize
+
+struct bhkConvexVerticesShape //niobject
+    bhkSphereRepShape
+    float Unknown[6]
+    Vector4 Vertices[uint]
+    Vector4 Normals[uint]
+
+// struct bhkConvexTransformShape inherit="bhkTransformShape" //niobject
+
+struct bhkMultiSphereShape //niobject
+    bhkSphereRepShape
+    float Unknown[2]
+    SphereBV Spheres[uint]
+
+// struct bhkBvTreeShape inherit="bhkShape" //niobject
+
+// "Memory optimized partial polytope bounding volume tree shape (not an
+// entity)"
+struct bhkMoppBvTreeShape //niobject
+    Ref     Shape // bhkShape
+    uint    Unknown1
+    byte    Unknown2[8]
+    float   Unknown3
+    uint    MOPPDataSize
+    Vector3 Origin
+    float   Scale
+    byte    OldMOPPData[MOPPDataSize] (Version <= 0x0a000100)
+    MoppDataBuildType BuildType ((Version >= 0x14020007) && (UVersion >= 12))
+    byte    MOPPData[MOPPDataSize] (Version >= 0x0a000102)
+
+// struct bhkShapeCollection inherit="bhkShape" //niobject
+
+struct bhkListShape //niobject
+    Ref           SubShapes[uint] // bhkShape
+    HavokMaterial Material
+    float         Unknown1[6]
+    uint          Unknown2[uint]
+
+// Caution: "the 4 dummy separator bytes seem to be missing from nifs that have
+// this block"
+struct bhkMeshShape //niobject
+    float Unknown1[9]
+    float Unknown2[int][3]
+    int   Unknown3[3]
+    Ref   StripsData[uint] (Version >= 0x0a000100) // NiTriStripsData
+
+// "A shape constructed from strips data"
+struct bhkPackedNiTriStripsShape //niobject
+    OblivionSubShape SubShapes[ushort] (Version <= 0x14000005)
+    uint    Unknown1[2]
+    float   Unknown2
+    uint    Unknown3
+    Vector3 ScaleCopy
+    float   Unknown4
+    float   Unknown5
+    Vector3 Scale
+    float   Unknown6
+    Ref     Data // hkPackedNiTriStripsData
+
+struct bhkNiTriStripsShape //niobject
+    HavokMaterial Material
+    float   Unknown1
+    uint    Unknown2
+    uint    Unknown3[4]
+    uint    Unknown4
+    Vector3 Scale
+    uint    Unknown5
+    Ref     StripsData[uint] // NiTriStripsData
+    HavokColFilter DataLayers[uint]
+
