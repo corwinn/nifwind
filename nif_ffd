@@ -1522,14 +1522,19 @@ struct bhkRDTConstraint
 
 // niobject ...................................................................
 
-struct Ni3dsAlphaAnimator
+// These are used to identify groups of objects; I'm letting them stay here for
+// reference until the transform is complete. This project won't be using them.
+//TODO create a distinct list from the test .nifs to see whats what.
+// struct NiObject //niobject
+
+struct Ni3dsAlphaAnimator //niobject
     byte Unknown1
     Ref  Base
     uint Num1
     uint Num2
     uint Unknown2[Num1][Num2]
 
-struct Ni3dsAnimationNode
+struct Ni3dsAnimationNode //niobject
     String Name
     bool   HasData
     float  Unknown1[21]       (HasData)
@@ -1538,3 +1543,85 @@ struct Ni3dsAnimationNode
     float  Unknown3[12]       (HasData)
     uint   Count              (HasData)
     byte   Unknown4[Count][5] (HasData)
+
+struct Ni3dsColorAnimator //niobject
+    byte Unknown[184]
+
+struct Ni3dsMorphShape //niobject
+    byte Unknown[14]
+
+struct Ni3dsParticleSystem //niobject
+    byte Unknown[14]
+
+struct Ni3dsPathController //niobject
+    byte Unknown[20]
+
+struct NiParticleModifier //niobject
+    Ref Next // NiParticleModifier
+    Ptr Controller (Version >= 0x04000002) // NiParticleSystemController
+
+NiPSysCollider //niobject
+    float Bounce
+    bool  CreateOnCollide
+    bool  FreeOnCollide
+    Ref   Modifier // NiPSysSpawnModifier
+    Ptr   Base
+    Ref   Next
+    Ptr   Collider
+
+// struct bhkRefObject //niobject
+// struct bhkSerializable //niobject
+
+struct bhkWorldObject //niobject
+    Ref Shape // bhkShape
+    HavokColFilter HavokColFilter
+
+// Such ... slow down the transform. I don't need the empty ... but I do need
+// its non-empty "parent".
+// struct bhkPhantom inherit="bhkWorldObject" //niobject
+// struct bhkShapePhantom inherit="bhkWorldObject" //niobject
+// struct bhkEntity" inherit="bhkWorldObject" //niobject
+
+struct bhkSimpleShapePhantom //niobject
+    bhkWorldObject
+    float Unknown1[7]
+    float Unknown2[3][5]
+    float Unknown3
+
+struct bhkRigidBody //niobject
+    bhkWorldObject
+    int            Unknown1
+    int            Unknown2
+    int            Unknown3[3]
+    hkResponseType CResponse
+    byte           Unknown4
+    ushort         ProcessContactCallbackDelay
+    ushort         Unknown5[2]
+    HavokColFilter HavokColFilterCopy
+    ushort         Unknown6[6]
+    Vector4        Translation
+    QuaternionXYZW Rotation
+    Vector4        LinearVelocity
+    Vector4        AngularVelocity
+    InertiaMatrix  Inertia
+    Vector4        Center
+    float Mass
+    float LinearDamping
+    float AngularDamping
+    float UnknownFactor1 (UVersion >= 12)
+    float UnknownFactor2 (UVersion >= 12)
+    float Friction
+    float RollingFrictionMultiplier (UVersion >= 12)
+    float Restitution
+    float MaxLinearVelocity
+    float MaxAngularVelocity
+    float PenetrationDepth
+    MotionSystem       MSystem
+    DeactivatorType    DType
+    SolverDeactivation SDeactivation
+    MotionQuality      QType
+    uint   Unknown7[3]
+    uint   Unknown8          (UVersion >= 12) // "Skyrim only"
+    Ref    Constraints[uint] // bhkSerializable
+    uint   Unknown9          (UVersion <= 11)
+    ushort Unknown10         (UVersion >= 12)
