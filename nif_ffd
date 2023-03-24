@@ -932,7 +932,9 @@ struct ByteArray
     byte Data[uint]
 
 struct ByteMatrix
-    byte Data[uint][uint] //TODO handle >1 implicit N; or not
+    uint Num1
+    uint Num2
+    byte Data[Num2][Num1] //LATER handle >1 implicit N; or not
 
 struct Color3
     float Value[3] // r,g,b
@@ -1032,7 +1034,7 @@ struct ControllerLink
     // have high values tend to correspond with the important parts of the
     // animation
     byte   Priority (Version >= 0x0a01006a && UVersion2 >= 10)
-    // NiStringPalette; thigns like this one demand split by version; this is
+    // NiStringPalette; things like this one demand split by version; this is
     // just the tip of the iceberg - there are truly scary things below (like
     // conditions at HavokColFilter): read on
     Ref    StringPalette ((Version >= 0x0a020000) && (Version <= 0x14000005))
@@ -1519,3 +1521,20 @@ struct bhkRDTConstraint
     bhkRDTMalleableConstraint MalleableConstraint (Type == 13)
 
 // niobject ...................................................................
+
+struct Ni3dsAlphaAnimator
+    byte Unknown1
+    Ref  Base
+    uint Num1
+    uint Num2
+    uint Unknown2[Num1][Num2]
+
+struct Ni3dsAnimationNode
+    String Name
+    bool   HasData
+    float  Unknown1[21]       (HasData)
+    ushort Unknown2           (HasData)
+    Ref    SubNode            (HasData)
+    float  Unknown3[12]       (HasData)
+    uint   Count              (HasData)
+    byte   Unknown4[Count][5] (HasData)
