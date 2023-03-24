@@ -1579,10 +1579,14 @@ struct bhkWorldObject //niobject
 
 // Such ... slow down the transform. I don't need the empty ... but I do need
 // its non-empty "parent".
-// struct bhkPhantom inherit="bhkWorldObject" //niobject
-// struct bhkShapePhantom inherit="bhkWorldObject" //niobject
-// struct bhkEntity" inherit="bhkWorldObject" //niobject
-// struct bhkRigidBodyT" inherit="bhkRigidBody" //niobject
+struct bhkPhantom //niobject
+    bhkWorldObject
+
+struct bhkShapePhantom //niobject
+    bhkWorldObject
+
+struct bhkEntity //niobject
+    bhkWorldObject
 
 struct bhkSimpleShapePhantom //niobject
     bhkWorldObject
@@ -1627,6 +1631,9 @@ struct bhkRigidBody //niobject
     Ref    Constraints[uint] // bhkSerializable
     uint   Unknown9          (UVersion <= 11)
     ushort Unknown10         (UVersion >= 12)
+
+struct bhkRigidBodyT //niobject
+    bhkRigidBody
 
 struct bhkConstraint //niobject // "Describes a physical constraint"
     Ptr  Entities[uint] // bhkEntity
@@ -1684,12 +1691,15 @@ struct bhkSphereRepShape //niobject
     HavokMaterial Material
     float         Radius
 
-// struct bhkConvexShape inherit="bhkSphereRepShape" //niobject
-// struct bhkSphereShape inherit="bhkConvexShape" //niobject
+struct bhkConvexShape //niobject
+    bhkSphereRepShape
+
+struct bhkSphereShape //niobject
+    bhkSphereRepShape
 
 struct bhkCapsuleShape //niobject
     bhkSphereRepShape
-    byte Unknown[8]
+    byte    Unknown[8]
     Vector3 First
     float   Radius
     Vector3 Second
@@ -1703,15 +1713,16 @@ struct bhkBoxShape //niobject
 
 struct bhkConvexVerticesShape //niobject
     bhkSphereRepShape
-    float Unknown[6]
+    float   Unknown[6]
     Vector4 Vertices[uint]
     Vector4 Normals[uint]
 
-// struct bhkConvexTransformShape inherit="bhkTransformShape" //niobject
+struct bhkConvexTransformShape //niobject
+    bhkTransformShape
 
 struct bhkMultiSphereShape //niobject
     bhkSphereRepShape
-    float Unknown[2]
+    float    Unknown[2]
     SphereBV Spheres[uint]
 
 // struct bhkBvTreeShape inherit="bhkShape" //niobject
@@ -1770,3 +1781,52 @@ struct bhkNiTriStripsShape //niobject
     Ref     StripsData[uint] // NiTriStripsData
     HavokColFilter DataLayers[uint]
 
+// struct NiInterpolator inherit="NiObject" //niobject
+// struct NiKeyBasedInterpolator inherit="NiObject" //niobject
+
+// Here: using FooInterpolator<T>? - is it really worth it?
+// T has to be transformed:
+//   1. read "NiFloatInterpolator"
+//   2. there is no such struct -> find() returns nullptr
+//   3. find what? - a pattern: Ni<T>Interpolator <=> map to FooInterpolator<T>
+//   4. extract "Float" from "NiFloatInterpolator"
+//   5. generate FooInterpolator<Float>
+// Really? So much code == "6 lines into 2" at the ML? I don't think so. The
+// trade-off is a big no-no.
+struct NiFloatInterpolator //niobject
+    float Value
+    Ref   Data // NiFloatData
+
+NiTransformInterpolator //niobject
+    Transform<Quaternion>
+    byte Unknown1[3] (Version == 0x0a01006a)
+    Ref  Data // NiTransformData
+
+struct NiPoint3Interpolator //niobject
+    Vector3 Value
+    Ref     Data // NiPosData
+
+struct NiPathInterpolator //niobject
+    ushort Unknown1
+    uint   Unknown2
+    float  Unknown3[2]
+    ushort Unknown4
+    Ref    PosData   // NiPosData
+    Ref    FloatData // NiFloatData
+
+struct NiBoolInterpolator //niobject
+    bool Value
+    Ref  Data // NiBoolData
+
+struct NiBoolTimelineInterpolator //niobject
+    NiBoolInterpolator
+
+struct NiBlendInterpolator //niobject
+    ushort Unknown1
+    uint   Unknown2
+
+struct NiBSplineInterpolator //niobject
+    float StartTime
+    float StopTime
+    Ref   SplineX     // NiBSplineData TODO spline what?
+    Ref   SplineBasis // NiBSplineBasisData
