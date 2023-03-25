@@ -1842,6 +1842,8 @@ struct NiBSplineInterpolator //niobject
 struct NiObjectNET //niobject
     // Not an issue after the split.
     //TODO not implementing a bad idea: cond="BSLightingShaderProperty"
+    // introduced by 0c5fed4290a04086a0b17d312fd7f49688f87940
+    // just setting the impossible condition disables it
     BSLightingShaderPropertyShaderType DetectMe (UVersion >= 123456781)
     String Name
     bool   HasOldExtraData    (Version <= 0x02030000)
@@ -2078,3 +2080,87 @@ struct NiLightColorController //niobject
 struct NiExtraDataController //niobject
     NiSingleInterpController
 
+struct NiFloatExtraDataController //niobject
+    NiExtraDataController
+    String ControllerData (Version >= 0x0a020000)
+    byte   BNum           (Version <= 0x0a010000)
+    byte   Unknown1[7]    (Version <= 0x0a010000)
+    byte   Unknown2[BNum] (Version <= 0x0a010000)
+
+struct NiBoneLODController //niobject
+    NiTimeController
+    uint Unknown1
+    uint GNum1
+    uint GNum2 // unused ??
+    NodeGroup NGroups[GNum1]
+    SkinShapeGroup SGroups1[uint] (((Version >= 0x04020200) && (UVersion == 0))
+        || ((Version == 0x0a020000) && (UVersion == 1)))
+    Ref SGroups2[uint] (((Version >= 0x04020200) && (UVersion == 0))
+        || ((Version == 0x0a020000) && (UVersion == 1))) // NiTriBasedGeom
+    int Unknown2[2] ((Version == 0x14030009) && (UVersion == 131072))
+
+struct NiBSBoneLODController //niobject
+    NiBoneLODController
+
+// "Describes a visible scene element with vertices like a mesh, a particle
+// system, lines, etc"
+struct NiGeometry //niobject
+    NiAVObject
+    Ref Data // NiGeometryData
+    Ref SkinInstance (Version >= 0x0303000D) // NiSkinInstance
+    // See: why would you want this:
+    uint   MNum         (Version >= 0x14020007)
+    String MName[MNum]  (Version >= 0x14020007)
+    int    MEData[MNum] (Version >= 0x14020007)
+    int    MActive      (Version >= 0x14020007)
+    // when it is in its own ffd, the conditions will be no more.
+    //
+    bool   HasShader  ((Version >= 0x0a000100) && (Version <= 0x14010003))
+    String ShaderName (HasShader)
+    int    Unknown1   (HasShader)
+    byte   Unknown2   ((UVersion == 1) && (Version == 0x0a020000))
+    int    Unknown3   (Version == 0x0a040001)
+    bool   Dirty      (Version >= 0x14020007)
+    // NiProperty
+    Ref    BSProperties[2] ((Version >= 0x14020007) && (UVersion == 12))
+
+struct NiTriBasedGeom //niobject
+    NiGeometry
+
+[mesh3d]
+struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
+    int Unknown1 (Verison >= 0x0a020000)
+    // cond="!NiPSysData" - I had to consult an undamaged "nif.xml":
+    // the damage has been done with 589c2b50c1ac3ec3b131b5957805aadca265e919
+    // checked out a0972b3d50be5ae1ef0dc1c21d597712565abb80
+    //   using it to restore NiObjectNET above: nope its damaged
+    //   further back ... already "fixed" it.
+    ushort VNum
+    byte   KeepFlags (Version >= 0x0a010000)
+    byte   CompressFlags (Version >= 0x0a010000)
+    bool   HasVertices
+    [mesh3d(vertices)]
+    Vector3 Vertices[VNum] (HasVertices)
+    byte   UVSetNum   (Version >= 0x0a000100)
+    // whats this? - this wasn't here before
+    ExtraVectorsFlags X (Version >= 0x0a000100)
+    uint   Unknown2 ((Version >= 0x14020007) && (UVersion == 12))
+    bool   HasNormals
+    [mesh3d(normals)]
+    Vector3 Normals[VNum] (HasNormals)
+    [mesh3d(noidea_1)]
+    Vector3 Tangents[VNum] ((HasNormals) && (X) && (Version >= 0x0a010000))
+    [mesh3d(noidea_2)]
+    Vector3 Bitangents[VNum] ((HasNormals) && (X) && (Version >= 0x0a010000))
+    Vector3 Center
+    float   Radius
+    short   Unknown3[13] ((Version == 0x14030009) && (UVersion == 131072))
+    bool    HasVColors
+    [mesh3d(colors)]
+    Color4  VColors[VNum] (HasVColors)
+    ushort  UVSetNum (Version <= 0x04020200)
+    bool    HasUV    (Version <= 0x04000002)
+    [mesh3d(uv)]
+    TextureCoord UVSets[VNum]
+    ConsistencyType CFlags (Version >= 0x0a000100)
+    Ref AbstractAdditionalGeometryData (Version >= 0x14000004)
