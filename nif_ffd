@@ -2163,4 +2163,130 @@ struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
     [mesh3d(uv)]
     TextureCoord UVSets[VNum]
     ConsistencyType CFlags (Version >= 0x0a000100)
-    Ref AbstractAdditionalGeometryData (Version >= 0x14000004)
+    Ref Data (Version >= 0x14000004) // AbstractAdditionalGeometryData
+
+// AbstractAdditionalGeometryData inherit="NiObject" //niobject
+
+struct NiTriBasedGeomData //niobject
+    NiGeometryData
+    ushort TNum
+
+struct bhkBlendController //niobject
+    NiTimeController
+    uint Unknown
+
+struct BSBound //niobject
+    NiExtraData // this ain't available above
+    Vector3 Center
+    Vector3 Dimensions
+
+struct BSFurnitureMarker //niobject
+    NiExtraData
+    FurniturePosition Positions[uint]
+
+struct BSParentVelocityModifier //niobject
+    NiPSysModifier
+    float Damping
+
+struct BSPSysArrayEmitter //niobject
+    NiPSysVolumeEmitter
+
+struct BSWindModifier //niobject
+    NiPSysModifier
+    float Strength
+
+struct hkPackedNiTriStripsData //niobject
+    bhkShapeCollection
+    hkTriangle Triangles[uint]
+    uint       VNum
+    byte       Unknown (Version >= 0x14020007)
+    Vector3    Vertices[VNum]
+    OblivionSubShape SubShapes[ushort] (Version >= 0x14020007)
+
+struct NiAlphaProperty //niobject
+    NiProperty
+    Flags  Flags
+    byte   Threshold
+    ushort Unknown1 (Version <= 0x02030000)
+    uint   Unknown2 (Version <= 0x02030000)
+
+struct NiAmbientLight //niobject
+    NiLight
+
+struct NiParticlesData //niobject
+    NiGeometryData
+    ushort PNum (Version <= 0x04000002)
+    float Radius (Version <= 0x0a000100)
+    bool HasRadii (Version >= 0x0a010000)
+    float Radii[VNum] ((HasRadii)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    ushort ANum
+    bool   HasSizes
+    float  Sizes[VNum] ((HasSizes)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    bool HasRotations (Version >= 0x0a000100)
+    Quaternion Rotations[VNum] ((HasRotations)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    byte Unknown1 ((Version >= 0x14020007) && (UVersion >= 12))
+    Ref  Unknown2 ((Version >= 0x14020007) && (UVersion >= 12))
+    bool HasAngles (Version >= 0x14000004)
+    float RAngles[VNum] ((HasRAngles)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    // I sense a pattern here; do you?
+    bool HasRAxes (Version >= 0x14000004)
+    Vector3 RAxes[VNum] ((HasRAngles)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    bool HasUVQ (Version >= 0x14000004)
+    Vector4 UVQs[byte] ((HasUVQ)
+        && !((Version >= 0x14020007) && (UVersion == 11)))
+    byte Unknown3 ((Version >= 0x14020007) && (UVersion >= 11))
+
+struct NiRotatingParticlesData //niobject
+    NiParticlesData
+    Quaternion Rotations2[VNum] ((bool) && (Version <= 0x04020200))
+
+struct NiAutoNormalParticlesData //niobject
+    NiParticlesData
+
+struct ParticleDesc // compound
+    Vector3 Translation
+    float   Unknown1[3] (Version <= 0x0a040001)
+    float   Unknown2[3]
+    int     Unknown3
+
+// The reason for the damage on NiGeometryData
+struct NiPSysData //niobject
+    NiRotatingParticlesData
+    ParticleDesc PD[VNum] (!((Version >= 0x14020007) && (UVersion >= 11)))
+    //TODO handle all these duplicate names
+    float  Unknown1[VNum] ((bool) && (Version >= 0x14000004)
+                          && !((Version >= 0x14020007) && (UVersion >= 11)))
+    ushort Unknown2[2] (!((Version >= 0x14020007) && (UVersion >= 11)))
+    bool   HasSOUV ((Version >= 0x14020007) && (UVersion >= 12))
+    uint   NumSOUV (HasSOUV)
+    float  ARatio  ((Version >= 0x14020007) && (UVersion >= 12))
+    Vector4 SOUV[NumSOUV] ((HasSOUV)
+        && (Version >= 0x14020007) && (UVersion >= 12))
+    uint   Unknown3[3] ((Version >= 0x14020007) && (UVersion >= 12))
+    ushort Unknown4 ((Version >= 0x14020007) && (UVersion >= 12))
+    byte   Unknown5 ((Version >= 0x14020007) && (UVersion >= 12))
+
+struct NiPSysData_a0972b3d50be5ae1ef0dc1c21d597712565abb80
+    NiRotatingParticlesData
+    ParticleDesc PD[VNum] (!((Version >= 0x14020007) && (UVersion >= 11)))
+    float  Unknown1[VNum] ((bool) && (Version >= 0x14000004)
+                          && !((Version >= 0x14020007) && (UVersion >= 11)))
+    ushort Unknown2[2] (!((Version >= 0x14020007) && (UVersion >= 11)))
+    // a very odd difference
+    byte   Unknown3 ((Version >= 0x14020007) && (UVersion >= 12))
+    ushort Unknown2[2] (!((Version >= 0x14020007) && (UVersion >= 12)))
+    //
+    bool   HasVC ((Version >= 0x14020007) && (UVersion >= 12))
+    uint   NumVC (HasVC)
+    uint   Unknown4 ((Version >= 0x14020007) && (UVersion >= 12))
+    Color4 VC[NumVC] ((HasVC)
+        && (Version >= 0x14020007) && (UVersion >= 12))
+    uint Unknown5[5] ((Version >= 0x14020007) && (UVersion >= 12))
+    ushort Unknown4 ((Version >= 0x14020007) && (UVersion >= 12))
+    byte   Unknown5 ((Version >= 0x14020007) && (UVersion >= 12))
+
