@@ -52,6 +52,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Its way better to manage simple files, and let the code merge them on the
 // fly - when needed: for example modifying version x FFD will no longer damage
 // version y FFD.
+//
+// This instance is crafted by hand, because a parser generator at the 1st run
+// will prevent me recalling "nif.xml". The funny thing is "github" is
+// recognizing this text as C - I'm "flattered", but this ain't C; I created
+// a "nif.xml" to C parser generator a long time ago - find it if you need
+// read-only speed.
+// There will be xml2ffd and ffd2xml for the ones who prefer XML - no worries :)
 
 // Machine types ...............................................................
 
@@ -1560,7 +1567,7 @@ struct NiParticleModifier //niobject
     Ref Next // NiParticleModifier
     Ptr Controller (Version >= 0x04000002) // NiParticleSystemController
 
-NiPSysCollider //niobject
+struct NiPSysCollider //niobject
     float Bounce
     bool  CreateOnCollide
     bool  FreeOnCollide
@@ -1797,7 +1804,7 @@ struct NiFloatInterpolator //niobject
     float Value
     Ref   Data // NiFloatData
 
-NiTransformInterpolator //niobject
+struct NiTransformInterpolator //niobject
     Transform<Quaternion>
     byte Unknown1[3] (Version == 0x0a01006a)
     Ref  Data // NiTransformData
@@ -1890,3 +1897,184 @@ struct NiAVObject //niobject
     BoundingBox BB ((bool)
                    && (Version >= 0x03000000) && (Version <= 0x04020200))
     Ref CObject (Version >= 0x0a000100) // NiCollisionObject
+
+// "A dynamic effect such as a light or environment map"
+struct NiDynamicEffect //niobject
+    NiAVObject
+    bool SwitchState (Version >= 0x0a01006a)
+    uint AffectedNodeListPointers[uint] (Version <= 0x04000002)
+    Ref  AffectedNodes[uint] (Version >= 0x0a010000) // NiAVObject
+
+struct NiLight // "Light source" //niobject
+    NiDynamicEffect
+    float Dimmer
+    Color3 Colors[3] // Ambient, Diffuse, Specular
+
+struct NiProperty //niobject
+    NiObjectNET
+
+struct NiTransparentProperty //niobject
+    NiProperty
+    byte Unknown[6]
+
+struct NiPSysModifier // "Generic particle system modifier object" //niobject
+    String Name
+    uint   Order
+    Ptr    Target // NiParticleSystem
+    bool   Active
+
+struct NiPSysEmitter //niobject
+    NiPSysModifier
+    float Speed
+    float SpeedVariation
+    float Declination
+    float DeclinationV
+    float PlanarAngle
+    float PlanarAngleV
+    Color4 Color
+    float Radius
+    float RadiusV (Version >= 0x0a040001)
+    float LifeSpan
+    float LifeSpanV
+
+struct NiPSysVolumeEmitter //niobject
+    NiPSysEmitter
+    Ptr EmitterObject (Version >= 0x0a010000) // NiNode
+
+struct NiTimeController //niobject
+    Ref   NextController // NiTimeController
+    Flags Flags /* Bit 0 : Anim type, 0=APP_TIME 1=APP_INIT
+                   Bit 1-2 : Cycle type  00=Loop 01=Reverse 10=Loop
+                   Bit 3 : Active
+                   Bit 4 : Play backwards */
+    float Frequency
+    float Phase
+    float StartTime
+    float StopTime
+    Ptr   Target   (Version >= 0x0303000D) // NiObjectNET
+    uint  Unknown1 (Version <= 0x03010000)
+
+struct NiInterpController //niobject
+    NiTimeController
+
+struct NiMultiTargetTransformController //niobject
+    NiInterpController
+    Ptr ExtraTargets[ushort] // NiAVObject
+
+struct NiGeomMorpherController //niobject
+    NiInterpController
+    Flags ExtraFlags (Version >= 0x0a000102)
+    byte  Unknown1   (Version == 0x0a01006a)
+    Ref   Data // NiMorphData
+    byte  AlwaysUpdate
+    uint  INum       (Version >= 0x0a01006a)
+    Ref Interpolators[INum] ((Version >= 0x0a01006a) && (Version <= 0x14000005))
+    MorphWeight IWeights[INum] (Version >= 0x14010003)
+    uint Unknown2[uint] ((Version >= 0x14000004) && (Version <= 0x14000005)
+                        && (UVersion >= 10))
+
+struct NiMorphController //TODO alias //niobject
+    NiInterpController
+
+struct NiMorpherController //niobject
+    NiInterpController
+    Ref Data // NiMorphData
+
+struct NiSingleInterpController //niobject
+    NiInterpController
+    Ref Interpolator (Version >= 0x0a020000) // NiInterpolator
+
+struct NiKeyframeController //niobject
+    NiSingleInterpController
+    Ref Data (Version <= 0x0a010000) // NiKeyframeData
+
+struct NiTransformController //niobject
+    NiKeyframeController
+
+struct NiPSysModifierCtlr //niobject
+    NiSingleInterpController
+    String Name
+
+struct NiPSysEmitterCtlr //niobject
+    NiPSysModifierCtlr
+    Ref Data (Version <= 0x0a010000) // NiPSysEmitterCtlrData
+    Ref VisibilityInterpolator (Version >= 0x0a020000) // NiInterpolator
+
+// I stopped updating the nif_xml.dia at this point - its a waste of time.
+
+struct NiPSysModifierBoolCtlr //niobject
+    NiPSysModifierCtlr
+
+struct NiPSysModifierActiveCtlr //niobject
+    NiPSysModifierBoolCtlr
+    Ref Data (Version <= 0x0a010000) // NiVisData
+
+struct NiPSysModifierFloatCtlr //niobject
+    NiPSysModifierCtlr
+    Ref Data (Version <= 0x0a010000) // NiFloatData
+
+// I'm trying to find reason here; and I'm failing.
+struct NiPSysEmitterDeclinationCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysEmitterDeclinationVarCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysEmitterInitialRadiusCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysEmitterLifeSpanCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysEmitterSpeedCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysGravityStrengthCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiFloatInterpController //niobject
+    NiSingleInterpController
+
+struct NiFlipController // "Texture flipping controller" //niobject
+    NiFloatInterpController
+    TextureType TextureSlot
+    uint Unknown1 ((Version >= 0x04000000) && (Version <= 0x0a010000))
+    float Delta (Version <= 0x0a010000)
+    Ref Sources[uint] (Version >= 0x04000000) // NiSourceTexture
+    Ref Images[uint] (Version <= 0x03010000) // NiImage
+
+struct NiAlphaController // "Time controller for transparency" //niobject
+    NiFloatInterpController
+    Ref Data (Version >= 0x0a010000) // NiFloatData
+
+struct NiTextureTransformController //niobject
+    NiFloatInterpController
+    byte             Unknown
+    TextureType      TextureSlot
+    TextureTransform Operation
+    Ref              Data (Version >= 0x0a010000) // NiFloatData
+
+struct NiLightDimmerController //niobject
+    NiFloatInterpController
+
+struct NiBoolInterpController //niobject
+    NiSingleInterpController
+
+struct NiVisController //niobject
+    NiBoolInterpController
+    Ref Data (Version >= 0x0a010000) // NiVisData
+
+struct NiPoint3InterpController //niobject
+    NiSingleInterpController
+    TargetColor Color (Version >= 0x0a010000)
+    Ref         Data  (Version >= 0x0a010000) // NiPosData
+
+struct NiMaterialColorController //niobject
+    NiPoint3InterpController
+
+struct NiLightColorController //niobject
+    NiPoint3InterpController
+
+struct NiExtraDataController //niobject
+    NiSingleInterpController
+
