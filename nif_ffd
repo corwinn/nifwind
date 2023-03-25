@@ -2535,3 +2535,110 @@ struct NiMaterialProperty //niobject
     float  Alpha
     float  EmitMulti (!((Version == 0x14020007) && (UVersion >= 11)
                      && (UVersion2 > 21)))
+
+struct NiMorphData //niobject
+    uint        MNum
+    uint        VNum
+    byte        RelativeTargets
+    Morph<VNum> Morphs[MNum]
+
+struct NiNode //niobject
+    NiAVObject
+    Ref Nodes[uint] // NiAVObject
+    Ref Effects[uint] // NiDynamicEffect
+
+struct NiBone //niobject
+    NiNode
+
+struct AvoidNode //niobject
+    NiNode
+
+struct FxWidget //niobject
+    NiNode
+    byte Unknown1
+    byte Unknown2[292]
+
+struct FxButton //niobject
+    FxWidget
+
+struct FxRadioButton //niobject
+    FxWidget
+    uint Unknown[3]
+    Ptr  Buttons[uint] // FxRadioButton
+
+struct NiBillboardNode //niobject
+    NiNode
+    BillboardMode BMode (Version >= 0x0a010000)
+
+struct NiBSAnimationNode //niobject
+    NiNode
+
+struct NiBSParticleNode //niobject
+    NiNode
+
+struct NiSwitchNode //niobject
+    NiNode
+    ushort Unknown1 (Version >= 0x0a010000)
+    int    Unknown2
+
+// "Level of detail selector. Links to different levels of detail of the same
+// model, used to switch a geometry at a specified distance"
+struct NiLODNode //niobject
+    NiSwitchNode
+    Vector3  Center       ((Version >= 0x04000002) && (Version <= 0x0a000100))
+    LODRange Levels[uint] (Version <= 0x0a000100)
+    Ref      Data         (Version >= 0x0a010000) // NiLODData
+
+struct NiPalette //niobject
+    byte Unknown
+    ByteColor4 Palette[uint]
+
+struct NiParticleBomb //niobject
+    NiParticleModifier
+    float        Decay
+    float        Duration
+    float        DeltaV
+    float        Start
+    DecayType    DType
+    SymmetryType SType     (Version >= 0x0401000C)
+    Vector3      Position
+    Vector3      Direction
+
+struct NiParticleColorModifier //niobject
+    NiParticleModifier
+    Ref Data // NiColorData
+
+struct NiParticleGrowFade //niobject
+    NiParticleModifier
+    float Grow
+    float Fade
+
+struct NiParticleMeshModifier //niobject
+    NiParticleModifier
+    Ref ParticleMeshes[uint] // NiAVObject
+
+struct NiParticleRotation //niobject
+    NiParticleModifier
+    byte    RandomInitialAxis
+    Vector3 InitialAxis
+    float   RotationSpeed
+
+struct NiParticles //niobject
+    NiGeometry
+
+struct NiAutoNormalParticles //niobject
+    NiParticles
+
+struct NiParticleMeshes //niobject
+    NiParticles
+
+struct NiParticleMeshesData //niobject
+    NiRotatingParticlesData
+    Ref Unknown // NiAVObject
+
+struct NiParticleSystem //niobject
+    NiParticles
+    ushort Unknown1[2] (UVersion >= 12)
+    uint   Unknown2 (UVersion >= 12)
+    bool   WorldSpace (Version >= 0x0a010000)
+    Ref    Modifiers[uint] (Version >= 0x0a010000) // NiPSysModifier
