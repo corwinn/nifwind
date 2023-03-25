@@ -1130,6 +1130,7 @@ struct TBC // "Tension, bias, continuity"
 //     float Backward (Interpolation == 2)
 //     TBC   TBC      (Interpolation == 3),
 // but is it worth it?
+// Key struct: NiKeyframeData
 struct Key<T,A>
     float Time
     T     Value
@@ -1945,10 +1946,10 @@ struct NiPSysVolumeEmitter //niobject
 
 struct NiTimeController //niobject
     Ref   NextController // NiTimeController
-    Flags Flags /* Bit 0 : Anim type, 0=APP_TIME 1=APP_INIT
+    Flags Flags /* "Bit 0 : Anim type, 0=APP_TIME 1=APP_INIT
                    Bit 1-2 : Cycle type  00=Loop 01=Reverse 10=Loop
                    Bit 3 : Active
-                   Bit 4 : Play backwards */
+                   Bit 4 : Play backwards" */
     float Frequency
     float Phase
     float StartTime
@@ -2290,3 +2291,247 @@ struct NiPSysData_a0972b3d50be5ae1ef0dc1c21d597712565abb80
     ushort Unknown4 ((Version >= 0x14020007) && (UVersion >= 12))
     byte   Unknown5 ((Version >= 0x14020007) && (UVersion >= 12))
 
+struct NiMeshPSysData //niobject
+    NiPSysData
+    uint Unknown1 (Version >= 0x0a020000)
+    byte Unknown2 (Version >= 0x0a020000)
+    uint Unknown3[uint] (Version >= 0x0a020000)
+    Ref  Unknown4
+
+struct NiBinaryExtraData //niobject
+    NiExtraData
+    ByteArray Data
+
+struct NiBinaryVoxelExtraData //niobject
+    NiExtraData
+    uint Unknown
+    Ref  Data // NiBinaryVoxelData
+
+struct NiBinaryVoxelData //niobject
+    ushort  Unknown1[3] //LATER implement some auto-naming
+    float   Unknown2[7][12]
+    Vector4 Unknown3[uint]
+    byte    Unknown4[uint]
+    uint    Unknown5[5]
+
+struct NiBlendBoolInterpolator //niobject
+    NiBlendInterpolator
+    byte Value
+
+struct NiBlendFloatInterpolator //niobject
+    NiBlendInterpolator
+    float Value
+
+struct NiBlendPoint3Interpolator //niobject
+    NiBlendInterpolator
+    Vector3 Value
+
+struct NiBlendTransformInterpolator //niobject
+    NiBlendInterpolator
+
+struct NiBoolData //niobject
+    KeyGroup<byte> Data
+
+struct NiBooleanExtraData //niobject
+    NiExtraData
+    byte Data
+
+struct NiBSplineBasisData //niobject
+    uint CPNum
+
+struct NiBSplineFloatInterpolator //niobject
+    NiBSplineInterpolator
+
+struct NiBSplineCompFloatInterpolator //niobject
+    NiBSplineFloatInterpolator
+    float Base
+    uint  Offset
+    float Bias
+    float Multiplier
+
+struct NiBSplinePoint3Interpolator //niobject
+    NiBSplineInterpolator
+    float Unknown[6]
+
+struct NiBSplineCompPoint3Interpolator //niobject
+    NiBSplinePoint3Interpolator
+
+struct NiBSplineTransformInterpolator //niobject
+    NiBSplineInterpolator
+    Transform<Quaternion> Transform
+    uint TranslationOffset
+    uint RotationOffset
+    uint ScaleOffset
+
+struct NiBSplineCompTransformInterpolator //niobject
+    NiBSplineTransformInterpolator
+    float TranslationBias
+    float TranslationMultiplier
+    float RotationBias
+    float RotationMultiplier
+    float ScaleBias
+    float ScaleMultiplier
+
+struct BSRotAccumTransfInterpolator //niobject
+    NiTransformInterpolator
+
+struct NiBSplineData //niobject
+    float FloatControlPoints[uint]
+    short ShortControlPoints[uint]
+
+struct NiCamera //niobject
+    NiAVObject
+    ushort Unknown1 (Version >= 0x0a010000)
+    float  Frustum[6] // Left,Right,Top,Bottom,Near,Far
+    bool   UseOrtho (Version >= 0x0a010000)
+    float  Viewport[4] // Left,Right,Top,Bottom
+    float  LODAdjust
+    Ref    Unknown2
+    uint   Unknown3
+    uint   Unknown4 (Version >= 0x04020100)
+    uint   Unknown5 (Version <= 0x03010000)
+
+struct NiColorData //niobject
+    KeyGroup<Color4> Data
+
+struct NiColorExtraData //niobject
+    NiExtraData
+    Color4 Data
+
+struct NiControllerManager //niobject
+    NiTimeController
+    bool Cumulative
+    Ref  ControllerSequences[uint] // NiControllerSequence
+    Ref  ObjectPalette // NiDefaultAVObjectPalette
+
+struct NiSequence //niobject
+    String Name
+    String KeyNames (Version <= 0x0a010000)
+    Ref    Keys (Version <= 0x0a010000) // NiTextKeyExtraData
+    int    Unknown1[2] ((Version == 0x14030009) && (UVersion == 131072))
+    uint   CBNum
+    uint   Unknown2 (Version >= 0x0a01006a)
+    ControllerLink CBlocks[CBNum]
+
+struct NiControllerSequence //niobject
+    NiSequence
+    float Weight    (Version >= 0x0a01006a)
+    Ref   Keys      (Version >= 0x0a01006a) // NiTextKeyExtraData
+    CycleType CType (Version >= 0x0a01006a)
+    uint  Unknown1  (Version == 0x0a01006a)
+    float Frequency (Version >= 0x0a01006a)
+    float StartTime (Version >= 0x0a01006a)
+    float Unknown2  ((Version >= 0x0a020000) && (Version <= 0x0a040001))
+    float StopTime  (Version >= 0x0a01006a)
+    byte  Unknown3  (Version == 0x0a01006a)
+    Ptr   Manager   (Version >= 0x0a01006a) // NiControllerManager
+    String TargetName (Version >= 0x0a01006a)
+    Ref   StringPalette ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    Ref   AnimNotes ((Version >= 0x14020007) && (UVersion >= 11)
+                    && (UVersion2 >= 24) && (UVersion2 <= 28))
+    short Unknown4 ((Version >= 0x14020007) && (UVersion >= 11)
+                   && (UVersion2 > 28))
+    uint  Unknown5  (Version >= 0x14030009)
+
+// NiAVObjectPalette inherit="NiObject"
+
+struct NiDefaultAVObjectPalette //niobject
+    uint Unknown
+    AVObject Objs[uint]
+
+struct NiDirectionalLight //niobject
+    NiLight
+
+struct NiDitherProperty //niobject
+    NiProperty
+    Flags Flags
+
+struct NiRollController //niobject
+    NiSingleInterpController
+    Ref Data // NiFloatData
+
+struct NiFloatData //niobject
+    KeyGroup<float> Data
+
+struct NiFloatExtraData //niobject
+    NiExtraData
+    float Data
+
+struct NiFloatsExtraData //niobject
+    NiExtraData
+    float Data[uint]
+
+struct NiFogProperty //niobject
+    NiProperty
+    Flags  Flags
+    float  Depth
+    Color3 Color
+
+struct NiGravity //niobject
+    NiParticleModifier
+    float     Unknown (Version >= 0x04000002)
+    float     Force
+    FieldType Type
+    Vector3   Position
+    Vector3   Direction
+
+struct NiIntegerExtraData //niobject
+    NiExtraData
+    uint Data
+
+struct BSXFlags //niobject
+    NiIntegerExtraData /*"Controls animation and collision. Integer holds flags:
+        Bit 0 : enable havok, bAnimated(Skyrim)
+        Bit 1 : enable collision, bHavok(Skyrim)
+        Bit 2 : is skeleton nif?, bRagdoll(Skyrim)
+        Bit 3 : enable animation, bComplex(Skyrim)
+        Bit 4 : FlameNodes present, bAddon(Skyrim)
+        Bit 5 : EditorMarkers present
+        Bit 6 : bDynamic(Skyrim)
+        Bit 7 : bArticulated(Skyrim)
+        Bit 8 : bIKTarget(Skyrim)
+        Bit 9 : Unknown(Skyrim)" */
+
+struct NiIntegersExtraData //niobject
+    NiExtraData
+    uint Data[uint]
+
+struct BSKeyframeController //niobject
+    NiKeyframeController
+    Ref Data2 // NiKeyframeData
+
+struct NiKeyframeData //niobject
+    uint              RKNum
+    KeyType           RType           (RKNum)
+    QuatKey<RType>    QKeys[RKNum]    (RType != 4)
+    float             Unknown1        ((RType == 4) && (Version <= 0x0a010000))
+    KeyGroup<float>   XYZRotations[3] (RType == 4)
+    KeyGroup<Vector3> Translation
+    KeyGroup<float>   Scale
+
+struct NiLookAtController //niobject
+    NiTimeController
+    ushort Unknown1 (Version >= 0x0a010000)
+    Ptr    LookAt
+
+struct NiLookAtInterpolator //niobject
+    NiInterpolator
+    ushort Unknown1
+    Ptr    LookAt
+    String Target
+    Transform<Quaternion> Transform (Version >= 0x14050000)
+    Ref    Unknown2[3] // NiPoint3Interpolator
+
+struct NiMaterialProperty //niobject
+    NiProperty
+    Flags  Flags (Version >= 0x03000000) && (Version <= 0x0a000102)
+    Color3 Ambient (!((Version == 0x14020007) && (UVersion >= 11)
+                   && (UVersion2 > 21)))
+    Color3 Diffuse (!((Version == 0x14020007) && (UVersion >= 11)
+                   && (UVersion2 > 21)))
+    Color3 Specular
+    Color3 Emissive
+    float  Glossiness
+    float  Alpha
+    float  EmitMulti (!((Version == 0x14020007) && (UVersion >= 11)
+                     && (UVersion2 > 21)))
