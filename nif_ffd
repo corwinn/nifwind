@@ -1359,47 +1359,6 @@ struct ExportInfo
     ShortString Info1
     ShortString Info2*/
 
-struct Block
-    uint Zero (Version <= 0x0A01006A)
-    //TODO implement variadic fields: hash[hash] a.k.a. dynamic value list:
-    //     the value list is not at the FFD but at the file data; matching
-    //     by struct name only
-    ... struct<>BlockName<>BlockHash // for key at BlockHash get BlockName[key]
-
-// ((Version >= 0x0303000D) && (Version < 0x05000001))
-struct BlockX
-    SizedString Name
-    ... struct<>Name
-
-format nif // this is a "Header" no more; this is the entire file
-    [NifVersionString] // initialize Version TODO field attributes
-    HeaderString Signature
-    // Catch: Version is parsed from Signature
-    HeaderString Copyright[3] (Version <= 0x03010000)
-    uint         Version // Replace. Option: Stop On Version Mishmash
-    Endianess   Endianess (Version >= 0x14000004)
-    uint        UVersion  (Version >= 0x0a010000) //REPLACE {User Version}
-    uint        NumBlocks (Version >= 0x0303000D) // num serialized objects
-    //REPLACE {User Version 2}
-    uint        UVersion2 ((Version >= 0x0a010000) && ((UVersion >= 10)
-                           || ((UVersion == 1) && (Version != 0x0a020000))))
-    uint        Unknown1  (Version >= 0x1e000002)
-    ExportInfo  Info      (Version == 0x0a000102)
-    ExportInfo  Info      ((Version >= 0x0a010000) && ((UVersion >= 10)
-                           || ((UVersion == 1) && (Version != 0x0a020000))))
-    SizedString BlockName[ushort]    (Version >= 0x0a000100) // distinct
-    // "The upper bit appears to be a flag used for PhysX block types."?
-    ushort      BlockHash[NumBlocks] (Version >= 0x0a000100) // file order
-    uint        BlockSize[NumBlocks] (Version >= 0x14020007) // [bytes] IIRC
-    uint        NumStrings           (Version >= 0x14010003)
-    uint        MaxStringLength      (Version >= 0x14010003)
-    SizedString Strings[NumStrings]  (Version >= 0x14010003)
-    uint        Unknown2             (Version >= 0x0a000100)
-    Block  Blocks[NumBlocks] (Version >= 0x0a000100)
-    BlockX Blocks[NumBlocks] ((Version >= 0x0303000D) && (Version < 0x05000001))
-    Footer Footer            (Version >= 0x0303000D)
-    //TODO (Version < 0x0303000D)
-
 struct StringPalette
     SizedString Palette // 0-terminated strings list
     uint        Length //TODO its total length or number of strings?
@@ -4551,3 +4510,44 @@ struct BSTreeNode //niobject
     NiNode
     Ref Bones1[uint]
     Ref Bones[uint]
+
+struct Block
+    uint Zero (Version <= 0x0A01006A)
+    //TODO implement variadic fields: hash[hash] a.k.a. dynamic value list:
+    //     the value list is not at the FFD but at the file data; matching
+    //     by struct name only
+    ... struct<>BlockName<>BlockHash // for key at BlockHash get BlockName[key]
+
+// ((Version >= 0x0303000D) && (Version < 0x05000001))
+struct BlockX
+    SizedString Name
+    ... struct<>Name
+
+format nif // this is a "Header" no more; this is the entire file
+    [NifVersionString] // initialize Version TODO field attributes
+    HeaderString Signature
+    // Catch: Version is parsed from Signature
+    HeaderString Copyright[3] (Version <= 0x03010000)
+    uint         Version // Replace. Option: Stop On Version Mishmash
+    Endianess   Endianess (Version >= 0x14000004)
+    uint        UVersion  (Version >= 0x0a010000) //REPLACE {User Version}
+    uint        NumBlocks (Version >= 0x0303000D) // num serialized objects
+    //REPLACE {User Version 2}
+    uint        UVersion2 ((Version >= 0x0a010000) && ((UVersion >= 10)
+                           || ((UVersion == 1) && (Version != 0x0a020000))))
+    uint        Unknown1  (Version >= 0x1e000002)
+    ExportInfo  Info      (Version == 0x0a000102)
+    ExportInfo  Info      ((Version >= 0x0a010000) && ((UVersion >= 10)
+                           || ((UVersion == 1) && (Version != 0x0a020000))))
+    SizedString BlockName[ushort]    (Version >= 0x0a000100) // distinct
+    // "The upper bit appears to be a flag used for PhysX block types."?
+    ushort      BlockHash[NumBlocks] (Version >= 0x0a000100) // file order
+    uint        BlockSize[NumBlocks] (Version >= 0x14020007) // [bytes] IIRC
+    uint        NumStrings           (Version >= 0x14010003)
+    uint        MaxStringLength      (Version >= 0x14010003)
+    SizedString Strings[NumStrings]  (Version >= 0x14010003)
+    uint        Unknown2             (Version >= 0x0a000100)
+    Block  Blocks[NumBlocks] (Version >= 0x0a000100)
+    BlockX Blocks[NumBlocks] ((Version >= 0x0303000D) && (Version < 0x05000001))
+    Footer Footer            (Version >= 0x0303000D)
+    //TODO (Version < 0x0303000D)
