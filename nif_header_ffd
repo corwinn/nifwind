@@ -1,0 +1,87 @@
+/**** BEGIN LICENSE BLOCK ****
+
+BSD 3-Clause License
+
+Copyright (c) 2023, the wind.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+**** END LICENCE BLOCK ****/
+
+// Used to identify distinct blocks at the test data. Also, the first thing
+// to be simplified.
+
+// Highlighter: C#
+
+// Machine types ...............................................................
+
+type uint 4
+type ushort 2
+type byte 1
+type char byte
+
+enum Endianess byte
+    BIG
+    LITTLE
+
+struct HeaderString
+    char Chars[-10]
+
+struct ShortString
+    char Value[byte] // 0-terminated (its length includes the 0)
+
+struct ExportInfo
+    ShortString Value[uint] (Version >= 0x0a000102)
+
+struct SizedString
+    char Value[uint]
+
+format nif
+    // It contains the version in a specific format: "%d.%d.%d.%d"?
+    // A quick scan by a simple program reveals: TODO
+    [NifVersionString] // field attribute: create "Version" from "Signature"
+    HeaderString Signature
+    HeaderString Copyright[3] (Version <= 0x03010000)
+    uint         Version // Replace. Option: Stop On Version Mishmash
+    Endianess    Endianess (Version >= 0x14000004)
+    uint         UVersion  (Version >= 0x0a010000) //REPLACE {User Version}
+    uint         NumBlocks (Version >= 0x0303000D) // num serialized objects
+    uint         UVersion2 ((Version >= 0x0a010000) && ((UVersion >= 10)
+                           || ((UVersion == 1) && (Version != 0x0a020000))))
+    uint         Unknown1  (Version >= 0x1e000002)
+    ExportInfo   Info      (Version == 0x0a000102)
+    ExportInfo   Info      ((Version >= 0x0a010000) && ((UVersion >= 10)
+                           || ((UVersion == 1) && (Version != 0x0a020000))))
+    SizedString  BlockName[ushort]    (Version >= 0x0a000100) // distinct
+    // "The upper bit appears to be a flag used for PhysX block types."?
+    [NifPhysXHighBit] // check for the presence of said bit
+    ushort       BlockHash[NumBlocks] (Version >= 0x0a000100) // file order
+    uint         BlockSize[NumBlocks] (Version >= 0x14020007) // [bytes] IIRC
+    uint         NumStrings           (Version >= 0x14010003)
+    uint         MaxStringLength      (Version >= 0x14010003)
+    SizedString  Strings[NumStrings]  (Version >= 0x14010003)
+    uint         Unknown2             (Version >= 0x0a000100)
