@@ -40,6 +40,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Highlighter: C#
 
+// https://github.com/corwinn/h3r/blob/main/ffd/h3r_ffd_formal_description
+
 // Describe a .nif. This is the common ground from which the different variants
 // shall be formed.
 // The purpose of this file is to test the correctness of the "nif.xml"
@@ -923,6 +925,160 @@ enum ChannelConvention uint
     INDEX 3
     COMPRESSED
     EMPTY
+
+enum BSShaderType uint
+    TALL_GRASS
+    DEFAULT
+    SKY        10
+    SKIN       14
+    WATER      17
+    LIGHTING30 29
+    TILE       32
+    NOLIGHTING
+
+enum BSShaderFlags uint // bitflags
+    Specular
+    Skin
+    LowDetail
+    Vertex_Alpha
+    Unknown_1
+    Single_Pass
+    Empty
+    Environment_Mapping
+    Alpha_Texture
+    Unknown_2
+    FaceGen
+    Parallax_Shader_Index_15
+    Unknown_3
+    Non_Projective_Shadows
+    Unknown_4
+    Refraction
+    Fire_Refraction
+    Eye_Environment_Mapping
+    Hair
+    Dynamic_Alpha
+    Localmap_Hide_Secret
+    Window_Environment_Mapping
+    Tree_Billboard
+    Shadow_Frustum
+    Multiple_Textures
+    Remappable_Textures
+    Decal_Single_Pass
+    Dynamic_Decal_Single_Pass
+    Parallax_Occulsion
+    External_Emittance
+    Shadow_Map
+    ZBuffer_Test // BSShaderFlags
+
+enum BSShaderFlags2 uint // bitflags
+    ZBuffer_Write
+    LOD_Landscape
+    LOD_Building
+    No_Fade
+    Refraction_Tint
+    Vertex_Colors
+    Unknown1
+    first_Light_is_Point_Light
+    second_Light
+    trhird_Light
+    Vertex_Lighting
+    Uniform_Scale
+    Fit_Slope
+    Billboard_and_Envmap_Light_Fade
+    No_LOD_Land_Blend
+    Envmap_Light_Fade
+    Wireframe
+    VATS_Selection
+    Show_in_Local_Map
+    Premult_Alpha
+    Skip_Normal_Maps
+    Alpha_Decal
+    No_Transparecny_Multisampling
+    Unknown2
+    Unknown3
+    Unknown4
+    Unknown5
+    Unknown6
+    Unknown7
+    Unknown8
+    Unknown9
+    Unknown10 // BSShaderFlags2
+
+enum SkyObjectType uint
+    TEXTURE
+    SUNGLARE
+    BSSM_SKY
+    CLOUDS
+    STARS           5
+    MOON_STARS_MASK 7
+
+enum SkyrimShaderPropertyFlags1 uint // bitflags
+    Specular
+    Skin
+    Temp_Refraction
+    Vertex_Alpha
+    Greyscale_To_PaletteColor
+    Greyscale_To_PaletteAlpha
+    Use_Falloff
+    Environment_Mapping
+    Recieve_Shadows
+    Cast_Shadows
+    Facegen_Detail_Map
+    Parallax
+    Model_Space_Normals
+    Non_Projective_Shadows
+    Landscape
+    Refraction
+    Fire_Refraction
+    Eye_Environment_Mapping
+    Hair_Soft_Lighting
+    Screendoor_Alpha_Fade
+    Localmap_Hide_Secret
+    FaceGen_RGB_Tint
+    Own_Emit
+    Projected_UV
+    Multiple_Textures
+    Remappable_Textures
+    Decal
+    Dynamic_Decal
+    Parallax_Occlusion
+    External_Emittance
+    Soft_Effect
+    ZBuffer_Test // SkyrimShaderPropertyFlags1
+
+enum SkyrimShaderPropertyFlags2 uint // bitflags
+    ZBuffer_Write
+    LOD_Landscape
+    LOD_Objects
+    No_Fade
+    Double_Sided
+    Vertex_Colors
+    Glow_Map
+    Assume_Shadowmask
+    Packed_Tangent
+    Multi_Index_Snow
+    Vertex_Lighting
+    Uniform_Scale
+    Fit_Slope
+    Billboard
+    No_LOD_Land_Blend
+    EnvMap_Light_Fade
+    Wireframe
+    Weapon_Blood
+    Hide_On_Local_Map
+    Premult_Alpha
+    Cloud_LOD
+    Anisotropic_Lighting
+    No_Transparency_Multisampling
+    Unused01
+    Multi_Layer_Parallax
+    Soft_Lighting
+    Rim_Lighting
+    Back_Lighting
+    Unused02
+    Tree_Anim
+    Effect_Lighting
+    HD_LOD_Objects // SkyrimShaderPropertyFlags2
 
 // const ......................................................................
 
@@ -1860,7 +2016,10 @@ struct NiObjectNET //niobject
     //TODO not implementing a bad idea: cond="BSLightingShaderProperty"
     // introduced by 0c5fed4290a04086a0b17d312fd7f49688f87940
     // just setting the impossible condition disables it
-    BSLightingShaderPropertyShaderType DetectMe (UVersion >= 123456781)
+    //
+    // BSLightingShaderPropertyShaderType DetectMe (UVersion >= 123456781)
+    // See BSLightingShaderProperty below
+    // Not an issue prior the split either :)
     String Name
     bool   HasOldExtraData    (Version <= 0x02030000)
     String OldExtraPropName   (HasOldExtraData)
@@ -3244,7 +3403,7 @@ struct NiEnvMappedTriShape //niobject
     Ref      Node2
     Ref      Node3
 
-// NiEnvMappedTriShapeData - commented out. //niobject - breaks total
+//niobject
 
 struct NiEnvMappedTriShapeData //niobject
     NiTriShapeData
@@ -3338,3 +3497,306 @@ struct NiSortAdjustNode //niobject
     SortingMode SMode
     int         Unknown (Version <= 0x0a020000)
 
+struct NiSourceCubeMap //niobject
+    NiSourceTexture
+
+struct NiPhysXProp //niobject
+    NiObjectNET
+    float Unknown1
+    Ref   Unknown2[uint]
+    Ref   TransformDests[int] // NiPhysXTransformDest
+    byte  Unknown3
+    int   Unknown4 (Version >= 0x14050000)
+    Ref   PropDescription // NiPhysXPropDesc
+
+struct physXMaterialRef // compound
+    byte Number
+    byte Unknown1
+    Ref  MaterialDesc // NiPhysXMaterialDesc
+
+struct NiPhysXPropDesc //niobject
+    Ref  ActorDescs[int] // NiPhysXActorDesc
+    Ref  JointDescs[uint] // NiPhysXD6JointDesc
+    int  Unknown1
+    physXMaterialRef MaterialDescs[uint]
+    uint Unknown2
+    uint Unknown3 (Version >= 0x14050000)
+    String Unknown4 (Version >= 0x14050000)
+    uint Unknown5 (Version >= 0x14050000)
+    byte Unknown6 (Version >= 0x14050000)
+
+struct NiPhysXActorDesc //niobject
+    int   Unknown1[2]
+    Quaternion Unknown2[3]
+    Ref   Unknown3 // NiPhysXBodyDesc
+    float Unknown4
+    int   Unknown5
+    byte  Unknown6[2]
+    int   Count
+    Ref   ShapeDescription // NiPhysXShapeDesc
+    Ref   Unknown7[2]
+    Ref   Unknown[Count]
+
+struct NiPhysXBodyDesc //niobject
+    byte Unknown[136] (Version >= 0x14030006)
+
+struct NiPhysXD6JointDesc //niobject
+    byte Unknown[388] (Version >= 0x14030006)
+
+struct NiPhysXShapeDesc //niobject
+    int   Unknown1
+    Quaternion Unknown2[3]
+    short Unknown3
+    int   Unknown4
+    short Unknown5
+    float Unknown6[3]
+    int   Unknown7[5]
+    Ref   MeshDescription // NiPhysXMeshDesc
+
+struct NiPhysXMeshDesc //niobject
+    short Unknown1
+    float Unknown2
+    short Unknown3
+    byte  Unknown4[3]
+    byte  Unknown5
+    byte  Unknown6[4]
+    byte  Unknown7[8]
+    float Unknown8
+    int   Unknown9[2]
+    int   VNum
+    int   Unknown10
+    Vector3 Vertices[VNum]
+    byte  Unknown11[982]
+    short Unknown12[368]
+    uint  Unknown13[3328]
+    byte  Unknown14
+
+struct NiPhysXMaterialDesc //niobject
+    uint Unknown1[12]
+    byte Unknown2[2]
+
+struct NiPhysXKinematicSrc //niobject
+    byte Unknown[6] (Version >= 0x14030006)
+
+struct NiPhysXTransformDest //niobject
+    byte Unknown[2]
+    Ptr  Node // NiNode
+
+struct NiArkAnimationExtraData //niobject
+    NiExtraData
+    int  Unknown1[4]
+    byte Unknown2[37] (Version <= 0x0401000C)
+
+struct NiArkImporterExtraData //niobject
+    NiExtraData
+    int    Unknown1
+    int    Unknown2 (Version <= 0x0401000C)
+    String ImporterName
+    byte   Unknown3[13]
+    float  Unknown4[7]
+
+struct NiArkTextureExtraData //niobject
+    NiExtraData
+    int  Unknown1[2]
+    byte Unknown2
+    int  Unknown3 (Version <= 0x0401000C)
+    ArkTexture Textures[int]
+
+struct NiArkViewportInfoExtraData //niobject
+    NiExtraData
+    byte Unknown[13]
+
+struct NiArkShaderExtraData //niobject
+    NiExtraData
+    int Unknown1
+    String Unknown2
+
+struct NiLines //niobject
+    NiTriBasedGeom
+
+struct NiLinesData //niobject
+    NiGeometryData
+    bool Lines[VNum]
+
+struct Polygon // compound
+    ushort NumVertices
+    ushort VertexOffset
+    ushort NumTriangles
+    ushort TriangleOffset
+
+struct NiScreenElementsData //niobject
+    NiTriShapeData
+    ushort  MaxPolygons
+    Polygon Polygons[MaxPolygons]
+    ushort  PolygonIndices[MaxPolygons]
+    ushort Unknown1
+    ushort NumPolygons
+    ushort UsedVertices
+    ushort Unknown2
+    ushort UsedTrianglePoints
+    ushort Unknown3
+
+struct NiScreenElements //niobject
+    NiTriShape
+
+struct NiRoomGroup //niobject
+    NiNode
+    Ptr ShellLink  // NiNode
+    Ptr Rooms[int] // NiRoom
+
+//TODO cross-ref with my files - I've never seen these blocks IIRC
+struct NiRoom  //niobject
+    NiNode
+    Vector4 WallPlane[int]
+    Ptr     InPortals[int] // NiPortal
+    Ptr     Portals2[int] // NiPortal
+    Ptr     Items[int] // NiAVObject
+
+struct NiPortal //niobject
+    NiAVObject
+    Flags   Flags
+    short   Unknown1
+    Vector3 Vertices[ushort]
+    Ptr     Target // NiNode
+
+//niobject
+//niobject
+//niobject
+
+struct BSFadeNode //niobject
+    NiNode
+
+struct BSShaderProperty //niobject
+    NiProperty
+    Flags Smooth
+    BSShaderType Shader
+    BSShaderFlags ShaderF
+    BSShaderFlags2 ShaderF2
+    float EnvMapScale (UVersion == 11)
+
+struct BSShaderLightingProperty //niobject
+    BSShaderProperty
+    TextureClampMode TCMode (UVersion <= 11)
+
+struct BSShaderNoLightingProperty //niobject
+    BSShaderLightingProperty
+    SizedString FileName
+    float FalloffStartAngle   ((UVersion >= 11) && (UVersion2 > 26))
+    float FalloffStopAngle    ((UVersion >= 11) && (UVersion2 > 26))
+    float FalloffStartOpacity ((UVersion >= 11) && (UVersion2 > 26))
+    float FalloffStopOpacity  ((UVersion >= 11) && (UVersion2 > 26))
+
+struct BSShaderPPLightingProperty //niobject
+    BSShaderLightingProperty
+    Ref TextureSet // BSShaderTextureSet
+    float RefractionStrength   ((UVersion == 11) && (UVersion2 > 14))
+    int   RefractionFirePeriod ((UVersion == 11) && (UVersion2 > 14))
+    float Unknown[2]           ((UVersion == 11) && (UVersion 2 > 24))
+    Color4 EmissiveColor       (UVersion >= 12)
+
+// This is one very wrong naming convention.
+struct BSEffectShaderPropertyFloatController //niobject
+    NiFloatInterpController
+    EffectShaderControlledVariable Type
+
+struct BSEffectShaderPropertyColorController //niobject
+    NiFloatInterpController
+    EffectShaderControlledColor Color
+
+struct BSLightingShaderPropertyFloatController //niobject
+    NiFloatInterpController
+    LightingShaderControlledVariable Type
+
+struct BSLightingShaderPropertyColorController //niobject
+    NiFloatInterpController
+    LightingShaderControlledColor Color
+
+//TODO idea: name service: query: name; result: struct
+struct BSNiAlphaPropertyTestRefController //niobject
+    NiAlphaController
+
+struct BSProceduralLightningController //niobject
+    NiFloatInterpController
+    Ref    NoIdea[8] // NiInterpolator
+    ushort Unknown1[3]
+    float  DistanceWeight
+    float  Unknown2
+    float  StripWidth
+    float  Fork
+    float  Unknown3
+    byte   Unknown4[3]
+    Ref    Unknown5 // NiInterpolator
+
+struct BSShaderTextureSet //niobject
+    SizedString Textures[int] /* Why is this a comment? :
+            "0: Diffuse
+            1: Normal/Gloss
+            2: Glow(SLSF2_Glow_Map)/Skin/Hair/Rim light(SLSF2_Rim_Lighting)
+            3: Height/Parallax
+            4: Environment
+            5: Environment Mask
+            6: Subsurface for Multilayer Parallax
+            7: Back Lighting Map (SLSF2_Back_Lighting)" */
+
+struct WaterShaderProperty //niobject
+    BSShaderProperty
+
+struct SkyShaderProperty //niobject
+    BSShaderLightingProperty
+    SizedString   FileName
+    SkyObjectType SOType
+
+struct TileShaderProperty //niobject
+    BSShaderLightingProperty
+    SizedString FileName
+
+struct DistantLODShaderProperty //niobject
+    BSShaderProperty
+
+struct BSDistantTreeShaderProperty //niobject
+    BSShaderProperty
+
+struct TallGrassShaderProperty //niobject
+    BSShaderProperty
+    SizedString FileName
+
+struct VolumetricFogShaderProperty //niobject
+    BSShaderProperty
+
+struct HairShaderProperty //niobject
+    BSShaderProperty
+
+struct Lighting30ShaderProperty //niobject
+    BSShaderPPLightingProperty
+
+struct BSLightingShaderProperty //niobject
+    BSLightingShaderPropertyShaderType SType (UVersion >= 12)
+    NiProperty
+    SkyrimShaderPropertyFlags1 ShaderFlags1 (UVersion == 12)
+    SkyrimShaderPropertyFlags2 ShaderFlags2 (UVersion == 12)
+    TextureCoord UVOffset
+    TextureCoord UVScale
+    Ref     TextureSet // BSShaderTextureSet
+    Color3  EmissiveColor
+    float   EmissiveMultiple
+    TextureClampMode TCMode
+    float   Alpha
+    float   RefractionStrength
+    float   Glossiness
+    Color3  Specular
+    float   SpecularStrength
+    float   LightingEffect1
+    float   LightingEffect2
+    float   EnvMapScale (SType == 1)
+    Color3  SkinTint     (SType == 5)
+    Color3  Hair          (SType == 6)
+    float   MaxPasses      (SType == 7)
+    float   Scale           (SType == 7)
+    float   ParallaxInnerLayerThickness (SType == 11)
+    float   ParallaxRefractionScale    (SType == 11)
+    TextureCoord ParallaxInnerLayerTextureScale (SType == 11)
+    float   ParallaxEnvmapStrength   (SType == 11)
+    Vector4 SparkleParameters       (SType == 14)
+    float   EyeCubemapScale        (SType == 16)
+    Vector3 LeftEyeReflectionCenter (SType == 16)
+    Vector3 RightEyeReflectionCenter (SType == 16)
