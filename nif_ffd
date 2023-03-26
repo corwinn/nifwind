@@ -1080,6 +1080,118 @@ enum SkyrimShaderPropertyFlags2 uint // bitflags
     Effect_Lighting
     HD_LOD_Objects // SkyrimShaderPropertyFlags2
 
+enum SkyrimWaterShaderFlags byte // bitflags
+    UNKNOWN0
+    Bypass_Refraction_Map
+    Water_Toggle
+    UNKNOWN3
+    UNKNOWN4
+    UNKNOWN5
+    Highlight_Layer_Toggle
+    Enabled
+
+enum CloningBehavior uint
+    SHARE
+    COPY
+    BLANK_COPY
+
+enum ComponentFormat uint
+    UNKNOWN             0x00000000
+    INT8_1              0x00010101
+    INT8_2              0x00020102
+    INT8_3              0x00030103
+    INT8_4              0x00040104
+    UINT8_1             0x00010105
+    UINT8_2             0x00020106
+    UINT8_3             0x00030107
+    UINT8_4             0x00040108
+    NORMINT8_1          0x00010109
+    NORMINT8_2          0x0002010A
+    NORMINT8_3          0x0003010B
+    NORMINT8_4          0x0004010C
+    NORMUINT8_1         0x0001010D
+    NORMUINT8_2         0x0002010E
+    NORMUINT8_3         0x0003010F
+    NORMUINT8_4         0x00040110
+    INT16_1             0x00010211
+    INT16_2             0x00020212
+    INT16_3             0x00030213
+    INT16_4             0x00040214
+    UINT16_1            0x00010215
+    UINT16_2            0x00020216
+    UINT16_3            0x00030217
+    UINT16_4            0x00040218
+    NORMINT16_1         0x00010219
+    NORMINT16_2         0x0002021A
+    NORMINT16_3         0x0003021B
+    NORMINT16_4         0x0004021C
+    NORMUINT16_1        0x0001021D
+    NORMUINT16_2        0x0002021E
+    NORMUINT16_3        0x0003021F
+    NORMUINT16_4        0x00040220
+    INT32_1             0x00010421
+    INT32_2             0x00020422
+    INT32_3             0x00030423
+    INT32_4             0x00040424
+    UINT32_1            0x00010425
+    UINT32_2            0x00020426
+    UINT32_3            0x00030427
+    UINT32_4            0x00040428
+    NORMINT32_1         0x00010429
+    NORMINT32_2         0x0002042A
+    NORMINT32_3         0x0003042B
+    NORMINT32_4         0x0004042C
+    NORMUINT32_1        0x0001042D
+    NORMUINT32_2        0x0002042E
+    NORMUINT32_3        0x0003042F
+    NORMUINT32_4        0x00040430
+    FLOAT16_1           0x00010231
+    FLOAT16_2           0x00020232
+    FLOAT16_3           0x00030233
+    FLOAT16_4           0x00040234
+    FLOAT32_1           0x00010435
+    FLOAT32_2           0x00020436
+    FLOAT32_3           0x00030437
+    FLOAT32_4           0x00040438
+    UINT_10_10_10_L1    0x00010439
+    NORMINT_10_10_10_L1 0x0001043A
+    NORMINT_11_11_10    0x0001043B
+    NORMUINT8_4_BGRA    0x0004013C
+    NORMINT_10_10_10_2  0x0001043D
+    UINT_10_10_10_2     0x0001043E
+
+enum DataStreamUsage uint
+    VERTEX_INDEX
+    VERTEX
+    SHADER_CONSTANT
+    USER
+
+enum DataStreamAccess uint // bitflags
+    CPU_Read
+    CPU_Write_Static
+    CPU_Write_Mutable
+    CPU_Write_Volatile
+    GPU_Read
+    GPU_Write
+    CPU_Write_Static_Inititialized
+
+enum MeshPrimitiveType uint
+    TRIANGLES
+    TRISTRIPS
+    LINESTRIPS
+    QUADS
+    POINTS
+
+enum SyncPoint ushort
+    ANY               0x8000
+    UPDATE            0x8010
+    POST_UPDATE       0x8020
+    VISIBLE           0x8030
+    RENDER            0x8040
+    PHYSICS_SIMULATE  0x8050
+    PHYSICS_COMPLETED 0x8060
+    REFLECTIONS       0x8070
+
 // const ......................................................................
 
 // These are incomplete. They shall be complete at their respective ffd.
@@ -3769,13 +3881,22 @@ struct HairShaderProperty //niobject
 struct Lighting30ShaderProperty //niobject
     BSShaderPPLightingProperty
 
-struct BSLightingShaderProperty //niobject
-    BSLightingShaderPropertyShaderType SType (UVersion >= 12)
+struct BSShaderPropertyHeader // compound
     NiProperty
-    SkyrimShaderPropertyFlags1 ShaderFlags1 (UVersion == 12)
-    SkyrimShaderPropertyFlags2 ShaderFlags2 (UVersion == 12)
+    SkyrimShaderPropertyFlags1 ShaderFlags1
+    SkyrimShaderPropertyFlags2 ShaderFlags2
     TextureCoord UVOffset
     TextureCoord UVScale
+
+struct BSLightingShaderProperty //niobject
+    BSLightingShaderPropertyShaderType SType (UVersion >= 12)
+    // 1 -> BSShaderPropertyHeader
+    NiProperty
+    SkyrimShaderPropertyFlags1 ShaderFlags1 (UVersion == 12) //TODO verify ==12
+    SkyrimShaderPropertyFlags2 ShaderFlags2 (UVersion == 12) //
+    TextureCoord UVOffset
+    TextureCoord UVScale
+    //
     Ref     TextureSet // BSShaderTextureSet
     Color3  EmissiveColor
     float   EmissiveMultiple
@@ -3800,3 +3921,370 @@ struct BSLightingShaderProperty //niobject
     float   EyeCubemapScale        (SType == 16)
     Vector3 LeftEyeReflectionCenter (SType == 16)
     Vector3 RightEyeReflectionCenter (SType == 16)
+
+struct BSEffectShaderProperty //niobject
+    BSShaderPropertyHeader
+    SizedString  SourceTexture
+    uint   TextureClampMode
+    float  FalloffStartAngle
+    float  FalloffStopAngle
+    float  FalloffStartOpacity
+    float  FalloffStopOpacity
+    Color4 Emissive
+    float  EmissiveMultiple
+    float  SoftFalloffDepth
+    SizedString GreyscaleTexture
+
+struct BSWaterShaderProperty //niobject
+    BSShaderPropertyHeader
+    SkyrimWaterShaderFlags Flags
+    byte   Direction
+    ushort Unknown
+
+struct BSSkyShaderProperty //niobject
+    BSShaderPropertyHeader
+    SizedString   SourceTexture
+    SkyObjectType SOType //TODO this struct repeats; look for "SOType"
+
+struct BSDismemberSkinInstance //niobject
+    NiSkinInstance
+    BodyPartList Partitions[int]
+
+struct BSDecalPlacementVectorExtraData //niobject
+    NiExtraData
+    float Unknown
+    DecalVectorArray VectorBlocks[short]
+
+struct BSPSysSimpleColorModifier //niobject
+    NiPSysModifier
+    float  FadeInPercent
+    float  FadeOutPercent
+    float  Color1EndPercent
+    float  Color1StartPercent
+    float  Color2EndPercent
+    float  Color2StartPercent
+    Color4 Colors[3]
+
+struct BSValueNode //niobject
+    NiNode
+    int  Value
+    byte Unknown
+
+struct BSStripParticleSystem //niobject
+    NiParticleSystem
+
+struct BSStripPSysData //niobject
+    NiPSysData
+    short Unknown1
+    byte  Unknown2
+    int   Unknown3
+    float Unknown4
+
+struct BSPSysStripUpdateModifier //niobject
+    NiPSysModifier
+    float UpdateDeltaTime
+
+struct BSMaterialEmittanceMultController //niobject
+    NiFloatInterpController
+
+struct BSMasterParticleSystem //niobject
+    NiNode
+    ushort MaxEmitterObjects
+    Ref    ParticleSystems[int] // NiAVObject
+
+struct BSPSysMultiTargetEmitterCtlr //niobject
+    NiPSysModifierCtlr
+    Ref Data (Version <= 0x0a010000) // NiPSysEmitterCtlrData
+    Ref VInterpolator (Version >= 0x0a020000) // NiInterpolator
+    short Unknown1
+    int   Unknown2
+
+struct BSRefractionStrengthController //niobject
+    NiFloatInterpController
+
+struct BSOrderedNode //niobject
+    NiNode
+    Vector4 AlphaSortBound
+    byte    IsStaticBound
+
+struct BSBlastNode //niobject
+    NiNode
+    byte Unknown1
+    short Unknown2
+
+struct BSDamageStage //niobject
+    NiNode
+    byte Unknown1
+    short Unknown2
+
+struct BSRefractionFirePeriodController //niobject
+    NiTimeController
+    Ref Interpolator // NiInterpolator
+
+struct bhkConvexListShape //niobject
+    bhkShape
+    Ref           SubShapes[uint] // bhkConvexShape
+    HavokMaterial Material
+    float Unknown1[6]
+    byte  Unknown2
+    float Unknown3
+
+struct BSTreadTransform // compound
+    String Name
+    Transform<Quaternion> Transform1
+    Transform<Quaternion> Transform2
+
+struct BSTreadTransfInterpolator //niobject
+    NiInterpolator
+    BSTreadTransform Transforms[int]
+    Ref Data // NiFloatData
+
+struct BSAnimNotes //niobject
+    short Unknown
+
+struct bhkLiquidAction //niobject
+    int   Unknown1[3]
+    float Unknown2[4]
+
+struct BSMultiBoundNode //niobject
+    NiNode
+    Ref MultiBound // BSMultiBound
+    uint Unknown ((Version >= 0x14020007) && (UVersion >= 12))
+
+struct BSMultiBound //niobject
+    Ref Data // BSMultiBoundData
+
+// BSMultiBoundData inherit="NiObject" //niobject
+
+struct BSMultiBoundOBB //niobject
+    Vector3  Center
+    Vector3  Size
+    Matrix33 Rotation
+
+struct BSMultiBoundSphere //niobject
+    int   Unknown[3]
+    float Radius
+
+struct BSSegmentedTriShape //niobject
+    NiTriShape
+    BSSegment Segment[int]
+
+struct BSMultiBoundAABB //niobject
+    Vector3 Position
+    Vector3 Extent
+
+struct AdditionalDataInfo // compound
+    int DataType
+    int NumChannelBytesPerElement
+    int NumChannelBytes
+    int NumTotalBytesPerElement
+    int BlockIndex
+    int ChannelOffset
+    byte Unknown
+
+struct AdditionalDataBlock // compound
+    bool HasData
+    int  BlockSize                (HasData)
+    int  BlockOffsets[int]        (HasData)
+    int  NumData                  (HasData)
+    int  DataSizes[NumData]       (HasData)
+    byte Data[NumData][BlockSize] (HasData)
+
+struct BSPackedAdditionalDataBlock // compound
+    bool HasData
+    int  NumTotalBytes       (HasData)
+    int  BlockOffsets[int]   (HasData)
+    int  AtomSizes[int]      (HasData)
+    byte Data[NumTotalBytes] (HasData)
+    int  Unknown
+    int  NumTotalBytesPerElement
+
+struct NiAdditionalGeometryData //niobject
+    ushort VNum
+    AdditionalDataInfo  BlockInfos[uint]
+    AdditionalDataBlock Blocks[int]
+
+struct BSPackedAdditionalGeometryData //niobject
+    ushort VNum
+    AdditionalDataInfo  BlockInfos[uint]
+    BSPackedAdditionalDataBlock Blocks[int]
+
+struct BSWArray //niobject
+    NiExtraData
+    int Items[int]
+
+struct bhkAabbPhantom //niobject
+    bhkShapePhantom
+    int Unknown[15]
+
+struct BSFrustumFOVController //niobject
+    NiTimeController
+    Ref Interpolator // NiFloatInterpolator
+
+struct BSDebrisNode //niobject
+    NiNode
+    byte  Unknown1
+    short Unknown2
+
+struct bhkBreakableConstraint //niobject
+    bhkConstraint
+    SubConstraint SC
+    float Threshold
+    bool  RemoveIfBroken
+
+struct bhkOrientHingedBodyAction //niobject
+    int Unknown[17]
+
+//niobject
+
+struct bhkRagdollTemplate //niobject
+    String Name
+    Ref Bones[int]
+
+struct bhkRagdollTemplateData //niobject
+    String Name
+    float Mass
+    float Restitution
+    float Friction
+    float Radius
+    uint  Unknown
+    uint  Flag
+    bhkRDTConstraint Constraint (Flag)
+
+struct Region // compound
+    uint StartIndex
+    uint NumIndices
+
+struct NiDataStream //niobject
+    DataStreamUsage Usage
+    DataStreamUsage Access
+    uint            NumBytes
+    CloningBehavior CBehavior
+    Region          Regions[uint]
+    ComponentFormat CFormats[uint]
+    byte            Data[NumBytes]
+    bool            Streamable
+
+struct SemanticData // compound
+    String Name
+    uint Index
+
+struct MeshData // compound
+    Ref    Stream // NiDataStream
+    bool   IsPerInstance
+    ushort SubmeshToRegionMap[ushort]
+    SemanticData ComponentSemantics[int]
+
+struct MaterialData // compound
+    String Name
+    uint   ExtraData
+
+struct NiRenderObject //niobject
+    NiAVObject
+    MaterialData MD[uint]
+    int  ActiveMaterial
+    bool Update
+
+struct NiMeshModifier //niobject
+    SyncPoint SPoints[uint]
+    SyncPoint CPoints[uint]
+
+struct ExtraMeshDataEpicMickey // compound
+    int   Unknown[3]
+    float Unknown[3]
+
+struct ExtraMeshDataEpicMickey2 // compound
+    int   Start
+    int   End
+    short Unknown[10]
+
+struct NiMesh //niobject
+    NiRenderObject
+    MeshPrimitiveType PType
+    int Unknown1[6] (UVersion == 15)
+    ushort NumSubmeshes
+    bool   Instancing
+    SphereBV BV
+    MeshData Meshes[uint]
+    Ref Modifiers[uint]
+    byte Unknown2        (UVersion == 15)
+    int  Unknown3        (UVersion == 15)
+    float Unknown4[uint] (UVersion == 15)
+    ExtraMeshDataEpicMickey Unknown5[int] (UVersion == 15)
+    int Unknown6[int]    (UVersion == 15)
+    int Unknown7         (UVersion == 15)
+    short Unknown8       (UVersion == 15)
+    byte Unknown9[int]   (UVersion == 15)
+    ExtraMeshDataEpicMickey2 Unknown10[int] (UVersion == 15)
+    int Unknown11        (UVersion == 15)
+
+struct NiMorphWeightsController //niobject
+    NiInterpController
+    int    Unknown
+    Ref    Interpolators[uint]
+    String TargetNames[uint]
+
+struct ElementReference // compound
+    SemanticData Semantic
+    uint         NormalizeFlag
+
+struct NiMorphMeshModifier //niobject
+    NiMeshModifier
+    byte Flags
+    ushort NumTargets
+    ElementReference Elements[uint]
+
+struct NiSkinningMeshModifier //niobject
+    NiMeshModifier
+    ushort Flags
+    Ptr    SkeletonRoot // NiAVObject
+    SkinTransform SkeletonTransform
+    uint BNum
+    Ptr  Bones[BNum] // NiAVObject
+    SkinTransform BoneTransforms[BNum]
+    SphereBV      BoneBounds[BNum] (Flags)
+
+struct NiInstancingMeshModifier //niobject
+    NiMeshModifier
+    // not decoded
+
+struct NiSkinningLODController //niobject
+    NiTimeController
+
+struct NiPSParticleSystem //niobject
+    NiAVObject
+    int   Unknown1
+    int   Unknown2[Unknown1]
+    int   Unknown3[2]
+    int   Unknown4[Unknown1]
+    int   Unknown5[4]
+    float Unknown6
+    int   Unknown7
+    int   Unknown8
+    Ref   Simulator
+    Ref   Generator (Unknown8 > 1)
+    int   Unknown9[3]
+    Ref   Emitter
+    int   Unknown10[3]
+    byte  Unknown11[4]
+    int   Unknown12[8] (Version >= 0x1e000002)
+    byte  Unknown13    (Version >= 0x1e000002)
+    int   Unknown14    (Version >= 0x1e000002)
+    short Unknown15    (Version >= 0x1e000002)
+
+struct NiPSMeshParticleSystem //niobject
+    NiPSParticleSystem
+    int  Unknown1[3]
+    byte Unknown2
+
+struct NiPSEmitParticlesCtlr //niobject
+    NiPSysEmitterCtlr
+
+struct NiPSForceActiveCtlr //niobject
+    NiTimeController
+    Ref Interpolator
+    int Unknown
+
+struct NiPSSimulator //niobject
+    NiMeshModifier
+    Ref SimulationSteps[uint] // NiPSSimulatorStep
