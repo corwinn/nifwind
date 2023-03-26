@@ -1192,6 +1192,13 @@ enum SyncPoint ushort
     PHYSICS_COMPLETED 0x8060
     REFLECTIONS       0x8070
 
+enum PSLoopBehavior uint
+    LOOP_CLAMP_SPAWN
+    LOOP_CLAMP_USPAWN
+    LOOP_AGESCALE
+    LOOP_LOOP
+    LOOP_REFLECT
+
 // const ......................................................................
 
 // These are incomplete. They shall be complete at their respective ffd.
@@ -4288,3 +4295,259 @@ struct NiPSForceActiveCtlr //niobject
 struct NiPSSimulator //niobject
     NiMeshModifier
     Ref SimulationSteps[uint] // NiPSSimulatorStep
+
+// NiPSSimulatorStep inherit="NiObject" //niobject
+
+struct NiPSSimulatorGeneralStep //niobject
+    Key<float,1>   SizeKeys[byte]
+    PSLoopBehavior SizeLoopBehavior     (Version >= 0x1e000002)
+    float          Unknown1[3]          (Version <= 0x14060000)
+    Key<ByteColor4,1> ColorKeys[byte]   (Version >= 0x1e000002)
+    PSLoopBehavior ColorLoopBehavior    (Version >= 0x1e000002)
+    QuatKey<1>     RotationKeys[byte]   (Version >= 0x1e000002)
+    PSLoopBehavior RotationLoopBehavior (Version >= 0x1e000002)
+    float GrowTime          (Version >= 0x1e000002)
+    float ShrinkTime        (Version >= 0x1e000002)
+    ushort GrowGeneration   (Version >= 0x1e000002)
+    ushort ShrinkGeneration (Version >= 0x1e000002)
+
+struct NiPSSimulatorForcesStep //niobject
+    Ref Forces[uint]
+
+struct NiPSSimulatorCollidersStep //niobject
+    Ref Colliders[uint]
+
+struct NiPSSimulatorMeshAlignStep //niobject
+    QuatKey<1> RotationKeys[byte]
+    PSLoopBehavior RotationLoopBehavior
+
+// NiPSSimulatorFinalStep //niobject
+
+struct NiPSFacingQuadGenerator //niobject
+    byte Unknown[12]
+
+struct NiShadowGenerator //niobject
+    String Name
+    ushort Unknown1
+    Ref    Unknown2[uint] // NiNode
+    int    Unkown3
+    Ref    Target // NiLight
+    float  Unkown4
+    byte   Unkown5
+    int    Unkown6[3]
+    byte   Unkown7
+
+struct NiPSBoundUpdater //niobject
+    byte Unknown[2]
+
+struct NiPSDragForce //niobject
+    int   Unknown1[2]
+    byte  Unknown2
+    float Unknown3[6]
+    int   Unknown4
+
+struct NiPSGravityForce //niobject
+    byte  Unknown1[17]
+    float Unknown2
+    byte  Unknown3[16]
+    float Unknown4
+    Ref   Unknown5
+
+struct NiPSBoxEmitter //niobject
+    String Name
+    float Unknown1[2]
+    byte  Unknown2[4]
+    float Unknown3
+    byte  Unknown4[4]
+    float Unknown5
+    int   Unknown6
+    float Unknown7[9]
+    byte  Unknown8[26]
+
+struct NiPSMeshEmitter //niobject
+    String Name
+    int   Unknown1[3]
+    int   Unknown2    (Version >= 0x1e000002)
+    float Unknown3[3]
+    float Unknown4    (Version >= 0x1e000002)
+    int   Unknown5
+    float Unknown6[5]
+    int   Unknown7
+    float Unknown8[3]
+    int   Unknown9[2] (Version <= 0x14060000)
+    short Unknown10
+    int   Unknown11[2]
+    float Unknown12   (Version <= 0x14060000)
+    int   Unknown13   (Version <= 0x14060000)
+    int   Unknown14[3]
+
+struct NiPSGravityStrengthCtlr //niobject
+    NiTimeController
+    int Unknown[2]
+
+struct NiPSPlanarCollider //niobject
+    String Name
+    int   Unknown1[2]
+    short Unknown2
+    byte  Unknown3
+    float Unknown4[8]
+    Ref   Unknown5 // NiNode
+
+struct NiPSEmitterSpeedCtlr //niobject
+    NiTimeController
+    Ref Interpolator
+    int Unknown
+
+struct NiPSEmitterRadiusCtlr //niobject
+    NiTimeController
+    Ref Interpolator
+    int Unknown
+
+struct NiPSResetOnLoopCtlr //niobject
+    NiTimeController
+
+struct NiPSSphereEmitter //niobject
+    String Name
+    int   Unknown1[4]
+    float Unknown2
+    int   Unknown3
+    float Unknown4[2]
+    int   Unknown5
+    float Unknown6
+    int   Unknown7[5]
+    float Unknown8
+    int   Unknown9[2]
+    short Unknown10
+    int   Unknown11
+    float Unknown12
+
+struct NiPSCylinderEmitter //niobject
+    NiPSSphereEmitter
+    float Unknown
+
+struct NiPSEmitterDeclinationCtlr //niobject
+    NiPSysModifierCtlr
+
+struct NiPSEmitterDeclinationVarCtlr //niobject
+    NiPSEmitterDeclinationCtlr
+
+struct NiPSEmitterPlanarAngleCtlr //niobject
+    NiPSysModifierCtlr
+
+struct NiPSEmitterPlanarAngleVarCtlr //niobject
+    NiPSEmitterPlanarAngleCtlr
+
+struct NiPSEmitterRotAngleCtlr //niobject
+    NiPSysModifierCtlr
+
+struct NiPSEmitterRotAngleVarCtlr //niobject
+    NiPSEmitterRotAngleCtlr
+
+struct NiPSEmitterRotSpeedCtlr //niobject
+    NiPSysModifierCtlr
+
+struct NiPSEmitterRotSpeedVarCtlr //niobject
+    NiPSEmitterRotSpeedCtlr
+
+struct NiPSEmitterLifeSpanCtlr //niobject
+    NiPSysModifierCtlr
+
+struct NiPSBombForce //niobject
+    String Name
+    byte Unknown1
+    int  Unknown2[9]
+
+struct NiPSSphericalCollider //niobject
+    int   Unknown1[2]
+    byte  Unknown2
+    float Unknown3
+    int   Unknown4
+    short Unknown5
+    int   Unknown6
+
+// NiPSSpawner - not decoded //niobject
+// NiSequenceData - not decoded //niobject
+// NiTransformEvaluator  - not decoded //niobject
+// NiBSplineCompTransformEvaluator  - not decoded //niobject
+// NiMeshHWInstance  - not decoded //niobject
+
+struct NiFurSpringController //niobject
+    NiTimeController
+    float Unknown1[2]
+    Ptr   Bones[uint] // NiNode
+    Ptr   Bones2[uint] // NiNode
+
+// "Divinity 2 (P_Island_VerySmall_A.item)"
+struct CStreamableAssetData //niobject
+    Ref  Root // NiNode
+    byte Unknown[5]
+
+struct bhkCompressedMeshShape //niobject
+    Ptr   Target // NiAVObject
+    uint  Unknown1
+    float Unknown2
+    byte  Unknown3[4]
+    Vector4 Unknown4
+    float Radius
+    float Scale
+    float Unknown5[3]
+    Ref   Data // bhkCompressedMeshShapeData
+
+struct bhkCompressedMeshShapeData //niobject
+    uint  BitsPerIndex
+    uint  BitsPerWIndex
+    uint  MaskWIndex
+    uint  MaskIndex
+    float Error
+    Vector4 BoundsMin
+    Vector4 BoundsMax
+    byte Unknown1
+    uint Unknown2
+    uint Unknown3
+    uint Unknown4
+    byte Unknown5
+    bhkCMSDMaterial  ChunkMaterials[uint]
+    uint Unknown6
+    bhkCMSDTransform ChunkTransforms[uint]
+    Vector4          BigVerts[uint]
+    bhkCMSDBigTris   BigTris[uint]
+    bhkCMSDChunk     Chunks[uint]
+    uint             Unknown7
+
+struct BSInvMarker //niobject
+    NiExtraData
+    ushort Rotation[3] // x,y,z
+    float  Zoom
+
+struct BSBoneLODExtraData //niobject
+    NiExtraData
+    BoneLOD Info[uint]
+
+struct BSBehaviorGraphExtraData //niobject
+    NiExtraData
+    String BehaviourGraphFile
+    byte   ControlsBaseSkeleton
+
+struct BSLagBoneController //niobject
+    NiTimeController
+    float LinearVelocity
+    float LinearRotation
+    float MaximumDistance
+
+struct BSLODTriShape //niobject
+    NiTriBasedGeom
+    uint Level0Size
+    uint Level1Size
+    uint Level2Size
+
+
+struct BSFurnitureMarkerNode //niobject
+    BSFurnitureMarker
+
+struct BSLeafAnimNode //niobject
+    NiNode
+
+struct BSTreeNode //niobject
+    NiNode
+    Ref Bones1[uint]
+    Ref Bones[uint]
