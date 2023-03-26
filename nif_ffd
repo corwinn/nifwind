@@ -909,6 +909,21 @@ enum BSPartFlag ushort // bitflags
     EDITOR_VISIBLE
     START_NET_BONESET 8
 
+enum ChannelType uint
+    RED
+    GREEN
+    BLUE
+    ALPHA
+    COMPRESSED
+    INDEX 16
+    EMPTY 19
+
+enum ChannelConvention uint
+    FIXED
+    INDEX 3
+    COMPRESSED
+    EMPTY
+
 // const ......................................................................
 
 // These are incomplete. They shall be complete at their respective ffd.
@@ -2642,3 +2657,684 @@ struct NiParticleSystem //niobject
     uint   Unknown2 (UVersion >= 12)
     bool   WorldSpace (Version >= 0x0a010000)
     Ref    Modifiers[uint] (Version >= 0x0a010000) // NiPSysModifier
+
+struct NiMeshParticleSystem //niobject
+    NiParticleSystem
+
+struct NiParticleSystemController //niobject
+    NiTimeController
+    uint     OldSpeed (Version <= 0x03010000)
+    float    Speed    (Version >= 0x0303000D)
+    float    SpeedRnd
+    float    VDirection // Up vector?
+    float    VAngle     //
+    float    HDirection
+    float    HAngle
+    Vector3  NormalX
+    Color4   ColorX
+    float    Size
+    float    EmitStartTime
+    float    EmitStopTime
+    byte     Unknown1    (Version >= 0x04000002)
+    uint     OldEmitRate (Version <= 0x03010000)
+    float    EmitRate    (Version >= 0x0303000D)
+    float    Lifetime
+    float    LifetimeRnd
+    ushort   EmitFlags   (Version >= 0x04000002)
+    Vector3  StartRnd
+    Ptr      Emitter
+    ushort   Unknown2    (Version >= 0x04000002)
+    float    Unknown3    (Version >= 0x04000002)
+    uint     Unknown4[2] (Version >= 0x04000002)
+    ushort   Unknown5    (Version >= 0x04000002)
+    Vector3  ParticleVelocity  (Version <= 0x03010000)
+    Vector3  Unknown6          (Version <= 0x03010000)
+    float    ParticleLifetime  (Version <= 0x03010000)
+    Ref      ParticleLink      (Version <= 0x03010000)
+    uint     ParticleTimestamp (Version <= 0x03010000)
+    ushort   Unknown7          (Version <= 0x03010000)
+    ushort   ParticleVertexId  (Version <= 0x03010000)
+    ushort   PNum              (Version >= 0x04000002)
+    ushort   NumValid          (Version >= 0x04000002)
+    Particle Particles[PNum]   (Version >= 0x04000002)
+    Ref      Unknown8          (Version >= 0x04000002)
+    Ref      ParticleExtra // NiParticleModifier
+    Ref      Unknown9
+    byte     Trailer             (Version >= 0x04000002)
+    Ref      ColorData           (Version <= 0x03010000) // NiColorData
+    float    Unknown10           (Version <= 0x03010000)
+    float    Unknown11[Unknown7] (Version <= 0x03010000)
+
+struct NiBSPArrayController //niobject
+    NiParticleSystemController
+
+struct NiPathController //niobject
+    NiTimeController
+    ushort Unknown1 (Version >= 0x0a010000)
+    uint   Unknown2
+    float  Unknown3[float]
+    ushort Unknown4
+    Ref    PosData   // NiPosData
+    Ref    FloatData // NiFloatData
+
+struct ChannelData // compound
+    ChannelType Type
+    ChannelConvention Convention
+    byte BitsPerChannel
+    byte Unknown
+
+struct ATextureRenderData //niobject
+    PixelFormat PFormat
+    uint RedMask      (Version <= 0x0a020000)
+    uint GreenMask    (Version <= 0x0a020000)
+    uint BlueMask     (Version <= 0x0a020000)
+    uint AlphaMask    (Version <= 0x0a020000)
+    byte BitsPerPixel (Version <= 0x0a020000)
+    byte Unknown1[3]  (Version <= 0x0a020000)
+    byte Unknown2[8]  (Version <= 0x0a020000)
+    uint Unknown3     (Version >= 0x0a010000)
+    byte BitsPerPixel (Version >= 0x14000004)
+    int  Unknown4     (Version >= 0x14000004)
+    uint Unknown5     (Version >= 0x14000004)
+    byte Flags        (Version >= 0x14000004)
+    uint Unknown6     (Version >= 0x14000004)
+    byte Unknown7     (Version >= 0x14030006)
+    ChannelData Channels[4] (Version >= 0x14000004)
+    Ref Palette // NiPalette
+    uint MMNum
+    uint BitsPerPixel
+    MipMap MM[MMNum]
+
+struct NiPersistentSrcTextureRendererData //niobject
+    ATextureRenderData
+    uint PNum
+    uint Unknown1
+    uint FNum
+    uint Unknown2
+    byte Bitmap[FNum][PNum]
+
+struct NiPixelData //niobject
+    ATextureRenderData
+    uint PNum
+    uint FNum               (Version >= 0x14000004)
+    byte Bitmap[FNum][PNum] (Version >= 0x14000004)
+    byte Bitmap[PNum]       (Version <= 0x0a020000)
+
+struct NiPlanarCollider //niobject
+    NiParticleModifier
+    ushort Unknown1 (Version >= 0x0a000100)
+    float  Unknown2[2]
+    ushort Unknown3 (Version == 0x04020200)
+    float  Unknown4[14]
+
+struct NiPointLight //niobject
+    NiLight
+    float Attenuation[3] // Constant,Linear,Quadratic
+
+struct NiPosData //niobject
+    KeyGroup<Vector3> Data
+
+struct NiPSysAgeDeathModifier //niobject
+    NiPSysModifier
+    bool ReSpawn
+    Ref  Modifier // NiPSysSpawnModifier
+
+struct NiPSysBombModifier //niobject
+    NiPSysModifier
+    Ptr          BombObject
+    Vector3      BombAxis
+    float        Decay
+    float        DeltaV
+    DecayType    DType
+    SymmetryType SType
+
+struct NiPSysBoundUpdateModifier //niobject
+    NiPSysModifier
+    ushort UpdateSkip
+
+struct NiPSysBoxEmitter //niobject
+    NiPSysVolumeEmitter
+    float Width
+    float Height
+    float Depth
+
+struct NiPSysColliderManager //niobject
+    NiPSysModifier
+    Ref Collider // NiPSysCollider
+
+struct NiPSysColorModifier //niobject
+    NiPSysModifier
+    Ref Data // NiColorData
+
+struct NiPSysCylinderEmitter //niobject
+    NiPSysVolumeEmitter
+    float Radius
+    float Height
+
+struct NiPSysDragModifier //niobject
+    NiPSysModifier
+    Ptr     Base
+    Vector3 DragAxis
+    float   Percentage
+    float   Range
+    float   RangeFalloff
+
+struct NiPSysEmitterCtlrData //niobject
+    KeyGroup<float> FKeys
+    Key<byte,1> VKeys[uint]
+
+
+struct NiPSysGravityModifier //niobject
+    NiPSysModifier
+    Ptr       GravityObject
+    Vector3   GravityAxis
+    float     Decay
+    float     Strength
+    ForceType FType
+    float     Turbulence
+    float     TurbulenceScale
+    byte      Unknown ((Verision >= 0x14020007) && (UVersion >= 11))
+
+struct NiPSysGrowFadeModifier //niobject
+    NiPSysModifier
+    float  GrowTime
+    ushort GrowGeneration
+    float  FadeTime
+    ushort FadeGeneration
+    float  BaseScale ((Version >= 0x14020007) && (UVersion == 11))
+
+struct NiPSysMeshEmitter //niobject
+    NiPSysEmitter
+    Ref          EmitterMeshes[uint] // NiTriBasedGeom
+    VelocityType InitialVelocityType
+    EmitFrom     EmissionType
+    Vector3      EmissionAxis
+
+struct NiPSysMeshUpdateModifier //niobject
+    NiPSysModifier
+    Ref Meshes[uint] // NiAVObject
+
+struct BSPSysInheritVelocityModifier //niobject
+    NiPSysModifier
+    uint  Unknown1
+    float Unknown2[3]
+
+struct BSPSysHavokUpdateModifier //niobject
+    NiPSysModifier
+    Ref Nodes[uint] // NiNode
+    ref Modifier // NiPSysModifier
+
+struct BSPSysRecycleBoundModifier //niobject
+    NiPSysModifier
+    float Unknown1[6]
+    uint  Unknown2
+
+struct BSPSysSubTexModifier //niobject
+    NiPSysModifier
+    uint  StartFrame
+    float StartFrameFudge
+    float EndFrame
+    float LoopStartFrame
+    float LoopStartFrameFudge
+    float FrameCount
+    float FrameCountFudge
+
+struct NiPSysPlanarCollider //niobject
+    NiPSysCollider
+    float Width
+    float Height
+    Vector3 XAxis
+    Vector3 YAxis
+
+struct NiPSysSphericalCollider //niobject
+    NiPSysCollider
+    float Radius
+
+struct NiPSysPositionModifier //niobject
+    NiPSysModifier
+
+struct NiPSysResetOnLoopCtlr //niobject
+    NiTimeController
+
+struct NiPSysRotationModifier //niobject
+    NiPSysModifier
+    float InitialRotationSpeed
+    float InitialRotationSpeedVariation (Version >= 0x14000004)
+    float InitialRotationAngle          (Version >= 0x14000004)
+    float InitialRotationAngleVariation (Version >= 0x14000004)
+    bool  RandomRotSpeedSign            (Version >= 0x14000004)
+    bool  RandomInitialAxis
+    Vector3 InitialAxis
+
+struct NiPSysSpawnModifier //niobject
+    NiPSysModifier
+    ushort NumSpawnGenerations
+    float  PercentageSpawned
+    ushort MinNumtoSpawn
+    ushort MaxNumtoSpawn
+    float  SpawnSpeedChaos
+    float  SpawnDirChaos
+    float  LifeSpan
+    float  LifeSpanVariation
+    int    Unknown (Version == 0x0a040001)
+
+struct NiPSysSphereEmitter //niobject
+    NiPSysVolumeEmitter
+    float Radius
+
+struct NiPSysUpdateCtlr //niobject
+    NiTimeController
+
+struct NiPSysFieldModifier //niobject
+    NiPSysModifier
+    Ref   FieldObject // NiAVObject
+    float Magnitude
+    float Attenuation
+    bool  UseMaxDistance
+    float MaxDistance
+
+struct NiPSysVortexFieldModifier //niobject
+    NiPSysFieldModifier
+    Vector3 Direction
+
+struct NiPSysGravityFieldModifier //niobject
+    NiPSysFieldModifier
+    Vector3 Direction
+
+struct NiPSysDragFieldModifier //niobject
+    NiPSysFieldModifier
+    bool    UseDirection
+    Vector3 Direction
+
+struct NiPSysTurbulenceFieldModifier //niobject
+    NiPSysFieldModifier
+    float Frequency
+
+struct BSPSysLODModifier //niobject
+    NiPSysModifier
+    float Uknown[4]
+
+struct BSPSysScaleModifier //niobject
+    NiPSysModifier
+    float Floats[uint]
+
+//TODO
+struct NiPSysFieldMagnitudeCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysFieldAttenuationCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysFieldMaxDistanceCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysAirFieldAirFrictionCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysAirFieldInheritVelocityCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysAirFieldSpreadCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysInitialRotSpeedCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysInitialRotSpeedVarCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysInitialRotAngleCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysInitialRotAngleVarCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysEmitterPlanarAngleCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysEmitterPlanarAngleVarCtlr //niobject
+    NiPSysModifierFloatCtlr
+
+struct NiPSysAirFieldModifier //niobject
+    NiPSysFieldModifier
+    Vector3 Direction
+    float   Unknown1[2]
+    bool    Unknown2[3]
+    float   Unknown3
+
+struct NiPSysTrailEmitter //niobject
+    NiPSysEmitter
+    int   Unknown1
+    float Unknown2[3]
+    int   Unknown3
+    float Unknown4
+    int   Unknown5
+    float Unknown6
+    int   Unknown7
+    float Unknown8[2]
+
+struct NiLightIntensityController //niobject
+    NiFloatInterpController
+
+struct NiPSysRadialFieldModifier //niobject
+    NiPSysFieldModifier
+    int RadialType
+
+// NiLODData inherit="NiObject" //niobject
+
+struct NiRangeLODData //niobject
+    Vector3 Center
+    LODRange Levels[uint]
+
+struct NiScreenLODData //niobject
+    Vector3 BoundCenter
+    float   BoundRadius
+    Vector3 WorldCenter
+    float   WorldRadius
+    float   ProportionLevels[uint]
+
+struct NiRotatingParticles //niobject
+    NiParticles
+
+struct NiSequenceStreamHelper //niobject
+    NiObjectNET
+
+struct NiShadeProperty //niobject
+    NiProperty
+    Flags Flags
+
+struct NiSkinData //niobject
+    SkinTransform STransform
+    uint BNum
+    // NiSkinPartition
+    Ref  SPartition ((Version >= 0x04000002) && (Version <= 0x0a010000))
+    byte HasVertexWeights (Version >= 0x04020100)
+    SkinData<HasVertexWeights> BoneList[BNum]
+
+struct NiSkinInstance //niobject
+    Ref Data // NiSkinData
+    Ref SkinPartition (Version >= 0x0a020000) // NiSkinPartition
+    Ptr SkeletonRoot // NiNode
+    Ptr Bones[uint] // NiNode
+
+struct NiTriShapeSkinController //niobject
+    NiTimeController
+    uint BNum
+    uint VCounts[BNum]
+    Ptr  Bones[BNum] // NiBone
+    OldSkinData BoneData[BNum][VCounts]
+
+struct NiClodSkinInstance //niobject
+    NiSkinInstance
+
+struct NiSkinPartition //niobject
+    SkinPartition Blocks[uint]
+
+struct NiTexture //niobject
+    NiObjectNET
+
+struct NiSourceTexture //niobject
+    NiTexture
+    TexSource
+    PixelLayout  PLayout
+    MipMapFormat UseMipmaps
+    AlphaFormat  AlphaFormat
+    byte         IsStatic
+    bool         DirectRender      (Verson >= 0x0a01006a)
+    bool         PersistRenderData (Verson >= 0x14020007)
+
+struct NiSpecularProperty //niobject
+    NiProperty
+    Flags Flags
+
+struct NiSphericalCollider //niobject
+    NiParticleModifier
+    float  Unknown1
+    ushort Unknown2
+    float  Unknown3
+    ushort Unknown4 (Version <= 0x04020002)
+    float  Unknown5 (Version >= 0x04020100)
+    float  Unknown6[2]
+
+struct NiSpotLight //niobject
+    NiPointLight
+    float CutoffAngle
+    float Unknown (Version >= 0x14020007)
+    float Exponent
+
+struct NiStencilProperty //niobject
+    NiProperty
+    Flags         Flags       (Version <= 0x0a000102)
+    byte          StencilEnabled (Version <= 0x14000005)
+    StencilCompareMode StencilFunction (Version <= 0x14000005)
+    uint          StencilRef  (Version <= 0x14000005)
+    uint          StencilMask (Version <= 0x14000005)
+    StencilAction FailAction  (Version <= 0x14000005)
+    StencilAction ZFailAction (Version <= 0x14000005)
+    StencilAction PassAction  (Version <= 0x14000005)
+    FaceDrawMode  DrawMode    (Version <= 0x14000005)
+    Flags         Flags       (Version >= 0x14010003)
+    uint          StencilRef  (Version >= 0x14010003)
+    uint          StencilMask (Version >= 0x14010003)
+
+struct NiStringExtraData //niobject
+    NiExtraData
+    uint   BytesRemaining (Version <= 0x04020200)
+    String StringData
+
+struct NiStringPalette //niobject
+    StringPalette Palette
+
+struct NiStringsExtraData //niobject
+    NiExtraData
+    SizedString Data[uint]
+
+struct NiTextKeyExtraData //niobject
+    NiExtraData
+    uint Unknown (Version <= 0x04020200)
+    Key<String,1> Keys[uint]
+
+struct NiTextureEffect //niobject
+    NiDynamicEffect
+    Matrix33          Projection
+    Vector3           PTransform
+    TextureFilterMode TFilter
+    TextureClampMode  TClamping
+    short        Unknown1   (Version >= 0x14060000)
+    EffectType   TType
+    CoordGenType CGType
+    Ref          Image      (Version <= 0x03010000) // NiImage
+    Ref          SrcTexture (Version >= 0x04000000) // NiSourceTexture
+    byte         CPlane
+    Vector3      Unknown2
+    float        Unknown3
+    short        PS2_L      (Version <= 0x0a020000)
+    short        PS2_K      (Version <= 0x0a020000)
+    ushort       Unknown4   (Version <= 0x0401000C)
+
+struct NiTextureModeProperty //niobject
+    NiProperty
+    uint  Unknown1[3] (Version <= 0x02030000)
+    short Unknown2    (Version >= 0x03000000)
+    short PS2_L       ((Version >= 0x03010000) && (Version <= 0x0a020000))
+    short PS2_K       ((Version >= 0x03010000) && (Version <= 0x0a020000))
+
+struct NiImage //niobject
+    byte UseExternal
+    FilePath FileName (UseExternal != 0)
+    Ref      Image    (UseExternal == 0) // NiRawImageData
+    uint     Unknown1
+    float    Unknown2 (Version >= 0x03010000)
+
+struct NiTextureProperty //niobject
+    NiProperty
+    uint  Unknown1[2] (Version <= 0x02030000)
+    Flags Flags       (Version >= 0x03000000)
+    Ref   Image // NiImage
+    uint  Unknown2[2] ((Version >= 0x03000000) && (Version <= 0x03030000))
+
+struct NiMultiTextureProperty //niobject
+    NiProperty
+    Flags Flags
+    uint Unknown1
+    MultiTextureElement TextureElements
+
+struct NiTPTexture // compound
+    bool HasTexture
+    TexDesc Texture
+
+struct NiTexturingProperty //niobject
+    NiProperty
+    Flags       Flags ((Version <= 0x0a000102) || (Version >= 0x14010003))
+    ApplyMode   AMode (Version <= 0x14000005)
+    uint        TCount
+    NiTPTexture Diffuse
+    NiTPTexture Dark
+    NiTPTexture Detail
+    NiTPTexture Gloss
+    NiTPTexture Glow
+    bool        HasBump
+    TexDesc     Bump              (HasBump)
+    float       BumpMapLumaScale  (HasBump)
+    float       BumpMapLumaOffset (HasBump)
+    Matrix22    BumpMapLumaMatrix (HasBump)
+    NiTPTexture Normal     (Version >= 0x14020007)
+    bool        HasUknown1 (Version >= 0x14020007)
+    TexDesc     Uknown1    (HasUknown1)
+    float       Uknown2    (HasUknown1)
+    NiTPTexture Decal0
+    NiTPTexture Decal1 (((Version >= 0x14010003) && (TCount >= 8))
+                       || ((Version >= 0x14020007) && (TCount >= 10)))
+    NiTPTexture Decal2 (((Version >= 0x14010003) && (TCount >= 9))
+                       || ((Version >= 0x14020007) && (TCount >= 11)))
+    NiTPTexture Decal3 (((Version >= 0x14010003) && (TCount >= 10))
+                       || ((Version >= 0x14020007) && (TCount >= 12)))
+    ShaderTexDesc ShaderTextures[uint] (Version = 0x0a000100)
+
+struct NiTransformData //niobject
+    NiKeyframeData
+
+struct NiTriShape //niobject
+    NiTriBasedGeom
+
+struct NiTriShapeData //niobject
+    NiTriBasedGeomData
+    uint TPNum
+    bool HasTriangles (Version >= 0x0a010000)
+    Triangle Triangles[TNum] ((Version <= 0x0a000102)
+        || ((HasTriangles) && (Version >= 0x0a000103)))
+    MatchGroup MGroups[uint] (Version >= 0x03010000)
+
+struct NiTriStrips //niobject
+    NiTriBasedGeom
+
+struct NiTriStripsData //niobject
+    NiTriBasedGeomData
+    ushort SNum
+    ushort SLengths[SNum]
+    bool   HasPoints (Version >= 0x0a000103)
+    ushort Points[SNum][SLengths] ((Version <= 0x0a000102)
+        || ((HasPoints) && (Version >= 0x0a000103)))
+
+struct NiEnvMappedTriShape //niobject
+    NiObjectNET
+    ushort   Unknown1
+    Matrix44 Unknown2
+    Ref      Nodes[uint] // NiAVObject
+    Ref      Node2
+    Ref      Node3
+
+// NiEnvMappedTriShapeData - commented out. //niobject - breaks total
+
+struct NiEnvMappedTriShapeData //niobject
+    NiTriShapeData
+
+struct NiBezierTriangle4 //niobject
+    uint     Unknown1[6]
+    ushort   Unknown2
+    Matrix33 Matrix
+    Vector3  Vector1
+    Vector3  Vector2
+    short    Unknown3[4]
+    byte     Unknown4
+    uint     Unknown5
+    short    Unknown6[24]
+
+struct NiBezierMesh //niobject
+    NiAVObject
+    Ref     BezierTriangle[uint] // NiBezierTriangle4
+    uint    Unknown1
+    ushort  Count
+    ushort  Unknown2
+    Vector3 Points[Count]
+    uint    Unknown3
+    float   Points[Count][2]
+    uint    Unknown4
+    ushort  Data[ushort][4]
+
+struct NiClod //niobject
+    NiTriBasedGeom
+
+struct NiClodData //niobject
+    NiTriBasedGeomData
+    ushort UnknownShorts // I'm keeping the name on purpose :)
+    ushort Unknown1
+    ushort Unknown2
+    ushort Unknown3
+    float  Unknown4
+    ushort Unknown5
+    ushort Unknown6[Unknown1][6]
+    ushort Unknown7[Unknown2]
+    ushort Unknown8[Unknown3][6]
+
+struct NiUVController //niobject
+    NiTimeController
+    ushort Unknown
+    Ref    Data // NiUVData
+
+struct NiUVData //niobject
+    KeyGroup<float> UVGroups[4]
+
+struct NiVectorExtraData //niobject
+    NiExtraData
+    Vector3 Data
+    float   Unknown
+
+struct NiVertexColorProperty //niobject
+    NiProperty
+    Flags     Flags
+    VertMode  VMode (Version <= 0x14000005)
+    LightMode LMode (Version <= 0x14000005)
+
+struct NiVertWeightsExtraData //niobject
+    NiExtraData
+    uint   BNum
+    float  Weight[ushort]
+
+struct NiVisData //niobject
+    Key<byte,1> Keys[uint]
+
+struct NiWireframeProperty //niobject
+    NiProperty
+    Flags Flags
+
+struct NiZBufferProperty //niobject
+    NiProperty
+    Flags Flags
+    ZCompareMode Function ((Version >= 0x0401000C) && (Version <= 0x14000005))
+
+struct RootCollisionNode //niobject
+    NiNode
+
+struct NiRawImageData //niobject
+    uint       Width
+    uint       Height
+    ImageType  IType
+    ByteColor3 RGBBitmap[Width][Height] (IType == 1)
+    ByteColor4 RGBABitmap[Width][Height] (IType == 2)
+
+struct NiSortAdjustNode //niobject
+    NiNode
+    SortingMode SMode
+    int         Unknown (Version <= 0x0a020000)
+
