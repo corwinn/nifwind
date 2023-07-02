@@ -121,12 +121,12 @@ enum LightMode uint
 //TODO to nif_tes4_ffd
 enum OblivionHavokMaterial uint
     STONE         0 //TODO the parser: code_repetition-- => pattern: table
-    CLOTH         1 //TODO these are sequential: its pointless to specify the
-    DIRT          2 //     obvious; besides no one cares if CLOTH is encoded as
-    GLASS         3 //     "uint" value of 4; make EnumItem.Value optional:
-    GRASS         4 //      - auto-value starts at 0
-    METAL         5 //      - auto-value gets invalidated to explicit Item.Value
-    ORGANIC       6 //      - you get exception reward for non-distinctiveness
+    CLOTH         1
+    DIRT          2
+    GLASS         3
+    GRASS         4
+    METAL         5
+    ORGANIC       6
     SKIN          7
     WATER         8
     WOOD          9
@@ -193,7 +193,7 @@ enum Fallout3HavokMaterial uint
 
 //TODO to nif_tes5_ffd
 enum SkyrimHavokMaterial uint
-    STONE          3741512247 // <- looks like a hash function; Dear, Wizards?
+    STONE          3741512247 // <- looks like a hash function;
     CLOTH          3839073443
     DIRT           3106094762
     GLASS          3739830338
