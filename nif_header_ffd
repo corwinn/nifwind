@@ -51,12 +51,15 @@ enum Endianess byte
 struct HeaderString
     char Chars[-10]
 
+[Text]
 struct ShortString
     char Value[byte] // 0-terminated (its length includes the 0)
 
 struct ExportInfo
-    ShortString Value[uint] (Version >= 0x0a000102)
+    ShortString Value[uint] (Version <= 0x0a000102)
+    ShortString Value[3] (Version > 0x0a000102)
 
+[Text]
 struct SizedString
     char Value[uint]
 
