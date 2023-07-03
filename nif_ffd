@@ -198,7 +198,7 @@ enum SkyrimHavokMaterial uint
     DIRT           3106094762
     GLASS          3739830338
     GRASS          1848600814
-    // METAL ? //TODO FFD::SNode::ParseEnum(): skip comment lines
+    // METAL ?
     ORGANIC        2974920155
     SKIN            591247106
     WATER          1024582599
@@ -758,7 +758,7 @@ enum BSBodyPartType ushort
     SBP_MOD_SHOULDER
     SBP_MOD_ARM_LEFT
     SBP_MOD_ARM_RIGHT
-    SBP_MOD_MISC2"
+    SBP_MOD_MISC2
     SBP_FX01
     BP_SECTIONCAP_HEAD 101
     BP_SECTIONCAP_HEAD2
@@ -814,7 +814,7 @@ enum BSSegmentFlags uint //TODO reason?
 //TODO to nif_tes(3|4|5)_ffd
 // BSLightingShaderProperty
 //REPLACE {BSLightingShaderPropertyShaderType}
-enum name="BS_LS_ShaderType" uint
+enum BS_LS_ShaderType uint
     Default
     EnvironmentMap // "EnvMap Mask(TS6), EnvMap Scale"
     GlowShader // "Glow(TS3)"
@@ -834,7 +834,7 @@ enum name="BS_LS_ShaderType" uint
     WorldMap2
     SparkleSnow // "SparkleParams"
     WorldMap3
-    Eye Envmap // "EnvMap Mask(TS6), Eye EnvMap Scale"
+    Eye_Envmap // "EnvMap Mask(TS6), Eye EnvMap Scale"
     Unknown_17
     WorldMap4
     WorldLODMultitexture
@@ -857,7 +857,7 @@ enum EffectShaderControlledColor uint
 
 // BSLightingShaderProperty
 enum LightingShaderControlledVariable uint
-    Refraction Strength
+    Refraction_Strength
     EnvironmentMapScale 8
     Glossiness
     SpecularStrength
@@ -880,7 +880,7 @@ enum ExtraVectorsFlags byte
 enum hkConstraintType uint
     BallAndSocket
     Hinge
-    Limited Hinge
+    Limited_Hinge
     Prismatic 6
     Ragdoll
     StiffSpring
@@ -1203,11 +1203,14 @@ enum PSLoopBehavior uint
 
 // These are incomplete. They shall be complete at their respective ffd.
 // see what falls out: grep -r... sort -u
+// 've seen what falls out. These are non-issue after the split because each
+// version depending on that parsed value "knows" exactly what to read
+// afterwards.
 const NIF_HEADER_STRING_1 "NetImmerse File Format" (Version <= 0x0a000100)
 const NIF_HEADER_STRING_2 "Gamebryo File Format" (Version >= 0x0a010000)
 
 // I could do this:
-const VER_FOO (Version == 34)
+const VER_FOO 1 (Version == 34)
 // and re-create the same mess with (VER_FOO); I'm not doing this - the idea
 // is to decouple the FFD from this program, and let different communities
 // manage their favorite FFDs
@@ -1216,7 +1219,7 @@ const VER_FOO (Version == 34)
 
 // "A variable length string that ends with a newline character (0x0A)."
 struct HeaderString
-    char Chars[-10] //TODO implement me: read until char[i] == 10
+    char Chars[-10]
 
 struct SizedString
     char Value[uint]
@@ -3855,7 +3858,7 @@ struct BSShaderPropertyHeader // compound
     TextureCoord UVScale
 
 struct BSLightingShaderProperty //niobject
-    BSLightingShaderPropertyShaderType SType (UVersion >= 12)
+    BS_LS_ShaderType SType (UVersion >= 12)
     // 1 -> BSShaderPropertyHeader
     NiProperty
     SkyrimShaderPropertyFlags1 ShaderFlags1 (UVersion == 12) //TODO verify ==12
