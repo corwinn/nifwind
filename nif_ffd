@@ -1373,15 +1373,6 @@ struct TBC // "Tension, bias, continuity"
  interpolation, type 2 has forward and backward tangents, and type 3 has
  tension, bias and continuity arguments. Note that color4 and byte always seem
  to be of type 1." */
-//TODO implement struct parameters: the parser should be able to transform it:
-// Key<float,Interpolation> becomes:
-// struct Key1
-//     float Time
-//     float Value
-//     float Forward  (Interpolation == 2)
-//     float Backward (Interpolation == 2)
-//     TBC   TBC      (Interpolation == 3),
-// but is it worth it?
 // Key struct: NiKeyframeData
 struct Key<T,A>
     float Time
