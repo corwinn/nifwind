@@ -2006,7 +2006,7 @@ struct bhkMeshShape //niobject
     float Unknown1[9]
     float Unknown2[int][3]
     int   Unknown3[3]
-    Ref   StripsData[uint] (Version >= 0x0a000100) // NiTriStripsData
+    Ref   StripsData[uint] (Version <= 0x0a000100) // NiTriStripsData
 
 // "A shape constructed from strips data"
 struct bhkPackedNiTriStripsShape //niobject
