@@ -3445,7 +3445,7 @@ struct NiTexturingProperty //niobject
                        || ((Version >= 0x14020007) && (TCount >= 11)))
     NiTPTexture Decal3 (((Version >= 0x14010003) && (TCount >= 10))
                        || ((Version >= 0x14020007) && (TCount >= 12)))
-    ShaderTexDesc ShaderTextures[uint] (Version = 0x0a000100)
+    ShaderTexDesc ShaderTextures[uint] (Version == 0x0a000100)
 
 struct NiTransformData //niobject
     NiKeyframeData
