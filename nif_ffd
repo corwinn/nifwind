@@ -2775,7 +2775,7 @@ struct NiLookAtInterpolator //niobject
 
 struct NiMaterialProperty //niobject
     NiProperty
-    Flags  Flags (Version >= 0x03000000) && (Version <= 0x0a000102)
+    Flags  Flags ((Version >= 0x03000000) && (Version <= 0x0a000102))
     Color3 Ambient (!((Version == 0x14020007) && (UVersion >= 11)
                    && (UVersion2 > 21)))
     Color3 Diffuse (!((Version == 0x14020007) && (UVersion >= 11)
