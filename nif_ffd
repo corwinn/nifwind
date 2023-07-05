@@ -2032,6 +2032,11 @@ struct bhkNiTriStripsShape //niobject
     Ref     StripsData[uint] // NiTriStripsData
     HavokColFilter DataLayers[uint]
 
+// A generic extra data object.
+struct NiExtraData //niobject
+    String Name (Version >= 0x0a000100)
+    Ref NextExtraData (Version <= 0x04020200) //NiExtraData
+
 // struct NiInterpolator inherit="NiObject" //niobject
 // struct NiKeyBasedInterpolator inherit="NiObject" //niobject
 
