@@ -1221,6 +1221,7 @@ const VER_FOO 1 (Version == 34)
 struct HeaderString
     char Chars[-10]
 
+[Text]
 struct SizedString
     char Value[uint]
 
