@@ -1356,11 +1356,8 @@ struct ControllerLink
     int<>String[] Variable2 ((Version >= 0x0a020000) && (Version <= 0x14000005))
 
 struct ExportInfo
-    ShortString Value[uint] (Version >= 0x0a000102) /* if this proves wrong
-    uint Unknown (Version >= 0x0a000102)
-    ShortString Author
-    ShortString Info1
-    ShortString Info2*/
+    ShortString Value[uint] (Version <= 0x0a000102)
+    ShortString Value[3] (Version > 0x0a000102)
 
 struct StringPalette
     SizedString Palette // 0-terminated strings list
