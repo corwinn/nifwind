@@ -4510,9 +4510,8 @@ struct BSTreeNode //niobject
 
 struct Block
     uint Zero (Version <= 0x0A01006A)
-    //TODO implement variadic fields: hash[hash] a.k.a. dynamic value list:
-    //     the value list is not at the FFD but at the file data; matching
-    //     by struct name only
+    // use the fields of a struct named BlockName[BlockHash];
+    // not the best way to express that, but it should get things started
     ... struct.BlockName.BlockHash // for key at BlockHash get BlockName[key]
 
 // ((Version >= 0x0303000D) && (Version < 0x05000001))
