@@ -1227,7 +1227,7 @@ struct SizedString
 
 struct String
     SizedString        Value (Version <= 0x14000005)
-    int<>SizedString[] Value (Version >= 0x14010003) // Header.Strings Index
+    int->SizedString[] Value (Version >= 0x14010003) // Header.Strings Index
 
 struct ByteArray
     byte Data[uint]
@@ -1251,7 +1251,7 @@ struct ByteColor4
 
 struct FilePath
     SizedString        Value (Version <= 0x14000005)
-    int<>SizedString[] Value (Version >= 0x14010003) // Header.Strings index
+    int->SizedString[] Value (Version >= 0x14010003) // Header.Strings index
 
 struct Footer
     // "If there is a camera, for 1st person view, then this NIF object is
@@ -1346,15 +1346,15 @@ struct ControllerLink
     String NodeName ((Version == 0x0a01006a) || (Version >= 0x14010003))
     // index at the above StringPalette; StringPalette had a SizedString
     // containing a set of zero-terminated strings
-    int<>String[] NodeName ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    int->String[] NodeName ((Version >= 0x0a020000) && (Version <= 0x14000005))
     String        PropType ((Version == 0x0a01006a) || (Version >= 0x14010003))
-    int<>String[] PropType ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    int->String[] PropType ((Version >= 0x0a020000) && (Version <= 0x14000005))
     String        CtllrType ((Version == 0x0a01006a) || (Version >= 0x14010003))
-    int<>String[] CtllrType ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    int->String[] CtllrType ((Version >= 0x0a020000) && (Version <= 0x14000005))
     String        Variable1 ((Version == 0x0a01006a) || (Version >= 0x14010003))
-    int<>String[] Variable1 ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    int->String[] Variable1 ((Version >= 0x0a020000) && (Version <= 0x14000005))
     String        Variable2 ((Version == 0x0a01006a) || (Version >= 0x14010003))
-    int<>String[] Variable2 ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    int->String[] Variable2 ((Version >= 0x0a020000) && (Version <= 0x14000005))
 
 struct ExportInfo
     ShortString Value[uint] (Version <= 0x0a000102)
