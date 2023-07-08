@@ -3425,7 +3425,7 @@ struct NiTPTexture // compound
 struct NiTexturingProperty //niobject
     NiProperty
     Flags       Flags ((Version <= 0x0a000102) || (Version >= 0x14010003))
-    ApplyMode   AMode (Version <= 0x14000005)
+    TextureApplyMode AMode (Version <= 0x14000005)
     uint        TCount
     NiTPTexture Diffuse
     NiTPTexture Dark
