@@ -1420,7 +1420,8 @@ struct TextureDesc
     // sharper.&quot;"
     short PS2_K     (Version <= 0x0a040001)
     ushort Unknown2 (Version <= 0x0401000C)
-    TDTextureTransform ((bool) && (Version >= 0x0a010000))
+    bool HasTT (Version >= 0x0a010000)
+    TDTextureTransform (HasTT)
 
 struct ShaderTexDesc
     bool        IsUsed
