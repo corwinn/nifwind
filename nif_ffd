@@ -2146,8 +2146,13 @@ struct NiAVObject //niobject
     Ref     Properties[uint] ((Version < 0x14020007) || (UVersion <= 11))
     uint    Unknown1[4]      (Version <= 0x02030000)
     byte    Unknown2         (Version <= 0x02030000)
-    BoundingBox BB ((bool)
-                   && (Version >= 0x03000000) && (Version <= 0x04020200))
+    // Be very careful with (bool); in this case it shouldn't be read at all;
+    // and I haven't done partial evaluation yet - e.g. moving the (bool) as
+    // last "&&" won't help, yet.
+    //TODO partial evaluation - this is a rare case where optimization is
+    //     required ASAP
+    bool HasBB ((Version >= 0x03000000) && (Version <= 0x04020200))
+    BoundingBox BB (HasBB)
     Ref CObject (Version >= 0x0a000100) // NiCollisionObject
 
 // "A dynamic effect such as a light or environment map"
