@@ -1402,7 +1402,7 @@ struct TDTextureTransform
     uint         TType
     TextureCoord Center
 
-struct TextureDesc  //REPLACE {TexDesc}
+struct TextureDesc
     [NifRef(NiSourceTexture)] //PERHAPS
     Ref Source // NiSourceTexture
     TextureClampMode ClampMode  (Version <= 0x14000005)
@@ -3419,7 +3419,7 @@ struct NiMultiTextureProperty //niobject
     MultiTextureElement TextureElements
 
 struct NiTPTexture // compound
-    TexDesc Texture (bool)
+    TextureDesc Texture (bool)
 
 struct NiTexturingProperty //niobject
     NiProperty
@@ -3432,13 +3432,13 @@ struct NiTexturingProperty //niobject
     NiTPTexture Gloss
     NiTPTexture Glow
     bool        HasBump
-    TexDesc     Bump              (HasBump)
+    TextureDesc Bump              (HasBump)
     float       BumpMapLumaScale  (HasBump)
     float       BumpMapLumaOffset (HasBump)
     Matrix22    BumpMapLumaMatrix (HasBump)
     NiTPTexture Normal     (Version >= 0x14020007)
     bool        HasUknown1 (Version >= 0x14020007)
-    TexDesc     Uknown1    (HasUknown1)
+    TextureDesc Uknown1    (HasUknown1)
     float       Uknown2    (HasUknown1)
     NiTPTexture Decal0
     NiTPTexture Decal1 (((Version >= 0x14010003) && (TCount >= 8))
