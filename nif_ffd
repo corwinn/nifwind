@@ -3419,8 +3419,7 @@ struct NiMultiTextureProperty //niobject
     MultiTextureElement TextureElements
 
 struct NiTPTexture // compound
-    bool HasTexture
-    TexDesc Texture
+    TexDesc Texture (bool)
 
 struct NiTexturingProperty //niobject
     NiProperty
