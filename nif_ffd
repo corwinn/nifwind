@@ -2384,7 +2384,7 @@ struct NiTriBasedGeom //niobject
 
 [mesh3d]
 struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
-    int Unknown1 (Verison >= 0x0a020000)
+    int Unknown1 (Version >= 0x0a020000)
     // cond="!NiPSysData" - I had to consult an undamaged "nif.xml":
     // the damage has been done with 589c2b50c1ac3ec3b131b5957805aadca265e919
     // checked out a0972b3d50be5ae1ef0dc1c21d597712565abb80
