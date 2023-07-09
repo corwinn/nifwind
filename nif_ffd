@@ -3319,8 +3319,8 @@ struct NiSourceTexture //niobject
     MipMaps      UseMipmaps
     TextureAlphaFormat  AlphaFormat
     byte         IsStatic
-    bool         DirectRender      (Verson >= 0x0a01006a)
-    bool         PersistRenderData (Verson >= 0x14020007)
+    bool         DirectRender      (Version >= 0x0a01006a)
+    bool         PersistRenderData (Version >= 0x14020007)
 
 struct NiSpecularProperty //niobject
     NiProperty
