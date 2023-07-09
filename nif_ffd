@@ -3317,7 +3317,7 @@ struct NiSourceTexture //niobject
     TexSource
     PixelLayout  PLayout
     MipMaps      UseMipmaps
-    AlphaFormat  AlphaFormat
+    TextureAlphaFormat  AlphaFormat
     byte         IsStatic
     bool         DirectRender      (Verson >= 0x0a01006a)
     bool         PersistRenderData (Verson >= 0x14020007)
