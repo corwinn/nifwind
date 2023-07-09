@@ -2787,8 +2787,8 @@ struct NiMaterialProperty //niobject
     Color3 Emissive
     float  Glossiness
     float  Alpha
-    float  EmitMulti (!((Version == 0x14020007) && (UVersion >= 11)
-                     && (UVersion2 > 21)))
+    float  EmitMulti ((Version == 0x14020007) && (UVersion >= 11)
+                     && (UVersion2 > 21))
 
 struct NiMorphData //niobject
     uint        MNum
