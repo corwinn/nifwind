@@ -3442,13 +3442,13 @@ struct NiTexturingProperty //niobject
     TextureDesc Uknown1    (HasUknown1)
     float       Uknown2    (HasUknown1)
     NiTPTexture Decal0
-    NiTPTexture Decal1 (((Version >= 0x14010003) && (TCount >= 8))
+    NiTPTexture Decal1 (((Version <= 0x14010003) && (TCount >= 8))
                        || ((Version >= 0x14020007) && (TCount >= 10)))
-    NiTPTexture Decal2 (((Version >= 0x14010003) && (TCount >= 9))
+    NiTPTexture Decal2 (((Version <= 0x14010003) && (TCount >= 9))
                        || ((Version >= 0x14020007) && (TCount >= 11)))
-    NiTPTexture Decal3 (((Version >= 0x14010003) && (TCount >= 10))
+    NiTPTexture Decal3 (((Version <= 0x14010003) && (TCount >= 10))
                        || ((Version >= 0x14020007) && (TCount >= 12)))
-    ShaderTexDesc ShaderTextures[uint] (Version == 0x0a000100)
+    ShaderTexDesc ShaderTextures[uint] (Version >= 0x0a000100)
 
 struct NiTransformData //niobject
     NiKeyframeData
