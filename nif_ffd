@@ -453,7 +453,6 @@ enum MoppDataBuildType byte
     NO_CHUNK
     NOT_SET
 
-//REPLACE {MipMapFormat}
 enum MipMaps uint // Omitting "Texture" prefix, since the name implies it.
     NO //TODO clarify: does this specify input or render texture state
     YES
@@ -3317,7 +3316,7 @@ struct NiSourceTexture //niobject
     NiTexture
     TexSource
     PixelLayout  PLayout
-    MipMapFormat UseMipmaps
+    MipMaps      UseMipmaps
     AlphaFormat  AlphaFormat
     byte         IsStatic
     bool         DirectRender      (Verson >= 0x0a01006a)
