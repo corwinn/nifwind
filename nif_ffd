@@ -3461,7 +3461,7 @@ struct NiTriShapeData //niobject
     bool HasTriangles (Version >= 0x0a010000)
     Triangle Triangles[TNum] ((Version <= 0x0a000102)
         || ((HasTriangles) && (Version >= 0x0a000103)))
-    MatchGroup MGroups[uint] (Version >= 0x03010000)
+    MatchGroup MGroups[ushort] (Version >= 0x03010000)
 
 struct NiTriStrips //niobject
     NiTriBasedGeom
