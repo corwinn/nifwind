@@ -1499,7 +1499,8 @@ struct Morph<A> // "Geometry morphing data component"
     AnimInterpolation        Interpolation (Version <= 0x0a010000)
     Key<float,Interpolation> Keys[KNum]    (Version <= 0x0a010000)
     uint Unknown1 ((Version >= 0x0a01006a) && (Version <= 0x0a020000))
-    uint Unknown2 ((Version >= 0x14000004) && (Version <= 0x14000005))
+    uint Unknown2 ((Version >= 0x14000004) && (Version <= 0x14000005)
+                    && (UVersion == 0))
     Vector3 Vectors[A]
 
 struct Particle
