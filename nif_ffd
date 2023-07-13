@@ -106,7 +106,7 @@ enum TextureType uint //REPLACE {TexType}
     DECAL_2 10
     DECAL_3 11
 
-enum AnimInterpolation uint //REPLACES {KeyType}
+enum AnimInterpolation uint
     LINEAR       1
     QUADRATIC    2
     TBC          3 // "Tension Bias Continuity"
@@ -2757,7 +2757,7 @@ struct BSKeyframeController //niobject
 
 struct NiKeyframeData //niobject
     uint              RKNum
-    KeyType           RType           (RKNum)
+    AnimInterpolation RType           (RKNum)
     QuatKey<RType>    QKeys[RKNum]    (RType != 4)
     float             Unknown1        ((RType == 4) && (Version <= 0x0a010000))
     KeyGroup<float>   XYZRotations[3] (RType == 4)
