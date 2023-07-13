@@ -2310,7 +2310,7 @@ struct NiTextureTransformController //niobject
     byte             Unknown
     TextureType      TextureSlot
     TextureTransform Operation
-    Ref              Data (Version >= 0x0a010000) // NiFloatData
+    Ref              Data (Version <= 0x0a010000) // NiFloatData
 
 struct NiLightDimmerController //niobject
     NiFloatInterpController
