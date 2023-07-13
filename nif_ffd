@@ -2417,7 +2417,7 @@ struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
     ushort  UVSetNum (Version <= 0x04020200)
     bool    HasUV    (Version <= 0x04000002)
     [mesh3d(uv)]
-    TextureCoord UVSets[VNum]
+    TextureCoord UVSets[VNum] (UVSetNum > 0)
     ConsistencyType CFlags (Version >= 0x0a000100)
     Ref Data (Version >= 0x14000004) // AbstractAdditionalGeometryData
 
@@ -2492,14 +2492,15 @@ struct NiParticlesData //niobject
     bool HasRAxes (Version >= 0x14000004)
     Vector3 RAxes[VNum] ((HasRAngles)
         && !((Version >= 0x14020007) && (UVersion >= 11)))
-    bool HasUVQ (Version >= 0x14000004)
+    bool HasUVQ ((Version >= 0x14020007) && (UVersion == 11))
     Vector4 UVQs[byte] ((HasUVQ)
-        && !((Version >= 0x14020007) && (UVersion == 11)))
-    byte Unknown3 ((Version >= 0x14020007) && (UVersion >= 11))
+        && ((Version >= 0x14020007) && (UVersion == 11)))
+    byte Unknown3 ((Version == 0x14020007) && (UVersion >= 11))
 
 struct NiRotatingParticlesData //niobject
     NiParticlesData
-    Quaternion Rotations2[VNum] ((bool) && (Version <= 0x04020200))
+    bool HasR2 (Version <= 0x04020200)
+    Quaternion Rotations2[VNum] (HasR2)
 
 struct NiAutoNormalParticlesData //niobject
     NiParticlesData
