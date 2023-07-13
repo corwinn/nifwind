@@ -2452,7 +2452,6 @@ struct BSWindModifier //niobject
     float Strength
 
 struct hkPackedNiTriStripsData //niobject
-    bhkShapeCollection
     hkTriangle Triangles[uint]
     uint       VNum
     byte       Unknown (Version >= 0x14020007)
