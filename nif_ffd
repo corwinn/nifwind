@@ -1593,7 +1593,8 @@ struct LimitedHingeDescriptor
     float MinAngle
     float MaxAngle
     float MaxFriction
-    MotorDescriptor Md ((bool) && (Version >= 0x14020007) && (UVersion2 > 16))
+    bool MdIsOn ((Version >= 0x14020007) && (UVersion2 > 16))
+    MotorDescriptor Md ((Version >= 0x14020007) && (UVersion2 > 16))
 
 // "This constraint allows rotation about a specified axis."
 struct HingeDescriptor
