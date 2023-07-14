@@ -2325,7 +2325,7 @@ struct NiVisController //niobject
 struct NiPoint3InterpController //niobject
     NiSingleInterpController
     TargetColor Color (Version >= 0x0a010000)
-    Ref         Data  (Version >= 0x0a010000) // NiPosData
+    Ref         Data  (Version <= 0x0a010000) // NiPosData
 
 struct NiMaterialColorController //niobject
     NiPoint3InterpController
@@ -2484,12 +2484,12 @@ struct NiParticlesData //niobject
         && !((Version >= 0x14020007) && (UVersion >= 11)))
     byte Unknown1 ((Version >= 0x14020007) && (UVersion >= 12))
     Ref  Unknown2 ((Version >= 0x14020007) && (UVersion >= 12))
-    bool HasAngles (Version >= 0x14000004)
+    bool HasRAngles (Version >= 0x14000004)
     float RAngles[VNum] ((HasRAngles)
         && !((Version >= 0x14020007) && (UVersion >= 11)))
     // I sense a pattern here; do you?
     bool HasRAxes (Version >= 0x14000004)
-    Vector3 RAxes[VNum] ((HasRAngles)
+    Vector3 RAxes[VNum] ((HasRAxes)
         && !((Version >= 0x14020007) && (UVersion >= 11)))
     bool HasUVQ ((Version >= 0x14020007) && (UVersion == 11))
     Vector4 UVQs[byte] ((HasUVQ)
