@@ -1318,6 +1318,10 @@ struct AVObject
     SizedString Name
     Ptr         AVObject // NiAVObject
 
+struct StringPaletteEntry
+    String Name ((Version == 0x0a01006a) || (Version >= 0x14010003))
+    uint   Offset ((Version >= 0x0a020000) && (Version <= 0x14000005))
+
 /* "In a .kf file, this links to a controllable object, via its name (or for
  version 10.2.0.0 and up, a link and offset to a NiStringPalette that
  contains the name), and a sequence of interpolators that apply to this
@@ -1333,27 +1337,12 @@ struct ControllerLink
     // Idle animations tend to have low values for this, and NIF objects that
     // have high values tend to correspond with the important parts of the
     // animation
-    byte   Priority (Version >= 0x0a01006a && UVersion2 >= 10)
+    byte   Priority ((Version >= 0x0a01006a) && (UVersion >= 10))
     // NiStringPalette; things like this one demand split by version; this is
     // just the tip of the iceberg - there are truly scary things below (like
     // conditions at HavokColFilter): read on
     Ref    StringPalette ((Version >= 0x0a020000) && (Version <= 0x14000005))
-    //
-    // -/__ Such walls of text shall cease to exist with the split _/--
-    //
-    // The name of the animated node
-    String NodeName ((Version == 0x0a01006a) || (Version >= 0x14010003))
-    // index at the above StringPalette; StringPalette had a SizedString
-    // containing a set of zero-terminated strings
-    int->String[] NodeName ((Version >= 0x0a020000) && (Version <= 0x14000005))
-    String        PropType ((Version == 0x0a01006a) || (Version >= 0x14010003))
-    int->String[] PropType ((Version >= 0x0a020000) && (Version <= 0x14000005))
-    String        CtllrType ((Version == 0x0a01006a) || (Version >= 0x14010003))
-    int->String[] CtllrType ((Version >= 0x0a020000) && (Version <= 0x14000005))
-    String        Variable1 ((Version == 0x0a01006a) || (Version >= 0x14010003))
-    int->String[] Variable1 ((Version >= 0x0a020000) && (Version <= 0x14000005))
-    String        Variable2 ((Version == 0x0a01006a) || (Version >= 0x14010003))
-    int->String[] Variable2 ((Version >= 0x0a020000) && (Version <= 0x14000005))
+    StringPaletteEntry SPEntries[5] // Node, Prop, Ctrlr, Var1, Var2
 
 struct ExportInfo
     ShortString Value[uint] (Version <= 0x0a000102)
@@ -2397,7 +2386,7 @@ struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
     bool   HasVertices
     [mesh3d(vertices)]
     Vector3 Vertices[VNum] (HasVertices)
-    byte   UVSetNum   (Version >= 0x0a000100)
+    byte   UVSetNum   (Version >= 0x0a000100) //TODO this is wrong
     // whats this? - this wasn't here before
     ExtraVectorsFlags X (Version >= 0x0a000100)
     uint   Unknown2 ((Version >= 0x14020007) && (UVersion == 12))
@@ -2405,9 +2394,9 @@ struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
     [mesh3d(normals)]
     Vector3 Normals[VNum] (HasNormals)
     [mesh3d(noidea_1)]
-    Vector3 Tangents[VNum] ((HasNormals) && (X) && (Version >= 0x0a010000))
+    Vector3 Tangents[VNum] ((HasNormals) && (X == 16) && (Version >= 0x0a010000))
     [mesh3d(noidea_2)]
-    Vector3 Bitangents[VNum] ((HasNormals) && (X) && (Version >= 0x0a010000))
+    Vector3 Bitangents[VNum] ((HasNormals) && (X == 16) && (Version >= 0x0a010000))
     Vector3 Center
     float   Radius
     short   Unknown3[13] ((Version == 0x14030009) && (UVersion == 131072))
