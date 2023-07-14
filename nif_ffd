@@ -2515,8 +2515,9 @@ struct NiPSysData //niobject
     NiRotatingParticlesData
     ParticleDesc PD[VNum] (!((Version >= 0x14020007) && (UVersion >= 11)))
     //TODO handle all these duplicate names
-    float  Unknown1[VNum] ((bool) && (Version >= 0x14000004)
-                          && !((Version >= 0x14020007) && (UVersion >= 11)))
+    bool   HasUnk1 ((Version >= 0x14000004)
+                    && !((Version >= 0x14020007) && (UVersion >= 11)))
+    float  Unknown1[VNum] (HasUnk1)
     ushort Unknown2[2] (!((Version >= 0x14020007) && (UVersion >= 11)))
     bool   HasSOUV ((Version >= 0x14020007) && (UVersion >= 12))
     uint   NumSOUV (HasSOUV)
