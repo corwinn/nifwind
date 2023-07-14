@@ -2309,7 +2309,7 @@ struct NiBoolInterpController //niobject
 
 struct NiVisController //niobject
     NiBoolInterpController
-    Ref Data (Version >= 0x0a010000) // NiVisData
+    Ref Data (Version <= 0x0a010000) // NiVisData
 
 struct NiPoint3InterpController //niobject
     NiSingleInterpController
@@ -2406,7 +2406,8 @@ struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
     ushort  UVSetNum (Version <= 0x04020200)
     bool    HasUV    (Version <= 0x04000002)
     [mesh3d(uv)]
-    TextureCoord UVSets[VNum] (UVSetNum > 0)
+    TextureCoord UVSets[UVSetNum][VNum] ((UVSetNum > 0) && (UVSetNum < 64))
+    TextureCoord UVSets[1][VNum] ((UVSetNum > 63))
     ConsistencyType CFlags (Version >= 0x0a000100)
     Ref Data (Version >= 0x14000004) // AbstractAdditionalGeometryData
 
