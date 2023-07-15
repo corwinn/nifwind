@@ -2294,7 +2294,7 @@ struct NiFlipController // "Texture flipping controller" //niobject
 
 struct NiAlphaController // "Time controller for transparency" //niobject
     NiFloatInterpController
-    Ref Data (Version >= 0x0a010000) // NiFloatData
+    Ref Data (Version <= 0x0a010000) // NiFloatData
 
 struct NiTextureTransformController //niobject
     NiFloatInterpController
@@ -2409,7 +2409,7 @@ struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
     bool    HasUV    (Version <= 0x04000002)
     [mesh3d(uv)]
     TextureCoord UVSets[UVSetNum][VNum] ((UVSetNum > 0) && (UVSetNum < 64))
-    TextureCoord UVSets[1][VNum] ((UVSetNum > 63))
+    TextureCoord UVSets[1][VNum] ((UVSetNum > 63) && (UVSetNum != 64))
     ConsistencyType CFlags (Version >= 0x0a000100)
     Ref Data (Version >= 0x14000004) // AbstractAdditionalGeometryData
 
@@ -2965,7 +2965,7 @@ struct ATextureRenderData //niobject
     byte BitsPerPixel (Version <= 0x0a020000)
     byte Unknown1[3]  (Version <= 0x0a020000)
     byte Unknown2[8]  (Version <= 0x0a020000)
-    uint Unknown3     (Version >= 0x0a010000)
+    uint Unknown3     ((Version >= 0x0a010000) && (Version <= 0x0a020000))
     byte BitsPerPixel (Version >= 0x14000004)
     int  Unknown4     (Version >= 0x14000004)
     uint Unknown5     (Version >= 0x14000004)
