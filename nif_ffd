@@ -3764,7 +3764,7 @@ struct BSShaderPPLightingProperty //niobject
     Ref TextureSet // BSShaderTextureSet
     float RefractionStrength   ((UVersion == 11) && (UVersion2 > 14))
     int   RefractionFirePeriod ((UVersion == 11) && (UVersion2 > 14))
-    float Unknown[2]           ((UVersion == 11) && (UVersion 2 > 24))
+    float Unknown[2]           ((UVersion == 11) && (UVersion2 > 24))
     Color4 EmissiveColor       (UVersion >= 12)
 
 // This is one very wrong naming convention.
