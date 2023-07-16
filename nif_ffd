@@ -1298,6 +1298,7 @@ struct MipMap // NiPixelData
 struct NodeGroup // NiNodes
     Ptr Nodes[uint]
 
+[Text]
 struct ShortString
     char Value[byte] // 0-terminated (its length includes the 0)
 
@@ -1345,8 +1346,8 @@ struct ControllerLink
     StringPaletteEntry SPEntries[5] // Node, Prop, Ctrlr, Var1, Var2
 
 struct ExportInfo
-    ShortString Value[uint] (Version <= 0x0a000102)
-    ShortString Value[3] (Version > 0x0a000102)
+    uint Unknown (Version <= 0x0a000102) // not the number of strings: 1 vs 3
+    ShortString Value[3] // Creator, Info1, Info2
 
 struct StringPalette
     SizedString Palette // 0-terminated strings list
