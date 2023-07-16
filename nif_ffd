@@ -2070,7 +2070,10 @@ struct NiBoolTimelineInterpolator //niobject
 
 struct NiBlendInterpolator //niobject
     ushort Unknown1
-    uint   Unknown2
+    uint   Unknown2 (Version != 0x0a01006a)
+    ushort Unknown2 (Version == 0x0a01006a)
+    byte   Unknown3[Unknown1][20] (Version == 0x0a01006a)
+    byte   Unknown4[18] (Version == 0x0a01006a)
 
 struct NiBSplineInterpolator //niobject
     float StartTime
@@ -2579,6 +2582,7 @@ struct NiBlendPoint3Interpolator //niobject
 
 struct NiBlendTransformInterpolator //niobject
     NiBlendInterpolator
+    byte Unknown[35] (Version == 0x0a01006a)
 
 struct NiBoolData //niobject
     KeyGroup<byte> Data
