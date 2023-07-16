@@ -2206,6 +2206,7 @@ struct NiTimeController //niobject
 
 struct NiInterpController //niobject
     NiTimeController
+    bool Unknwon ((Version == 0x0a01006a) && (UVersion2 == 5))
 
 struct NiMultiTargetTransformController //niobject
     NiInterpController
@@ -2214,7 +2215,7 @@ struct NiMultiTargetTransformController //niobject
 struct NiGeomMorpherController //niobject
     NiInterpController
     Flags ExtraFlags (Version >= 0x0a000102)
-    byte  Unknown1   (Version == 0x0a01006a)
+    // byte  Unknown1   (Version == 0x0a01006a)
     Ref   Data // NiMorphData
     byte  AlwaysUpdate
     uint  INum       (Version >= 0x0a01006a)
@@ -2232,7 +2233,7 @@ struct NiMorpherController //niobject
 
 struct NiSingleInterpController //niobject
     NiInterpController
-    Ref Interpolator (Version >= 0x0a020000) // NiInterpolator
+    Ref Interpolator (Version >= 0x0a010000) // NiInterpolator
 
 struct NiKeyframeController //niobject
     NiSingleInterpController
@@ -2248,7 +2249,7 @@ struct NiPSysModifierCtlr //niobject
 struct NiPSysEmitterCtlr //niobject
     NiPSysModifierCtlr
     Ref Data (Version <= 0x0a010000) // NiPSysEmitterCtlrData
-    Ref VisibilityInterpolator (Version >= 0x0a020000) // NiInterpolator
+    Ref VisibilityInterpolator (Version >= 0x0a010000) // NiInterpolator
 
 // I stopped updating the nif_xml.dia at this point - its a waste of time.
 
