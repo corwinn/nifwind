@@ -3288,7 +3288,7 @@ struct NiSkinData //niobject
 
 struct NiSkinInstance //niobject
     Ref Data // NiSkinData
-    Ref SkinPartition (Version >= 0x0a020000) // NiSkinPartition
+    Ref SkinPartition (Version >= 0x0a01006a) // NiSkinPartition
     Ptr SkeletonRoot // NiNode
     Ptr Bones[uint] // NiNode
 
