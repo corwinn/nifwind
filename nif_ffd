@@ -2123,7 +2123,8 @@ struct bhkCollisionObject //niobject
 
 struct bhkBlendCollisionObject //niobject
     bhkNiCollisionObject
-    float Unknown[2]
+    float Unknown1[2]
+    byte  Unknown2[8] ((Version == 0x0a020000) && (UVersion == 10) && (UVersion2 == 6))
 
 struct bhkPCollisionObject //niobject
     bhkNiCollisionObject
