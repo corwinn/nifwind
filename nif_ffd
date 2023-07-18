@@ -3153,7 +3153,7 @@ struct BSPSysInheritVelocityModifier //niobject
 struct BSPSysHavokUpdateModifier //niobject
     NiPSysModifier
     Ref Nodes[uint] // NiNode
-    ref Modifier // NiPSysModifier
+    Ref Modifier // NiPSysModifier
 
 struct BSPSysRecycleBoundModifier //niobject
     NiPSysModifier
