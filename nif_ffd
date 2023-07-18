@@ -2512,13 +2512,62 @@ struct ParticleDesc // compound
 
 // The reason for the damage on NiGeometryData
 struct NiPSysData //niobject
-    NiRotatingParticlesData
+    // NiGeometryData - same; it just doesn't have Vertices
+    int Unknown1 (Version >= 0x0a020000)
+    ushort VNum
+    byte   KeepFlags (Version >= 0x0a010000)
+    byte   CompressFlags (Version >= 0x0a010000)
+    bool   HasVertices
+    [mesh3d(vertices)]
+    Vector3 Vertices[VNum] ((HasVertices) && ((Version < 0x14020007) || (UserVersion < 11)))
+    byte   UVSetNum   (Version >= 0x0a000100) //TODO this is wrong
+    ExtraVectorsFlags X (Version >= 0x0a000100)
+    bool   HasNormals
+    [mesh3d(normals)]
+    Vector3 Normals[VNum] ((HasNormals) && ((Version < 0x14020007) || (UserVersion < 11)))
+    Vector3 Center
+    float   Radius
+    short   Unknown3[13] ((Version == 0x14030009) && (UVersion == 131072))
+    bool    HasVColors
+    [mesh3d(colors)]
+    Color4  VColors[VNum] ((HasVColors) && ((Version < 0x14020007) || (UserVersion < 11)))
+    [mesh3d(uv)]
+    TextureCoord UVSets[1][VNum] (UVSetNum & 1) //TODO check if any psys has
+    TextureCoord UVSets[2][VNum] (UVSetNum & 2) //these
+    TextureCoord UVSets[4][VNum] (UVSetNum & 4)
+    ConsistencyType CFlags ((Version >= 0x0a000100) && (UVersion < 12))
+    Ref Data ((Version >= 0x14000004) &&  (UVersion < 12)) // AbstractAdditionalGeometryData
+    // NiParticlesData
+    bool HasRadii (Version >= 0x0a010000)
+    float Radii[VNum] ((HasRadii)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    ushort ANum
+    bool   HasSizes
+    float  Sizes[VNum] ((HasSizes)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    bool HasRotations (Version >= 0x0a000100)
+    Quaternion Rotations[VNum] ((HasRotations)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    byte Unknown1 ((Version >= 0x14020007) && (UVersion >= 12))
+    Ref  Unknown2 ((Version >= 0x14020007) && (UVersion >= 12))
+    bool HasRAngles (Version >= 0x14000004)
+    float RAngles[VNum] ((HasRAngles)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    // I sense a pattern here; do you?
+    bool HasRAxes (Version >= 0x14000004)
+    Vector3 RAxes[VNum] ((HasRAxes)
+        && !((Version >= 0x14020007) && (UVersion >= 11)))
+    bool HasUVQ ((Version >= 0x14020007) && (UVersion == 11))
+    byte NumUVQ ((Version >= 0x14020007) && (UVersion == 11))
+    Vector4 UVQs[NumUVQ] (HasUVQ)
+    byte Unknown3 ((Version == 0x14020007) && (UVersion >= 11))
+    //
     ParticleDesc PD[VNum] (!((Version >= 0x14020007) && (UVersion >= 11)))
     //TODO handle all these duplicate names
     bool   HasUnk1 ((Version >= 0x14000004)
                     && !((Version >= 0x14020007) && (UVersion >= 11)))
     float  Unknown1[VNum] (HasUnk1)
-    ushort Unknown2[2] (!((Version >= 0x14020007) && (UVersion >= 11)))
+    ushort Unknown2[2] (!((Version >= 0x14020007) && (UVersion == 11)))
     bool   HasSOUV ((Version >= 0x14020007) && (UVersion >= 12))
     uint   NumSOUV (HasSOUV)
     float  ARatio  ((Version >= 0x14020007) && (UVersion >= 12))
@@ -3075,7 +3124,7 @@ struct NiPSysGravityModifier //niobject
     ForceType FType
     float     Turbulence
     float     TurbulenceScale
-    byte      Unknown ((Verision >= 0x14020007) && (UVersion >= 11))
+    byte      Unknown ((Version >= 0x14020007) && (UVersion >= 11))
 
 struct NiPSysGrowFadeModifier //niobject
     NiPSysModifier
