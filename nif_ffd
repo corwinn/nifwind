@@ -483,7 +483,7 @@ enum TextureClampMode uint //REPLACE {TexClampMode}
     WRAP_S_CLAMP_T
     WRAP_S_WRAP_T
 
-enum TextureFilter uint //REPLACE {TexFilterMode}
+enum TextureFilter uint
      NEAREST  // GL_NEAREST
      BILERP   // GL_LINEAR
      TRILERP
@@ -1638,7 +1638,7 @@ struct MultiTextureElement
     bool HasImage
     Ref               Image  (HasImage) // NiImage
     TextureClampMode  Clamp  (HasImage)
-    TextureFilterMode Filter (HasImage)
+    TextureFilter     Filter (HasImage)
     uint              UVSet  (HasImage)
     short PS2_L ((HasImage)
                 && (Version >= 0x03030000) && (Version <= 0x0a020000))
@@ -3380,7 +3380,7 @@ struct NiTextureEffect //niobject
     NiDynamicEffect
     Matrix33          Projection
     Vector3           PTransform
-    TextureFilterMode TFilter
+    TextureFilter     TFilter
     TextureClampMode  TClamping
     short        Unknown1   (Version >= 0x14060000)
     EffectType   TType
