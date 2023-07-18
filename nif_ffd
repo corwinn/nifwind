@@ -1609,7 +1609,7 @@ struct HingeDescriptor
     Vector4 Value[8] (Version >= 0x14020007)
 
 struct BallAndSocketDescriptor
-    byte    Unknown1
+    byte    Unknown1[4]
     Vector3 Unknown2[2]
     int     Unknown3
 
