@@ -2954,7 +2954,7 @@ struct NiPathController //niobject
     NiTimeController
     ushort Unknown1 (Version >= 0x0a010000)
     uint   Unknown2
-    float  Unknown3[float]
+    float  Unknown3[2]
     ushort Unknown4
     Ref    PosData   // NiPosData
     Ref    FloatData // NiFloatData
