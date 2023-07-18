@@ -652,7 +652,7 @@ enum EffectType uint
     ENVIRONMENT_MAP
     FOG_MAP
 
-enum TextureCoordGenType uint //REPLACE {CoordGenType}
+enum TextureCoordGenType uint
     WORLD_PARALLEL // planar
     WORLD_PERSPECTIVE
     SPHERE_MAP
@@ -3384,7 +3384,7 @@ struct NiTextureEffect //niobject
     TextureClampMode  TClamping
     short        Unknown1   (Version >= 0x14060000)
     EffectType   TType
-    CoordGenType CGType
+    TextureCoordGenType CGType
     Ref          Image      (Version <= 0x03010000) // NiImage
     Ref          SrcTexture (Version >= 0x04000000) // NiSourceTexture
     byte         CPlane
