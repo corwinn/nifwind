@@ -2821,11 +2821,10 @@ struct NiLookAtController //niobject
     Ptr    LookAt
 
 struct NiLookAtInterpolator //niobject
-    NiInterpolator
     ushort Unknown1
     Ptr    LookAt
     String Target
-    Transform<Quaternion> Transform (Version >= 0x14050000)
+    Transform<Quaternion> Transform (Version <= 0x14050000)
     Ref    Unknown2[3] // NiPoint3Interpolator
 
 struct NiMaterialProperty //niobject
