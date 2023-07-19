@@ -2416,8 +2416,10 @@ struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
     bool    HasUV    (Version <= 0x04000002)
     [mesh3d(uv)]
     TextureCoord UVSets[1][VNum] (UVSetNum & 1) //TODO this is becoming annoying
-    TextureCoord UVSets[2][VNum] ((UVSetNum & 2) && (UVSetNum != 11)) // ??
-    TextureCoord UVSets[4][VNum] (UVSetNum & 4) //
+    TextureCoord UVSets[2][VNum] ((UVSetNum & 2)
+                            && (!((Version >= 0x14020007) && (UVersion >= 11))))
+    TextureCoord UVSets[4][VNum] ((UVSetNum & 4)
+                            && (!((Version >= 0x14020007) && (UVersion >= 11))))
     ConsistencyType CFlags (Version >= 0x0a000100)
     Ref Data (Version >= 0x14000004) // AbstractAdditionalGeometryData
 
