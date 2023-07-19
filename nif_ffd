@@ -2403,9 +2403,9 @@ struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
     [mesh3d(normals)]
     Vector3 Normals[VNum] (HasNormals)
     [mesh3d(noidea_1)]
-    Vector3 Tangents[VNum] ((HasNormals) && (X & 16) && (Version >= 0x0a010000))
+    Vector3 Tangents[VNum] ((HasNormals) && (X & 48) && (Version >= 0x0a010000))
     [mesh3d(noidea_2)]
-    Vector3 Bitangents[VNum] ((HasNormals) && (X & 16) && (Version >= 0x0a010000))
+    Vector3 Bitangents[VNum] ((HasNormals) && (X & 48) && (Version >= 0x0a010000))
     Vector3 Center
     float   Radius
     short   Unknown3[13] ((Version == 0x14030009) && (UVersion == 131072))
@@ -2416,7 +2416,7 @@ struct NiGeometryData // "Mesh data: vertices, vertex normals, etc" //niobject
     bool    HasUV    (Version <= 0x04000002)
     [mesh3d(uv)]
     TextureCoord UVSets[1][VNum] (UVSetNum & 1) //TODO this is becoming annoying
-    TextureCoord UVSets[2][VNum] (UVSetNum & 2) //
+    TextureCoord UVSets[2][VNum] ((UVSetNum & 2) && (UVSetNum != 11)) // ??
     TextureCoord UVSets[4][VNum] (UVSetNum & 4) //
     ConsistencyType CFlags (Version >= 0x0a000100)
     Ref Data (Version >= 0x14000004) // AbstractAdditionalGeometryData
