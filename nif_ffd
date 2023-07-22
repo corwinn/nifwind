@@ -4580,6 +4580,8 @@ format nif // this is a "Header" no more; this is the entire file
     HeaderString Signature
     // Catch: Version is parsed from Signature
     HeaderString Copyright[3] (Version <= 0x03010000)
+    //TODO This isn't available for some nif formats ("Bridge Commander" - "3.1"
+    //     as text at "Signature")
     uint         Version // Replace. Option: Stop On Version Mishmash
     Endianess   Endianess (Version >= 0x14000004)
     uint        UVersion  (Version >= 0x0a010000) //REPLACE {User Version}
