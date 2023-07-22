@@ -2238,7 +2238,7 @@ struct NiMorpherController //niobject
 
 struct NiSingleInterpController //niobject
     NiInterpController
-    Ref Interpolator (Version >= 0x0a010000) // NiInterpolator
+    Ref Interpolator (Version >= 0x0a020000) // NiInterpolator
 
 struct NiKeyframeController //niobject
     NiSingleInterpController
