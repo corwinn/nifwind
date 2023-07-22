@@ -2254,7 +2254,7 @@ struct NiPSysModifierCtlr //niobject
 struct NiPSysEmitterCtlr //niobject
     NiPSysModifierCtlr
     Ref Data (Version <= 0x0a010000) // NiPSysEmitterCtlrData
-    Ref VisibilityInterpolator (Version >= 0x0a010000) // NiInterpolator
+    Ref VisibilityInterpolator (Version >= 0x0a020000) // NiInterpolator
 
 // I stopped updating the nif_xml.dia at this point - its a waste of time.
 
