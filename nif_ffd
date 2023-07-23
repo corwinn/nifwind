@@ -2222,12 +2222,12 @@ struct NiGeomMorpherController //niobject
     Flags ExtraFlags (Version >= 0x0a000102)
     // byte  Unknown1   (Version == 0x0a01006a)
     Ref   Data // NiMorphData
-    byte  AlwaysUpdate
+    byte  AlwaysUpdate (Version >= 0x04000001) // () is from latest "nif.xml"
     uint  INum       (Version >= 0x0a01006a)
     Ref Interpolators[INum] ((Version >= 0x0a01006a) && (Version <= 0x14000005))
     MorphWeight IWeights[INum] (Version >= 0x14010003)
-    uint Unknown2[uint] ((Version >= 0x14000004) && (Version <= 0x14000005)
-                        && (UVersion >= 10))
+    uint Unknown2[uint] ((Version >= 0x0a020000) && (Version <= 0x14000005)
+                        && (UVersion >= 10) && (UVersion2 >= 10))
 
 struct NiMorphController //TODO alias //niobject
     NiInterpController
@@ -2238,7 +2238,7 @@ struct NiMorpherController //niobject
 
 struct NiSingleInterpController //niobject
     NiInterpController
-    Ref Interpolator (Version >= 0x0a020000) // NiInterpolator
+    Ref Interpolator (Version >= 0x0a010060) // NiInterpolator
 
 struct NiKeyframeController //niobject
     NiSingleInterpController
@@ -2254,7 +2254,7 @@ struct NiPSysModifierCtlr //niobject
 struct NiPSysEmitterCtlr //niobject
     NiPSysModifierCtlr
     Ref Data (Version <= 0x0a010000) // NiPSysEmitterCtlrData
-    Ref VisibilityInterpolator (Version >= 0x0a020000) // NiInterpolator
+    Ref VisibilityInterpolator (Version >= 0x0a010060) // NiInterpolator
 
 // I stopped updating the nif_xml.dia at this point - its a waste of time.
 
