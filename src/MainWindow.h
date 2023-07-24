@@ -32,60 +32,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-//c make
-//r LSAN_OPTIONS=suppressions="${PWD}/asan_supp" ./nifwind
+#ifndef _MAINWINDOW_H_
+#define _MAINWINDOW_H_
 
-#include <QApplication>
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions>
-#include <QTimer>
-#include <QStyle>
-#include <QDesktopWidget>
-#include <QScreen>
-#include <math.h>
-#include "nifwind.h"
+#include <QMainWindow>
 
-#include "MainWindow.h"
+namespace nifwind {
 
-class foo final : public QOpenGLWidget, protected QOpenGLFunctions
+class MainWindow final: public QMainWindow
 {
-    public: using QOpenGLWidget::QOpenGLWidget;
-    private: void initializeGL() override
-    {
-        initializeOpenGLFunctions ();
-    }
-    private: inline void resizeGL(int w, int h) override
-    {
-        glViewport (0, 0, static_cast<GLint>(w), static_cast<GLint>(h));
-    }
-    private: float _t {};
-    private: inline void paintGL() override
-    {
-        glClearColor (sinf (_t) * .5f + .5f, cosf (_t) * .5f + .5f,
-            sinf (6.28f - _t) * .5f + .5f, 1.0f);
-        _t += 0.01f;
-        if (_t > 6.28f) _t = float {};
-        glClear (GL_COLOR_BUFFER_BIT);
+    public: MainWindow();
+    public: ~MainWindow() override;
+};
 
-        void (foo::*post_redisplay)() = &foo::update;
-        QTimer::singleShot (1000/60, this, post_redisplay);
-    }
-};// QOpenGLWidget
-
-int main(int argc, char **argv)
-{
-    QApplication app (argc, argv);
-    nifwind::MainWindow mw {};
-    foo bar {};
-    mw.setCentralWidget (&bar);
-    mw.resize (800, 600);
-    mw.setWindowTitle (NIFWIND_PROJECT);
-    mw.setGeometry (
-        QStyle::alignedRect (
-            Qt::LeftToRight,
-            Qt::AlignCenter,
-            mw.size (),
-            app.screens ().first ()->geometry ()));
-    mw.show ();
-    return app.exec ();
 }
+#endif
