@@ -32,7 +32,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-//c clang++ -Wall -Wextra -Wshadow -std=c++14 -I"${QTDIR}/include" -I"${QTDIR}/include/QtCore"  -I"${QTDIR}/include/QtWidgets" -I"${QTDIR}/include/QtOpenGL" -I"${QTDIR}/include/QtGui" -I. main.cpp -o main -L"${QTDIR}/lib" -lQt5Core -lQt5Widgets -lQt5OpenGL -lQt5Gui -lGL
+//c make
+//r LSAN_OPTIONS=suppressions="${PWD}/asan_supp" ./nifwind
 
 #include <QApplication>
 #include <QOpenGLWidget>
