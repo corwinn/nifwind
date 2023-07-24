@@ -39,20 +39,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QAction>
 #include <QMenuBar>
 #include <QApplication>
+#include <QFileDialog>
 
 namespace nifwind {
 
 MainWindow::MainWindow()
-    : QMainWindow{}
+    : QMainWindow {}
 {
     auto miFile = menuBar ()->addMenu ("&File");
-    auto aQuit = miFile->addAction ("&Quit");
-    connect (aQuit, &QAction::triggered, this, &MainWindow::close);
+        miFile->addAction ("&Open", this, &MainWindow::HandleFileOpen);
+        miFile->addSeparator ();
+
+        auto aQuit = miFile->addAction ("&Quit");
+        connect (aQuit, &QAction::triggered, this, &MainWindow::close);
 
     auto miHelp = menuBar ()->addMenu ("&Help");
-    miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
+        miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
 }
 
 MainWindow::~MainWindow() { printf ("I am defined\n"); }
+
+void MainWindow::HandleFileOpen()
+{
+    QFileDialog dlg {this};
+    dlg.setFileMode (QFileDialog::ExistingFile);
+    dlg.setNameFilter ("Nif files (*.nif *.nifcache *.texcache)");
+    dlg.setViewMode (QFileDialog::Detail);
+    if (dlg.exec ()) printf ("Open it\n");
+    else printf ("Don't open it\n");
+}
 
 }

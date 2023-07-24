@@ -41,8 +41,12 @@ namespace nifwind {
 
 class MainWindow final: public QMainWindow
 {
+    Q_OBJECT
+
     public: MainWindow();
     public: ~MainWindow() override;
+
+    private slots: void HandleFileOpen();
 };
 
 }
