@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 {
     QApplication app (argc, argv);
     foo bar {};
-    bar.resize (320, 200);
+    bar.resize (800, 600);
     bar.setWindowTitle (NIFWIND_PROJECT);
     bar.setGeometry (
         QStyle::alignedRect (
