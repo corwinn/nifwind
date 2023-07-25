@@ -41,12 +41,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QStatusBar>
 #include <QApplication>
 #include <QFileDialog>
+#include <QTreeView>
+#include <QDockWidget>
+#include <QFileSystemModel>
+
+#include "TreeModel.h"
 
 namespace nifwind {
 
 MainWindow::MainWindow()
     : QMainWindow {}
 {
+    // main menu
     auto miFile = menuBar ()->addMenu ("&File");
         miFile->addAction ("&Open", this, &MainWindow::HandleFileOpen);
         miFile->addSeparator ();
@@ -57,6 +63,16 @@ MainWindow::MainWindow()
     auto miHelp = menuBar ()->addMenu ("&Help");
         miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
 
+    //
+    //auto tree = new TreeModel<int> (nullptr, this);
+    auto tree = new QFileSystemModel (this);
+    auto tv = new QTreeView;
+    tv->setModel (tree);
+    auto foo = new QDockWidget ("TreeView");
+    foo->setWidget (tv);
+    addDockWidget (Qt::RightDockWidgetArea, foo);
+
+    // status bar
     statusBar ()->showMessage ("Idle");
 }
 
