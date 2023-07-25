@@ -41,7 +41,8 @@ namespace nifwind {
 
 // Courtesy of "qtbase/src/widgets/dialogs/qfilesystemmodel.*".
 //TODO Why wouldn't I use a template for a Model?
-template <typename T> class TreeModel final : public QAbstractItemModel
+template <typename NodeAdapter> class TreeModel final
+    : public QAbstractItemModel
 {
 };
 
