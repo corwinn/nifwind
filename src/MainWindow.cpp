@@ -65,13 +65,16 @@ MainWindow::MainWindow()
 
     //
     //auto tree = new TreeModel<int> (nullptr, this);
-    auto tree = new QFileSystemModel (this);
-    auto tv = new QTreeView;
+    auto tree = new QFileSystemModel {this};
+    tree->setRootPath (QDir::currentPath ());
+    auto tv = new QTreeView {};
+    // I have to sub-class QTreeView just to set its initial size as a docked
+    // tree?! You have got to be nice mountain view kidding me. TODO read
+    // QDockWidget
     tv->setModel (tree);
-    auto foo = new QDockWidget ("TreeView");
+    auto foo = new QDockWidget {"TreeView"};
     foo->setWidget (tv);
-    addDockWidget (Qt::RightDockWidgetArea, foo);
-
+    addDockWidget (Qt::LeftDockWidgetArea, foo);
     // status bar
     statusBar ()->showMessage ("Idle");
 }
