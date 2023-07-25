@@ -38,6 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QAction>
 #include <QMenuBar>
+#include <QStatusBar>
 #include <QApplication>
 #include <QFileDialog>
 
@@ -55,6 +56,8 @@ MainWindow::MainWindow()
 
     auto miHelp = menuBar ()->addMenu ("&Help");
         miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
+
+    statusBar ()->showMessage ("Idle");
 }
 
 MainWindow::~MainWindow() { printf ("I am defined\n"); }
