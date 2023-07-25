@@ -44,6 +44,20 @@ namespace nifwind {
 template <typename NodeAdapter> class TreeModel final
     : public QAbstractItemModel
 {
+    public: explicit TreeModel(NodeAdapter * = nullptr, QObject * = nullptr);
+    public: virtual ~TreeModel() override;
+
+    // mandatory
+    private: QModelIndex index(int, int, const QModelIndex & = QModelIndex{})
+        const override;
+    private: QModelIndex parent(const QModelIndex &)
+        const override;
+    private: int rowCount(const QModelIndex & = QModelIndex{})
+        const override;
+    private: int columnCount(const QModelIndex & = QModelIndex{})
+        const override;
+    private: QVariant data(const QModelIndex &, int = Qt::DisplayRole)
+        const override;
 };
 
 }
