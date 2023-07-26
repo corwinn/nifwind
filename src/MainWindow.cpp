@@ -62,7 +62,7 @@ struct BigBadNode
     BigBadNode(BigBadNode * b = nullptr)
     {
         if (b)
-            Base = b, b->Nodes.push_back (this);
+            Base = b, b->Nodes.push_back (this), Index = Nodes.size ()-1;
     }
     ~BigBadNode() { for (auto f : Nodes) delete f; }
 };
