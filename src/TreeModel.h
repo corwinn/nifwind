@@ -41,6 +41,12 @@ namespace nifwind {
 
 // Courtesy of "qtbase/src/widgets/dialogs/qfilesystemmodel.*".
 //TODO Why wouldn't I use a template for a Model?
+//
+// "A valid index belongs to a model, and has non-negative row and column
+// numbers."
+// What does "hierarchy of tables" mean?! Hierarchy of their top-left corners?!
+// "If you do not make use of the hierarchy, then the model is a simple table of
+// rows and columns"
 template <typename NodeAdapter> class TreeModel final
     : public QAbstractItemModel
 {
@@ -58,6 +64,8 @@ template <typename NodeAdapter> class TreeModel final
         const override;
     private: QVariant data(const QModelIndex &, int = Qt::DisplayRole)
         const override;
+
+    private NodeAdapter * _root{};
 };
 
 }
