@@ -59,6 +59,12 @@ struct BigBadNode
     inline int Count() { return Nodes.size (); }
     inline BigBadNode * operator[](int i) { return Nodes[i]; }
     QString Name {"root doesn't drink bonbons"};
+    BigBadNode(BigBadNode * b = nullptr)
+    {
+        if (b)
+            Base = b, b->Nodes.push_back (this);
+    }
+    ~BigBadNode() { for (auto f : Nodes) delete f; }
 };
 
 MainWindow::MainWindow()
@@ -76,7 +82,8 @@ MainWindow::MainWindow()
         miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
 
     //
-    auto root = new BigBadNode;
+    auto root = new BigBadNode; // can't be shown
+    new BigBadNode {root};
     auto tree = new TreeModel<BigBadNode> (root, this);
     // auto tree = new QFileSystemModel {this};
     // tree->setRootPath (QDir::currentPath ());

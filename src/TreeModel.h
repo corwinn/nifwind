@@ -98,6 +98,19 @@ template <typename NodeAdapter> class TreeModel final
         }
     }
 
+    // didn't help showing my single simple node
+    private: Qt::ItemFlags flags(const QModelIndex & n) const override
+    {
+        if (! n.isValid ()) return Qt::NoItemFlags;
+        return QAbstractItemModel::flags (n);
+    }
+    private: QVariant headerData(int s, Qt::Orientation o, int r) const override
+    {
+        if (Qt::Horizontal == o && Qt::DisplayRole == r)
+            return s;
+        return QVariant {};
+    }
+
     private: NodeAdapter * Index2Node(const QModelIndex & i) const
     {
         return ! i.isValid () ? _tree
