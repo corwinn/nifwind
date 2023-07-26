@@ -50,23 +50,61 @@ namespace nifwind {
 template <typename NodeAdapter> class TreeModel final
     : public QAbstractItemModel
 {
-    public: explicit TreeModel(NodeAdapter * = nullptr, QObject * = nullptr);
-    public: virtual ~TreeModel() override;
+    public: explicit TreeModel(NodeAdapter * n = nullptr, QObject * b = nullptr)
+        : QAbstractItemModel {b}, _tree{n}
+    {
+    }
+    public: virtual ~TreeModel() override
+    {
+        if (_tree) delete _tree; // temporary here
+    }
 
     // mandatory
-    private: QModelIndex index(int, int, const QModelIndex & = QModelIndex{})
-        const override;
-    private: QModelIndex parent(const QModelIndex &)
-        const override;
-    private: int rowCount(const QModelIndex & = QModelIndex{})
-        const override;
+    private: QModelIndex index(int r, int c, const QModelIndex & n = QModelIndex{})
+        const override
+    {
+        if (! QAbstractItemModel::hasIndex (r, c, n)) return QModelIndex {};
+        auto sub_node = Index2Node (n)->operator[] (r);
+        return sub_node ? createIndex (r, c, sub_node) : QModelIndex {};
+    }
+    private: QModelIndex parent(const QModelIndex & n)
+        const override
+    {
+        if (! n.isValid ()) return QModelIndex {};
+        auto node = static_cast<NodeAdapter *>(n.internalPointer ());
+        if (node->Base == _tree) return QModelIndex {};
+        // This is quite peculiar requirement - e.g. the adapter
+        return createIndex (node->Base->Index, 0, node->Base);
+    }
+    private: int rowCount(const QModelIndex & n = QModelIndex{})
+        const override
+    {
+        if (n.column () > 0) return 0; // Because?! Qt, could you please document ...
+        return Index2Node (n)->Count ();
+    }
     private: int columnCount(const QModelIndex & = QModelIndex{})
-        const override;
-    private: QVariant data(const QModelIndex &, int = Qt::DisplayRole)
-        const override;
+        const override { return 5; }
+    private: QVariant data(const QModelIndex & n, int r = Qt::DisplayRole)
+        const override
+    {
+        if (! n.isValid ()) return QVariant {};
+        if (r != Qt::DisplayRole) return QVariant {};
 
-    private NodeAdapter * _root{};
-};
+        auto node = static_cast<NodeAdapter *>(n.internalPointer ());
+        // map index.column () to node fields
+        switch (n.column ()) {
+            case 0: return node->Name;
+            default: return "MV";
+        }
+    }
+
+    private: NodeAdapter * Index2Node(const QModelIndex & i) const
+    {
+        return ! i.isValid () ? _tree
+            : static_cast<NodeAdapter *>(i.internalPointer ());
+    }
+    private: NodeAdapter * _tree{};
+};// TreeModel
 
 }
 

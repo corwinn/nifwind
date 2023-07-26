@@ -44,10 +44,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QTreeView>
 #include <QDockWidget>
 #include <QFileSystemModel>
+#include <QVector>
+#include <QString>
 
 #include "TreeModel.h"
 
 namespace nifwind {
+
+struct BigBadNode
+{
+    BigBadNode * Base{};
+    int Index; // Because QAbstractItemModel::parent()
+    QVector<BigBadNode *> Nodes {};
+    inline int Count() { return Nodes.size (); }
+    inline BigBadNode * operator[](int i) { return Nodes[i]; }
+    QString Name {"root doesn't drink bonbons"};
+};
 
 MainWindow::MainWindow()
     : QMainWindow {}
@@ -64,9 +76,10 @@ MainWindow::MainWindow()
         miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
 
     //
-    //auto tree = new TreeModel<int> (nullptr, this);
-    auto tree = new QFileSystemModel {this};
-    tree->setRootPath (QDir::currentPath ());
+    auto root = new BigBadNode;
+    auto tree = new TreeModel<BigBadNode> (root, this);
+    // auto tree = new QFileSystemModel {this};
+    // tree->setRootPath (QDir::currentPath ());
     auto tv = new QTreeView {};
     // I have to sub-class QTreeView just to set its initial size as a docked
     // tree?! You have got to be nice mountain view kidding me. TODO read
