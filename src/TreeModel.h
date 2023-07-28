@@ -74,6 +74,7 @@ template <typename NodeAdapter> class TreeModel final
     private: QModelIndex index(int r, int c,
         const QModelIndex & n = QModelIndex {}) const override
     {
+        printf ("m: index(%d, %d, (%d, %d))\n", r, c, n.row (), n.column ());
         // "qtbase/src/corelib/itemmodels/qabstractitemmodel.cpp":
         // range check: r in [0;row.count) && c in [0;col.count)
         if (! QAbstractItemModel::hasIndex (r, c, n)) return QModelIndex {};
@@ -84,6 +85,7 @@ template <typename NodeAdapter> class TreeModel final
     private: QModelIndex parent(const QModelIndex & n)
         const override
     {
+        printf ("m: parent((%d, %d))\n", n.row (), n.column ());
         if (! n.isValid ()) return QModelIndex {};
         auto node = static_cast<NodeAdapter *>(n.internalPointer ());
         if (node->Base == _tree) return QModelIndex {};
@@ -93,14 +95,20 @@ template <typename NodeAdapter> class TreeModel final
     private: int rowCount(const QModelIndex & n = QModelIndex {})
         const override
     {
+        printf ("m: rowCount((%d, %d))\n", n.row (), n.column ());
         if (n.column () > 0) return 0; // see TreeModel.dia
         return this->Index2Node (n)->Count ();
     }
-    private: int columnCount(const QModelIndex & = QModelIndex {})
-        const override { return 5; }
+    private: int columnCount(const QModelIndex & n = QModelIndex {})
+        const override
+    {
+        printf ("m: columnCount((%d, %d))\n", n.row (), n.column ());
+        return 5;
+    }
     private: QVariant data(const QModelIndex & n, int r = Qt::DisplayRole)
         const override
     {
+        printf ("m: data((%d, %d), %d)\n", n.row (), n.column (), r);
         if (! n.isValid ()) return QVariant {};
         if (r != Qt::DisplayRole) return QVariant {};
 
