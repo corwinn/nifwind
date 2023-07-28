@@ -32,6 +32,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
+/*
+  legend (context: trees, their views, models, adapters, delegates, factories):
+
+    r   - row
+    c   - column
+    n   - node
+    qmi - QModelIndex
+*/
+
 #ifndef _TREEMODEL_H_
 #define _TREEMODEL_H_
 
@@ -59,12 +68,17 @@ template <typename NodeAdapter> class TreeModel final
         if (_tree) delete _tree; // temporary here
     }
 
-    // mandatory
-    private: QModelIndex index(int r, int c, const QModelIndex & n = QModelIndex{})
-        const override
+    // mandatory ---------------------------------------------------------------
+
+    // Bind qmi to tree-node; see TreeModel.dia
+    private: QModelIndex index(int r, int c,
+        const QModelIndex & n = QModelIndex {}) const override
     {
+        // "qtbase/src/corelib/itemmodels/qabstractitemmodel.cpp":
+        // range check: r in [0;row.count) && c in [0;col.count)
         if (! QAbstractItemModel::hasIndex (r, c, n)) return QModelIndex {};
-        auto sub_node = Index2Node (n)->operator[] (r);
+
+        auto sub_node = this->Index2Node (n)->operator[] (r);
         return sub_node ? createIndex (r, c, sub_node) : QModelIndex {};
     }
     private: QModelIndex parent(const QModelIndex & n)
@@ -76,13 +90,13 @@ template <typename NodeAdapter> class TreeModel final
         // This is quite peculiar requirement - e.g. the adapter
         return createIndex (node->Base->Index, 0, node->Base);
     }
-    private: int rowCount(const QModelIndex & n = QModelIndex{})
+    private: int rowCount(const QModelIndex & n = QModelIndex {})
         const override
     {
-        if (n.column () > 0) return 0; // Because?! Qt, could you please document ...
-        return Index2Node (n)->Count ();
+        if (n.column () > 0) return 0; // see TreeModel.dia
+        return this->Index2Node (n)->Count ();
     }
-    private: int columnCount(const QModelIndex & = QModelIndex{})
+    private: int columnCount(const QModelIndex & = QModelIndex {})
         const override { return 5; }
     private: QVariant data(const QModelIndex & n, int r = Qt::DisplayRole)
         const override
