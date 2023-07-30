@@ -43,29 +43,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QFileDialog>
 #include <QTreeView>
 #include <QDockWidget>
-#include <QFileSystemModel>
 #include <QVector>
 #include <QString>
 
 #include "TreeModel.h"
+#include "FFDNodeAdapter.h"
 
 namespace nifwind {
-
-struct BigBadNode
-{
-    BigBadNode * Base{};
-    int Index; // Because QAbstractItemModel::parent()
-    QVector<BigBadNode *> Nodes {};
-    inline int Count() { return Nodes.size (); }
-    inline BigBadNode * operator[](int i) { return Nodes[i]; }
-    QString Name {"root doesn't drink bonbons"};
-    BigBadNode(BigBadNode * b = nullptr)
-    {
-        if (b)
-            Base = b, b->Nodes.push_back (this), Index = Nodes.size ()-1;
-    }
-    ~BigBadNode() { for (auto f : Nodes) delete f; }
-};
 
 MainWindow::MainWindow()
     : QMainWindow {}
@@ -82,11 +66,9 @@ MainWindow::MainWindow()
         miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
 
     //
-    auto root = new BigBadNode; // can't be shown
-    new BigBadNode {root};
-    auto tree = new TreeModel<BigBadNode> (root, this);
-    // auto tree = new QFileSystemModel {this};
-    // tree->setRootPath (QDir::currentPath ());
+    auto root = new FFDNodeAdapter; // can't be shown
+    new FFDNodeAdapter {root};
+    auto tree = new TreeModel<FFDNodeAdapter> (root, this);
     auto tv = new QTreeView {};
     // I have to sub-class QTreeView just to set its initial size as a docked
     // tree?! You have got to be nice mountain view kidding me. TODO read
@@ -99,7 +81,7 @@ MainWindow::MainWindow()
     statusBar ()->showMessage ("Idle");
 }
 
-MainWindow::~MainWindow() { printf ("I am defined\n"); }
+MainWindow::~MainWindow() {}
 
 void MainWindow::HandleFileOpen()
 {
