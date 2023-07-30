@@ -126,6 +126,7 @@ template <typename NodeAdapter> class TreeModel final
     private: int columnCount(const QModelIndex & n = QModelIndex {})
         const override
     {
+        (void)n;
         //printf ("m: columnCount((%d, %d))\n", n.row (), n.column ());
         return 5;
     }
