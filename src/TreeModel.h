@@ -78,7 +78,7 @@ namespace nifwind {
 //    NodeAdapter * Nodes
 //    int Count()                     // number of sub-nodes at Nodes
 //    NodeAdapter * operator[](int i) // [] access at Nodes
-//    Name //TODO map - see data() below; (a.k.a. - field N)
+//    QVariant FieldById(column)
 // }
 template <typename NodeAdapter> class TreeModel final
     : public QAbstractItemModel
@@ -137,11 +137,7 @@ template <typename NodeAdapter> class TreeModel final
         if (r != Qt::DisplayRole) return QVariant {};
 
         auto node = static_cast<NodeAdapter *>(n.internalPointer ());
-        // map index.column () to node fields
-        switch (n.column ()) {
-            case 0: return node->Name;
-            default: return "MV";
-        }
+        return node->FieldById (n.column ());
     }
 
     // didn't help showing my single simple node
