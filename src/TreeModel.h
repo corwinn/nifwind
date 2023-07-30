@@ -49,13 +49,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace nifwind {
 
 // Courtesy of "qtbase/src/widgets/dialogs/qfilesystemmodel.*".
-//TODO Why wouldn't I use a template for a Model?
+// For the "QModelIndex" mappings, see "TreeModel.dia".
 //
-// "A valid index belongs to a model, and has non-negative row and column
-// numbers."
-// What does "hierarchy of tables" mean?! Hierarchy of their top-left corners?!
-// "If you do not make use of the hierarchy, then the model is a simple table of
-// rows and columns"
+// NodeAdapter - adapts FFDNode to "QModelIndex" & co:
+//
+//   * maps FFDNode fields to columns on the view; since I'm allowing
+//     re-grouping of the tree:
+//       - default: and you get the "nif" block tree
+//       - group by type *: and you get the "nif" by-block-type sub-trees
+//       - group by ref/ptr: and you get the "usual" "nif" "tree"
+//       - group by type 1:  and you get 1 type only tree
+//       for starters
+//       example:
+//           0 1                1 0
+//         r                  r
+//         +-a    group-by 1  +-b
+//           +-b     ->       | +-a
+//           +-c              +-c
+//                              +-a
+//       How: 1. un-group the tree to a table; 2. group by the new column:
+//           0 1
+//           a b
+//           a c
+//
+// NodeAdapter { // so far...
+//    NodeAdapter * Base
+//    int Index                       // the index of this at Base[]
+//    NodeAdapter * Nodes
+//    int Count()                     // number of sub-nodes at Nodes
+//    NodeAdapter * operator[](int i) // [] access at Nodes
+//    Name //TODO map - see data() below; (a.k.a. - field N)
+// }
 template <typename NodeAdapter> class TreeModel final
     : public QAbstractItemModel
 {
