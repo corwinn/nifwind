@@ -40,6 +40,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QVariant>
 
+#include "ffd_node.h"
+using FFDNode = FFD_NS::FFDNode;
+
 namespace nifwind {
 
 // Adapt FFDNode to the TreeModel.
@@ -51,11 +54,17 @@ class FFDNodeAdapter
     public: QVector<FFDNodeAdapter *> Nodes {};
     public: inline int Count() { return Nodes.size (); }
     public: inline FFDNodeAdapter * operator[](int i) { return Nodes[i]; }
-    public: FFDNodeAdapter(FFDNodeAdapter * b = nullptr)
+    public: FFDNodeAdapter(FFDNode * n = nullptr, FFDNodeAdapter * b = nullptr)
+        : _n{n}
     {
         if (b)
             Base = b, b->Nodes.push_back (this), Index = Nodes.size ()-1;
-        _fields.push_back (_name);
+        if (_n) {
+            _fields.push_back (QString {_n->FieldNode ()->Name.AsZStr ()});
+        }
+        else {
+            _fields.push_back ("Field 0");
+        }
     }
     public: ~FFDNodeAdapter() { for (auto f : Nodes) delete f; }
     public: inline QVariant FieldById(int id)
@@ -64,7 +73,7 @@ class FFDNodeAdapter
     }
     private: QVector<QVariant> _fields;
     //TODO update _fields on set()
-    private: QString _name {"root doesn't drink bonbons"};
+    private: FFDNode * _n{};
 };// FFDNodeAdapter
 
 }

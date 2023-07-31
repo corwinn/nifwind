@@ -67,7 +67,7 @@ MainWindow::MainWindow()
 
     //
     auto root = new FFDNodeAdapter; // can't be shown
-    new FFDNodeAdapter {root};
+    new FFDNodeAdapter {nullptr, root};
     auto tree = new TreeModel<FFDNodeAdapter> (root, this);
     auto tv = new QTreeView {};
     // I have to sub-class QTreeView just to set its initial size as a docked

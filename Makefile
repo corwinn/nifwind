@@ -32,6 +32,7 @@
 
 # Requirements: grep
 # Please setup your QTDIR prior issuing this makefile.
+# Please setup FFDIR prior issuing this makefile.
 # TODO CMakeLists.txt
 
 MAKEFLAGS += rR
@@ -46,14 +47,15 @@ CXXFLAGS = -std=c++14 -march=core2 -mtune=core2 \
 SAN = -fsanitize=undefined,leak,address
 CXXFLAGS += $(SAN) -std=c++14 \
  -DNIFWIND_VERSION="\"1.0\"" \
- -I. -Isrc \
+ -I. -Isrc -I${FFDIR} -I${FFDIR}/stl \
  -I${QTDIR}/include -I${QTDIR}/include/QtCore -I${QTDIR}/include/QtWidgets \
  -I${QTDIR}/include/QtOpenGL -I${QTDIR}/include/QtGui \
  -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB \
  -DQT_CORE_LIB -UQT_NO_CAST_FROM_ASCII -UQT_RESTRICTED_CAST_FROM_ASCII \
  -DGL_GLEXT_PROTOTYPES -DGL_2_0=1
 LDFLAGS = $(SAN) -Wl,--as-needed -L${QTDIR}/lib \
- -lQt5Core -lQt5Widgets -lQt5OpenGL -lQt5Gui -lGL -lpthread
+ -L${FFDIR} -Wl,-rpath -Wl,${FFDIR} \
+ -lQt5Core -lQt5Widgets -lQt5OpenGL -lQt5Gui -lGL -lpthread -lwind-ffd
 
 SRC := $(patsubst %.h,%.moc.cpp,$(shell grep --exclude=*~ -rl '\(signal\|slot\)s:'))
 SRC += $(shell grep -rvl --include=*.cpp --exclude=*.moc.cpp '\(signal\|slot\)s:')
