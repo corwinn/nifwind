@@ -71,6 +71,7 @@ class FFDNodeAdapter
     {
         return id >= 0 and id < _fields.size () ? _fields[id] : "MV";
     }
+    // Why is this not pointless? Because it allows you to move columns about.
     private: QVector<QVariant> _fields;
     //TODO update _fields on set()
     private: FFDNode * _n{};
