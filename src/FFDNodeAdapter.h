@@ -46,7 +46,7 @@ using FFDNode = FFD_NS::FFDNode;
 namespace nifwind {
 
 // Adapt FFDNode to the TreeModel.
-// Deletes the Nodes pointers.
+// Deletes the "Nodes" pointers.
 class FFDNodeAdapter
 {
     public: FFDNodeAdapter * Base{};
@@ -59,11 +59,24 @@ class FFDNodeAdapter
     {
         if (b)
             Base = b, b->Nodes.push_back (this), Index = Nodes.size ()-1;
+        // These are configured by the user: e.g. ensure the unnamed-yet method
+        // reflects that.
         if (_n) {
+            // TODO map to Options; diagram time: is adapter role to
+            //      do such mapping? also, this shouldn't happen for each Node:
+            //      there is no use case yet: where the user wants different
+            //      set of fields shown per node?
+            //      I'm really missing reflection here.
+            // Otherwise this is exacly this adapter job: code like this should
+            // happen here only: when FFDNode gets its interface modified,
+            // only this file shall be updated.
             _fields.push_back (QString {_n->FieldNode ()->Name.AsZStr ()});
+            _fields.push_back (QString {_n->FieldNode ()->TypeToString ()
+                .AsZStr ()});
         }
         else {
             _fields.push_back ("Field 0");
+            _fields.push_back ("Field 1");
         }
     }
     public: ~FFDNodeAdapter() { for (auto f : Nodes) delete f; }
