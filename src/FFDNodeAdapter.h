@@ -78,6 +78,10 @@ class FFDNodeAdapter
             _fields.push_back ("Field 0");
             _fields.push_back ("Field 1");
         }
+        // the node transforms to a tree
+        if (_n && ! _n->ArrayOfFields ())
+            for (auto sn : _n->Nodes ())
+                new FFDNodeAdapter {sn, this};
     }
     public: ~FFDNodeAdapter() { for (auto f : Nodes) delete f; }
     public: inline QVariant FieldById(int id)
