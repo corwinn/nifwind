@@ -41,20 +41,21 @@ APP  = nifwind
 MOC = $(QTDIR)/bin/moc
 CC  = ccache clang
 LD  = clang++
+FFD_CFLAGS = -I${FFDIR} -I${FFDIR}/stl
+FFD_LDFLAGS = -L${FFDIR} -Wl,-rpath -Wl,${FFDIR}
 CXXFLAGS = -std=c++14 -march=core2 -mtune=core2 \
  -Wall -Wextra -Wshadow -Werror=shadow -Wno-deprecated-copy \
  -fvisibility=hidden -frtti -fno-exceptions -pipe -O0 -g
 SAN = -fsanitize=undefined,leak,address
 CXXFLAGS += $(SAN) -std=c++14 \
  -DNIFWIND_VERSION="\"1.0\"" \
- -I. -Isrc -I${FFDIR} -I${FFDIR}/stl \
+ -I. -Isrc $(FFD_CFLAGS) \
  -I${QTDIR}/include -I${QTDIR}/include/QtCore -I${QTDIR}/include/QtWidgets \
  -I${QTDIR}/include/QtOpenGL -I${QTDIR}/include/QtGui \
  -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB \
  -DQT_CORE_LIB -UQT_NO_CAST_FROM_ASCII -UQT_RESTRICTED_CAST_FROM_ASCII \
  -DGL_GLEXT_PROTOTYPES -DGL_2_0=1
-LDFLAGS = $(SAN) -Wl,--as-needed -L${QTDIR}/lib \
- -L${FFDIR} -Wl,-rpath -Wl,${FFDIR} \
+LDFLAGS = $(SAN) -Wl,--as-needed -L${QTDIR}/lib $(FFD_LDFLAGS) \
  -lQt5Core -lQt5Widgets -lQt5OpenGL -lQt5Gui -lGL -lpthread -lwind-ffd
 
 SRC := $(patsubst %.h,%.moc.cpp,$(shell grep --exclude=*~ -rl '\(signal\|slot\)s:'))
