@@ -10,6 +10,6 @@ WIP (until proven otherwise)
  - "//PERHAPS" - an idea to be considered
  - "//LATER" - do this at the next major version
  - function calls get one  " ": "foo ("
- - init: "a{4}" - POT=4; "a {4}" - constructor call
+ - init: "a{4}" - POD=4; "a {4}" - constructor call
  - use the full power of the "Qt" framework, for now
  - "nifwind.h" has no dependencies & contains common code for the entire project
