@@ -4,7 +4,7 @@ WIP (until proven otherwise)
  - every class member is prefixed by its access specifier
  - class member(s) of the same class are always referenced explicitly: "this->"
  - (TODO) non-public class members that aren't functions are suffixed with _
- - (TODO) filename matches class-name: case-insensitive
+ - filename matches class-name: case-insensitive with "_" word delimiter
  - "//TODO" - do this ASAP
  - "//TODONT" - don't do this
  - "//PERHAPS" - an idea to be considered
