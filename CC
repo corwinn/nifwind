@@ -1,0 +1,14 @@
+WIP (until proven otherwise)
+ - everything is in "namespace nifwind"
+ - every type/const/def/global starts with capital N
+ - every class member is prefixed by its access specifier
+ - class member(s) of the same class are always referenced explicitly: "this->"
+ - (TODO) class members that aren't functions are suffixed with _
+ - (TODO) filename matches class-name: case-insensitive
+ - "//TODO" - do this ASAP
+ - "//TODONT" - don't do this
+ - "//PERHAPS" - an idea to be considered
+ - "//LATER" - do this at the next major version
+ - function calls get one  " ": "foo ("
+ - init: "a{4}" - POT=4, "a {4}" - constructor call
+ - use the full power of the "Qt" framework, for now
