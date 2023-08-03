@@ -35,9 +35,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _N_MAIN_WINDOW_H_
 #define _N_MAIN_WINDOW_H_
 
+#include "nifwind.h"
+
 #include <QMainWindow>
 
-namespace nifwind {
+NIFWIND_NAMESPACE
 
 class NMainWindow final: public QMainWindow
 {
@@ -49,5 +51,5 @@ class NMainWindow final: public QMainWindow
     private slots: void HandleFileOpen();
 };
 
-}
+NAMESPACE_NIFWIND
 #endif

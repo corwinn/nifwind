@@ -34,8 +34,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "n_tree_model.h"
 
-namespace nifwind {
-
-
-
-}
+NIFWIND_NAMESPACE
+NAMESPACE_NIFWIND

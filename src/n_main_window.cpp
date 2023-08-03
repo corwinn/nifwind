@@ -49,7 +49,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "n_tree_model.h"
 #include "n_ffd_node_adapter.h"
 
-namespace nifwind {
+NIFWIND_NAMESPACE
 
 NMainWindow::NMainWindow()
     : QMainWindow {}
@@ -93,4 +93,4 @@ void NMainWindow::HandleFileOpen()
     else printf ("Don't open it\n");
 }
 
-}
+NAMESPACE_NIFWIND

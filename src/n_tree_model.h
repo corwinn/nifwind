@@ -44,9 +44,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _N_TREE_MODEL_H_
 #define _N_TREE_MODEL_H_
 
+#include "nifwind.h"
+
 #include <QAbstractItemModel>
 
-namespace nifwind {
+NIFWIND_NAMESPACE
 
 // Courtesy of "qtbase/src/widgets/dialogs/qfilesystemmodel.*".
 // For the "QModelIndex" mappings, see "TreeModel.dia".
@@ -84,12 +86,12 @@ template <typename NodeAdapter> class NTreeModel final
     : public QAbstractItemModel
 {
     public: explicit NTreeModel(NodeAdapter * n = nullptr, QObject * b = nullptr)
-        : QAbstractItemModel {b}, _tree{n}
+        : QAbstractItemModel {b}, tree_{n}
     {
     }
     public: virtual ~NTreeModel() override
     {
-        if (_tree) delete _tree; // temporary here
+        if (tree_) delete tree_; // temporary here
     }
 
     // mandatory ---------------------------------------------------------------
@@ -112,7 +114,7 @@ template <typename NodeAdapter> class NTreeModel final
         //printf ("m: parent((%d, %d))\n", n.row (), n.column ());
         if (! n.isValid ()) return QModelIndex {};
         auto node = static_cast<NodeAdapter *>(n.internalPointer ());
-        if (node->Base == _tree) return QModelIndex {};
+        if (node->Base == tree_) return QModelIndex {};
         // This is quite peculiar requirement - e.g. the adapter
         return createIndex (node->Base->Index, 0, node->Base);
     }
@@ -156,12 +158,11 @@ template <typename NodeAdapter> class NTreeModel final
 
     private: NodeAdapter * Index2Node(const QModelIndex & i) const
     {
-        return ! i.isValid () ? _tree
+        return ! i.isValid () ? tree_
             : static_cast<NodeAdapter *>(i.internalPointer ());
     }
-    private: NodeAdapter * _tree{};
+    private: NodeAdapter * tree_{};
 };// TreeModel
 
-}
-
+NAMESPACE_NIFWIND
 #endif

@@ -35,13 +35,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _N_FFD_NODE_ADAPTER_H_
 #define _N_FFD_NODE_ADAPTER_H_
 
+#include "nifwind.h"
+
 #include <QVector>  // the full power of "Qt" shall be used for now
 #include <QVariant>
 
 #include "ffd_node.h"
 using FFDNode = FFD_NS::FFDNode;
 
-namespace nifwind {
+NIFWIND_NAMESPACE
 
 // Adapt FFDNode to the TreeModel.
 // Deletes the "Nodes" pointers.
@@ -53,13 +55,13 @@ class NFFDNodeAdapter
     public: inline int Count() { return Nodes.size (); }
     public: inline NFFDNodeAdapter * operator[](int i) { return Nodes[i]; }
     public: NFFDNodeAdapter(FFDNode * n = nullptr, NFFDNodeAdapter * b = nullptr)
-        : _n{n}
+        : n_{n}
     {
         if (b)
             Base = b, b->Nodes.push_back (this), Index = Nodes.size ()-1;
         // These are configured by the user: e.g. ensure the unnamed-yet method
         // reflects that.
-        if (_n) {
+        if (n_) {
             // TODO map to Options; diagram time: is adapter role to
             //      do such mapping? also, this shouldn't happen for each Node:
             //      there is no use case yet: where the user wants different
@@ -68,30 +70,29 @@ class NFFDNodeAdapter
             // Otherwise this is exacly this adapter job: code like this should
             // happen here only: when FFDNode gets its interface modified,
             // only this file shall be updated.
-            _fields.push_back (QString {_n->FieldNode ()->Name.AsZStr ()});
-            _fields.push_back (QString {_n->FieldNode ()->TypeToString ()
+            fields_.push_back (QString {n_->FieldNode ()->Name.AsZStr ()});
+            fields_.push_back (QString {n_->FieldNode ()->TypeToString ()
                 .AsZStr ()});
         }
         else {
-            _fields.push_back ("Field 0");
-            _fields.push_back ("Field 1");
+            fields_.push_back ("Field 0");
+            fields_.push_back ("Field 1");
         }
         // the node transforms to a tree
-        if (_n && ! _n->ArrayOfFields ())
-            for (auto sn : _n->Nodes ())
+        if (n_ && ! n_->ArrayOfFields ())
+            for (auto sn : n_->Nodes ())
                 new NFFDNodeAdapter {sn, this};
     }
     public: ~NFFDNodeAdapter() { for (auto f : Nodes) delete f; }
     public: inline QVariant FieldById(int id)
     {
-        return id >= 0 and id < _fields.size () ? _fields[id] : "MV";
+        return id >= 0 and id < fields_.size () ? fields_[id] : "MV";
     }
     // Why is this not pointless? Because it allows you to move columns about.
-    private: QVector<QVariant> _fields;
+    private: QVector<QVariant> fields_;
     //TODO update _fields on set()
-    private: FFDNode * _n{};
+    private: FFDNode * n_{};
 };// FFDNodeAdapter
 
-}
-
+NAMESPACE_NIFWIND
 #endif

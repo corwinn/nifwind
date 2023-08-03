@@ -3,13 +3,13 @@ WIP (until proven otherwise)
  - every type/const/def/global starts with capital N
  - every class member is prefixed by its access specifier
  - class member(s) of the same class are always referenced explicitly: "this->"
- - (TODO) non-public class members that aren't functions are suffixed with _
+ - non-public class members that aren't functions are suffixed with _
  - filename matches class-name: case-insensitive with "_" word delimiter
  - "//TODO" - do this ASAP
  - "//TODONT" - don't do this
  - "//PERHAPS" - an idea to be considered
  - "//LATER" - do this at the next major version
  - function calls get one  " ": "foo ("
- - init: "a{4}" - POT=4, "a {4}" - constructor call
+ - init: "a{4}" - POT=4; "a {4}" - constructor call
  - use the full power of the "Qt" framework, for now
  - "nifwind.h" has no dependencies & contains common code for the entire project
