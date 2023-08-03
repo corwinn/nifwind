@@ -41,6 +41,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define NIFWIND_NAMESPACE namespace NIFWIND_NS {
 #define NAMESPACE_NIFWIND }
 
+#define N_NO_COPY(T) T(const T&) = delete; T& operator=(const T&) = delete;
+#define N_NO_MOVE(T) T(T&&) = delete; T& operator=(T&&) = delete;
+
 #ifndef EOL
 # ifdef _WIN32
 #  define EOL "\r\n"
@@ -55,6 +58,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 NIFWIND_NAMESPACE
     class NException
     {
+        N_NO_COPY(NException)
         public: NException(const char * f, int l) : src_{f}, row_{l} {}
         protected: NException(const char * name,
             const char * msg, const char * f, int l)
@@ -70,6 +74,7 @@ NIFWIND_NAMESPACE
     };
     class NAssertionFailed final : public NException
     {
+        N_NO_COPY(NAssertionFailed)
         public: NAssertionFailed(const char * msg, const char * f, int l)
             : NException {"AssertionFailed", msg, f, l} {}
     };
