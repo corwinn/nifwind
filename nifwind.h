@@ -37,4 +37,52 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define NIFWIND_PROJECT "nifwind 0.1"
 
+#define NIFWIND_NS nifwind
+#define NIFWIND_NAMESPACE namespace NIFWIND_NS {
+#define NAMESPACE_NIFWIND }
+
+#ifndef EOL
+# ifdef _WIN32
+#  define EOL "\r\n"
+# else
+#  define EOL "\n"
+# endif
+#endif
+
+#define N_EXCEPTION 1
+#define N_EXCEPTION_MSG "%s. Stop."
+
+#include <cstdio>
+
+NIFWIND_NAMESPACE
+    class NException
+    {
+        public: NException(const char * f, int l) : src_{f}, row_{l} {}
+        protected: NException(const char * name, const char * f, int l)
+            : Name{name}, src_{f}, row_{l} {}
+
+        public: const char * const Name{"Exception"};
+        private: const char * const src_;
+        private: int row_;
+        public: inline virtual void Print() const
+        {
+            printf ("%s: %s:%d" EOL, Name, src_, row_);
+        }
+    };
+    class NAssertionFailed final : public NException
+    {
+        public: NAssertionFailed(const char * f, int l)
+            : NException {"AssertionFailed", f, l} {}
+    };
+NAMESPACE_NIFWIND
+
+#ifdef NIFWIND_TESTING
+# define NTHROW(E) throw E;
+#else
+# define NTHROW(E) { E.Print (); exit (N_EXCEPTION); }
+#endif
+
+#define NSURE(C,M) if (! (C)) \
+    { printf (M EOL); NTHROW ((NAssertionFailed {__FILE__, __LINE__}))}
+
 #endif
