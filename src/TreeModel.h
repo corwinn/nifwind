@@ -80,14 +80,14 @@ namespace nifwind {
 //    NodeAdapter * operator[](int i) // [] access at Nodes
 //    QVariant FieldById(column)
 // }
-template <typename NodeAdapter> class TreeModel final
+template <typename NodeAdapter> class NTreeModel final
     : public QAbstractItemModel
 {
-    public: explicit TreeModel(NodeAdapter * n = nullptr, QObject * b = nullptr)
+    public: explicit NTreeModel(NodeAdapter * n = nullptr, QObject * b = nullptr)
         : QAbstractItemModel {b}, _tree{n}
     {
     }
-    public: virtual ~TreeModel() override
+    public: virtual ~NTreeModel() override
     {
         if (_tree) delete _tree; // temporary here
     }

@@ -51,24 +51,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace nifwind {
 
-MainWindow::MainWindow()
+NMainWindow::NMainWindow()
     : QMainWindow {}
 {
     // main menu
     auto miFile = menuBar ()->addMenu ("&File");
-        miFile->addAction ("&Open", this, &MainWindow::HandleFileOpen);
+        miFile->addAction ("&Open", this, &NMainWindow::HandleFileOpen);
         miFile->addSeparator ();
 
         auto aQuit = miFile->addAction ("&Quit");
-        connect (aQuit, &QAction::triggered, this, &MainWindow::close);
+        connect (aQuit, &QAction::triggered, this, &NMainWindow::close);
 
     auto miHelp = menuBar ()->addMenu ("&Help");
         miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
 
     //
-    auto root = new FFDNodeAdapter; // can't be shown
-    new FFDNodeAdapter {nullptr, root};
-    auto tree = new TreeModel<FFDNodeAdapter> (root, this);
+    auto root = new NFFDNodeAdapter; // can't be shown
+    new NFFDNodeAdapter {nullptr, root};
+    auto tree = new NTreeModel<NFFDNodeAdapter> (root, this);
     auto tv = new QTreeView {};
     // I have to sub-class QTreeView just to set its initial size as a docked
     // tree?! You have got to be nice mountain view kidding me. TODO read
@@ -81,9 +81,9 @@ MainWindow::MainWindow()
     statusBar ()->showMessage ("Idle");
 }
 
-MainWindow::~MainWindow() {}
+NMainWindow::~NMainWindow() {}
 
-void MainWindow::HandleFileOpen()
+void NMainWindow::HandleFileOpen()
 {
     QFileDialog dlg {this};
     dlg.setFileMode (QFileDialog::ExistingFile);

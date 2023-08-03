@@ -32,19 +32,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-#ifndef _MAINWINDOW_H_
-#define _MAINWINDOW_H_
+#ifndef _N_MAIN_WINDOW_H_
+#define _N_MAIN_WINDOW_H_
 
 #include <QMainWindow>
 
 namespace nifwind {
 
-class MainWindow final: public QMainWindow
+class NMainWindow final: public QMainWindow
 {
     Q_OBJECT
 
-    public: MainWindow();
-    public: ~MainWindow() override;
+    public: NMainWindow();
+    public: ~NMainWindow() override;
 
     private slots: void HandleFileOpen();
 };

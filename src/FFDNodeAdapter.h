@@ -45,14 +45,14 @@ namespace nifwind {
 
 // Adapt FFDNode to the TreeModel.
 // Deletes the "Nodes" pointers.
-class FFDNodeAdapter
+class NFFDNodeAdapter
 {
-    public: FFDNodeAdapter * Base{};
+    public: NFFDNodeAdapter * Base{};
     public: int Index; // Because QAbstractItemModel::parent()
-    public: QVector<FFDNodeAdapter *> Nodes {};
+    public: QVector<NFFDNodeAdapter *> Nodes {};
     public: inline int Count() { return Nodes.size (); }
-    public: inline FFDNodeAdapter * operator[](int i) { return Nodes[i]; }
-    public: FFDNodeAdapter(FFDNode * n = nullptr, FFDNodeAdapter * b = nullptr)
+    public: inline NFFDNodeAdapter * operator[](int i) { return Nodes[i]; }
+    public: NFFDNodeAdapter(FFDNode * n = nullptr, NFFDNodeAdapter * b = nullptr)
         : _n{n}
     {
         if (b)
@@ -79,9 +79,9 @@ class FFDNodeAdapter
         // the node transforms to a tree
         if (_n && ! _n->ArrayOfFields ())
             for (auto sn : _n->Nodes ())
-                new FFDNodeAdapter {sn, this};
+                new NFFDNodeAdapter {sn, this};
     }
-    public: ~FFDNodeAdapter() { for (auto f : Nodes) delete f; }
+    public: ~NFFDNodeAdapter() { for (auto f : Nodes) delete f; }
     public: inline QVariant FieldById(int id)
     {
         return id >= 0 and id < _fields.size () ? _fields[id] : "MV";
