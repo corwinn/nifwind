@@ -32,56 +32,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-#ifndef _NIFWIND_H_
-#define _NIFWIND_H_
-
-#define NIFWIND_PROJECT "nifwind 0.1"
-
-#define NIFWIND_NS nifwind
-#define NIFWIND_NAMESPACE namespace NIFWIND_NS {
-#define NAMESPACE_NIFWIND }
-
-#ifndef EOL
-# ifdef _WIN32
-#  define EOL "\r\n"
-# else
-#  define EOL "\n"
-# endif
-#endif
-
-#define N_EXCEPTION 1
-#define N_EXCEPTION_MSG "%s. Stop."
+#include "nifwind.h"
+#include <cstdio>
+#include <cstdlib>
 
 NIFWIND_NAMESPACE
-    class NException
-    {
-        public: NException(const char * f, int l) : src_{f}, row_{l} {}
-        protected: NException(const char * name,
-            const char * msg, const char * f, int l)
-            : Name{name}, Msg{msg}, src_{f}, row_{l} {}
 
-        public: const char * const Name{"Exception"};
-        public: const char * const Msg{""};
-        private: const char * const src_;
-        private: int row_;
-        public: virtual void Print() const;
-        public: static
-            __attribute__((__noreturn__)) void Exit(const NException &);
-    };
-    class NAssertionFailed final : public NException
-    {
-        public: NAssertionFailed(const char * msg, const char * f, int l)
-            : NException {"AssertionFailed", msg, f, l} {}
-    };
+void NException::Print() const
+{
+    if (Msg[0]) printf ("%s (%s: %s:%d)" EOL, Msg, Name, src_, row_);
+    else printf ("%s: %s:%d" EOL, Name, src_, row_);
+}
+
+/*static*/ void NException::Exit(const NException & exc)
+{
+    exc.Print ();
+    exit (N_EXCEPTION);
+}
+
 NAMESPACE_NIFWIND
-
-#ifdef NIFWIND_TESTING
-# define NTHROW(E) throw E;
-#else
-# define NTHROW(E) NException::Exit (E);
-#endif
-
-#define NSURE(C,M) if (! (C)) \
-    { NTHROW ((NAssertionFailed {M, __FILE__, __LINE__})) }
-
-#endif
