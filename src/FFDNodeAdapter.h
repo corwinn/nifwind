@@ -35,9 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _FFDNODEADAPTER_H_
 #define _FFDNODEADAPTER_H_
 
-//TODO should I?
-#include <QVector>
-
+#include <QVector>  // the full power of "Qt" shall be used for now
 #include <QVariant>
 
 #include "ffd_node.h"
