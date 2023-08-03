@@ -45,7 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include "nifwind.h"
 
-#include "MainWindow.h"
+#include "n_main_window.h"
 
 class foo final : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -75,7 +75,7 @@ class foo final : public QOpenGLWidget, protected QOpenGLFunctions
 int main(int argc, char **argv)
 {
     QApplication app (argc, argv);
-    nifwind::MainWindow mw {};
+    nifwind::NMainWindow mw {};
     foo bar {};
     mw.setCentralWidget (&bar);
     mw.resize (800, 600);

@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-#include "MainWindow.h"
+#include "n_main_window.h"
 
 #include <QAction>
 #include <QMenuBar>
@@ -46,8 +46,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QVector>
 #include <QString>
 
-#include "TreeModel.h"
-#include "FFDNodeAdapter.h"
+#include "n_tree_model.h"
+#include "n_ffd_node_adapter.h"
 
 namespace nifwind {
 

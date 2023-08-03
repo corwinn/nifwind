@@ -32,8 +32,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-#ifndef _FFDNODEADAPTER_H_
-#define _FFDNODEADAPTER_H_
+#ifndef _N_FFD_NODE_ADAPTER_H_
+#define _N_FFD_NODE_ADAPTER_H_
 
 #include <QVector>  // the full power of "Qt" shall be used for now
 #include <QVariant>

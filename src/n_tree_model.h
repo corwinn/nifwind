@@ -41,8 +41,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     qmi - QModelIndex
 */
 
-#ifndef _TREEMODEL_H_
-#define _TREEMODEL_H_
+#ifndef _N_TREE_MODEL_H_
+#define _N_TREE_MODEL_H_
 
 #include <QAbstractItemModel>
 
