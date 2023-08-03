@@ -35,6 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **** END LICENCE BLOCK ****/
 
 #include "n_main_window.h"
+#include "n_options.h"
 
 #include <QAction>
 #include <QMenuBar>
@@ -45,6 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDockWidget>
 #include <QVector>
 #include <QString>
+#include <QDebug>
 
 #include "n_tree_model.h"
 #include "n_ffd_node_adapter.h"
@@ -69,6 +71,14 @@ NMainWindow::NMainWindow()
     auto root = new NFFDNodeAdapter; // can't be shown
     new NFFDNodeAdapter {nullptr, root};
     auto tree = new NTreeModel<NFFDNodeAdapter> (root, this);
+
+    // TODO to a unit test:
+    int arr[] = {1,2,3};
+    NOptions::PutIntArr ("foo", QVector<int> {arr, arr+3});
+    auto arr2 = NOptions::GetIntArr ("foo");
+    qDebug () << arr2;
+
+    printf ("arr %d: %d, %d, %d" EOL, arr2.size (), arr2[0], arr2[1], arr2[2]);
     auto tv = new QTreeView {};
     // I have to sub-class QTreeView just to set its initial size as a docked
     // tree?! You have got to be nice mountain view kidding me. TODO read

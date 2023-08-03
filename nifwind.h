@@ -81,12 +81,12 @@ NIFWIND_NAMESPACE
 NAMESPACE_NIFWIND
 
 #ifdef NIFWIND_TESTING
-# define NTHROW(E) throw E;
+# define NTHROW(E) {throw E;}
 #else
-# define NTHROW(E) NException::Exit (E);
+# define NTHROW(E) {NException::Exit (E);}
 #endif
 
-#define NSURE(C,M) if (! (C)) \
-    { NTHROW ((NAssertionFailed {M, __FILE__, __LINE__})) }
+#define NSURE(C,M) { if (! (C)) \
+    { NTHROW ((NAssertionFailed {M, __FILE__, __LINE__})) }}
 
 #endif
