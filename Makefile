@@ -41,7 +41,7 @@ APP  = nifwind
 MOC = $(QTDIR)/bin/moc
 CC  = ccache clang
 LD  = clang++
-FFD_CFLAGS = -I${FFDIR} -I${FFDIR}/stl
+FFD_CFLAGS = -I${FFDIR} -Iffd
 FFD_LDFLAGS = -L${FFDIR} -Wl,-rpath -Wl,${FFDIR}
 CXXFLAGS = -std=c++14 -march=core2 -mtune=core2 \
  -Wall -Wextra -Wshadow -Werror=shadow -Wno-deprecated-copy \
