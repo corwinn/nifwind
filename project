@@ -1,3 +1,15 @@
 This project requires a lot of time.
 
- It needs "nif.xml" transformed to my FFD, prior even dreaming about a design.
+"nif.xml" was transformed to my FFD.
+
+Proof of concept:
+ - render the instance tree
+ - render the syntax tree
+ - render a 3D mesh
+ - add "python" scripting - write a script to list all nodes of a chosen type
+ - render the instance data in a hexadecimal view with areas colored according
+   to the syntax tree
+     - create the nif header from scratch (load some binary data and start with
+       an empty syntax tree)
+ - transform nif_ffd to multiple simple ffd
+ - xml import/export
