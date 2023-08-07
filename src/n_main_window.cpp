@@ -47,18 +47,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QVector>
 #include <QString>
 #include <QDebug>
+#include <QStringList>
 
 #include "n_tree_model.h"
 #include "n_ffd_node_adapter.h"
+#include "n_file_stream.h"
 
 NIFWIND_NAMESPACE
 
 NMainWindow::NMainWindow()
     : QMainWindow {}
 {
+    InitFFD (); // load all available FFD
+
     // main menu
     auto miFile = menuBar ()->addMenu ("&File");
-        miFile->addAction ("&Open", this, &NMainWindow::HandleFileOpen);
+        auto aOpen =
+            miFile->addAction ("&Open", this, &NMainWindow::HandleFileOpen);
+        aOpen->setEnabled (! ffd_.empty ()); //TODO update via timer
         miFile->addSeparator ();
 
         auto aQuit = miFile->addAction ("&Quit");
@@ -68,9 +74,9 @@ NMainWindow::NMainWindow()
         miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
 
     //
-    auto root = new NFFDNodeAdapter; // can't be shown
+    /*auto root = new NFFDNodeAdapter; // can't be shown
     new NFFDNodeAdapter {nullptr, root};
-    auto tree = new NTreeModel<NFFDNodeAdapter> (root, this);
+    auto tree = new NTreeModel<NFFDNodeAdapter> (root, this);*/
 
     // TODO to a unit test:
     int arr[] = {1,2,3};
@@ -79,13 +85,13 @@ NMainWindow::NMainWindow()
     qDebug () << arr2;
 
     printf ("arr %d: %d, %d, %d" EOL, arr2.size (), arr2[0], arr2[1], arr2[2]);
-    auto tv = new QTreeView {};
+    tv_ = new QTreeView {};
     // I have to sub-class QTreeView just to set its initial size as a docked
     // tree?! You have got to be nice mountain view kidding me. TODO read
     // QDockWidget
-    tv->setModel (tree);
+    // tv->setModel (tree);
     auto foo = new QDockWidget {"TreeView"};
-    foo->setWidget (tv);
+    foo->setWidget (tv_);
     addDockWidget (Qt::LeftDockWidgetArea, foo);
     // status bar
     statusBar ()->showMessage ("Idle");
@@ -93,14 +99,52 @@ NMainWindow::NMainWindow()
 
 NMainWindow::~NMainWindow() {}
 
+void NMainWindow::InitFFD()
+{
+    //TODO to options (ffd_files =  QDirIterator ... (NIFWIND_FFD_DIR))
+    NMainWindow::FFDEntry one {"nif_ffd"};
+    ffd_ << one;
+}
+
+NMainWindow::FFDEntry::FFDEntry(const QString & fn)
+    : fn_ {fn}
+{
+    //TODO do something about this: like ffd.FromStream ()
+    NFileStream ffd_stream {fn};
+    FFD_NS::ByteArray ffd_buf {};
+    qDebug () << "Using \"" << fn << "\" (" << ffd_stream.Size ()
+        << " bytes) FFD";
+    //TODO FFD_MAX_SIZE
+    NSURE(ffd_stream.Size () > 0 && ffd_stream.Size () < 1<<20,
+        "Suspicious FFD size")
+    ffd_buf.Resize (ffd_stream.Size ());
+    ffd_stream.Read (ffd_buf.operator byte * (), ffd_stream.Size ());
+    Dbg.Enabled = false; //TODO un-mix my Dbg and QDebug()
+    ffd_ = new FFD_NS::FFD {ffd_buf.operator byte * (), ffd_buf.Length ()};
+}
+
 void NMainWindow::HandleFileOpen()
 {
+    NSURE(! ffd_.empty (), "bug: Open File shall be disabled when no FFDs")
+
     QFileDialog dlg {this};
     dlg.setFileMode (QFileDialog::ExistingFile);
     dlg.setNameFilter ("Nif files (*.nif *.nifcache *.texcache)");
     dlg.setViewMode (QFileDialog::Detail);
-    if (dlg.exec ()) printf ("Open it\n");
-    else printf ("Don't open it\n");
+    if (! dlg.exec ()) return;
+
+    NSURE(1 == dlg.selectedFiles ().size (), "unexpected number of files")
+    NFileStream data_stream {dlg.selectedFiles ()[0]};
+    qDebug () << "Parsing " << dlg.selectedFiles ()[0] << ", "
+        << data_stream.Size () << " bytes";
+    //TODO loop over ffd_ - tryparse()
+    //TODO progress bar
+    FFD_NS::FFDNode * tree = ffd_[0].FFD ()->File2Tree (data_stream);
+    NSURE(nullptr != tree, "parse_nif(): File2Tree() returned null?!")
+    // tree->PrintTree ();
+    auto root = new NFFDNodeAdapter {tree}; // can't be shown
+    auto tree_model = new NTreeModel<NFFDNodeAdapter> (root, this);
+    tv_->setModel (tree_model);
 }
 
 NAMESPACE_NIFWIND

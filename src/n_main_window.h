@@ -36,8 +36,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _N_MAIN_WINDOW_H_
 
 #include "nifwind.h"
+#include "ffd.h"
 
 #include <QMainWindow>
+
+class QTreeView;
 
 NIFWIND_NAMESPACE
 
@@ -49,6 +52,36 @@ class NMainWindow final: public QMainWindow
     public: ~NMainWindow() override;
 
     private slots: void HandleFileOpen();
+
+    private: class FFDEntry
+    {
+        public: FFDEntry(const FFDEntry & v) { operator= (v); }
+        public: FFDEntry(FFDEntry && v)
+        {
+            operator= (static_cast<FFDEntry &&>(v));
+        }
+        public: FFDEntry & operator=(const FFDEntry & v)
+        {
+            //TODO make FFD copy-able
+            return ffd_ = v.ffd_, (const_cast<FFDEntry &>(v)).ffd_ = nullptr,
+                fn_ = v.fn_, *this;
+        }
+        public: FFDEntry & operator=(FFDEntry && v)
+        {
+            return ffd_ = v.ffd_, v.ffd_ = nullptr,
+                fn_.operator= (static_cast<QString &&>(v.fn_)), *this;
+        }
+        public: FFDEntry(const QString &);
+        // lets see if QList does auto~() ... it does
+        public: ~FFDEntry() { if (ffd_) { delete ffd_; ffd_ = nullptr; } }
+        private: FFD_NS::FFD * ffd_{};
+        public: inline FFD_NS::FFD * FFD() { return ffd_; }
+        private: QString fn_{}; //LATER remove if useless
+    }; // FFDEntry
+    private: QList<FFDEntry> ffd_ {};
+    private: void InitFFD();
+
+    private: QTreeView * tv_{};
 };
 
 NAMESPACE_NIFWIND
