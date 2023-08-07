@@ -1217,6 +1217,7 @@ const VER_FOO 1 (Version == 34)
 // struct - "compound" ........................................................
 
 // "A variable length string that ends with a newline character (0x0A)."
+[Text]
 struct HeaderString
     char Chars[-10]
 
