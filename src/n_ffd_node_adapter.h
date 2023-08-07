@@ -58,7 +58,7 @@ class NFFDNodeAdapter
         : n_{n}
     {
         if (b)
-            Base = b, b->Nodes.push_back (this), Index = Nodes.size ()-1;
+            Base = b, b->Nodes.push_back (this), Index = b->Nodes.size ()-1;
         // These are configured by the user: e.g. ensure the unnamed-yet method
         // reflects that.
         if (n_) {
@@ -73,17 +73,58 @@ class NFFDNodeAdapter
             fields_.push_back (QString {n_->FieldNode ()->Name.AsZStr ()});
             fields_.push_back (QString {n_->FieldNode ()->TypeToString ()
                 .AsZStr ()});
+
+            // verbose on purpose
+            //TODO
+            /*Dbg.Enabled = true;
+            n_->FieldNode ()->DbgPrint ();
+            if (n_->FieldNode ()->Base) {
+                n_->FieldNode ()->Base->DbgPrint ();
+                if (n_->FieldNode ()->Base->Prev) {
+                    n_->FieldNode ()->Base->Prev->DbgPrint ();
+                    if (n_->FieldNode ()->Base->Prev->IsAttribute ()) {
+                        Dbg << "attr: " << n_->FieldNode ()->Base->Prev->Attribute << EOL;
+                        Dbg << (n_->FieldNode ()->Base->Prev->Attribute == "[Text]") << EOL;
+                        Dbg << "text: " << n_->AsString () << EOL;
+                        fields_.push_back (QString {n_->AsString ().AsZStr ()});
+                        Dbg.Enabled = false;
+                    }
+                }
+            }*/
+            // Dbg.Enabled = false;
+            if (n_->FieldNode ()->Base
+                && n_->FieldNode ()->Base->Prev
+                && n_->FieldNode ()->Base->Prev->IsAttribute ()
+                && n_->FieldNode ()->Base->Prev->Attribute
+                    == "[Text]") {
+                Dbg.Enabled = true;
+                Dbg << "text: " << n_->AsString () << EOL;
+                Dbg.Enabled = false;
+                fields_.push_back (QString {n_->AsString ().AsZStr ()});
+            }
+            else if (n_->FieldNode ()->DType
+                && n_->FieldNode ()->DType->IsIntType ()
+                && ! n_->FieldNode ()->Array)
+                fields_.push_back (n_->AsInt ());
+            else fields_.push_back ("TODO");
         }
         else {
             fields_.push_back ("Field 0");
             fields_.push_back ("Field 1");
+            fields_.push_back ("Field 3");
         }
         // the node transforms to a tree
-        if (n_ && ! n_->ArrayOfFields ())
+        if (n_ /*&& ! n_->ArrayOfFields ()*/)
             for (auto sn : n_->Nodes ())
-                new NFFDNodeAdapter {sn, this};
+                if (sn && (sn->FieldNode ()->IsField ()
+                    || sn->FieldNode ()->IsStruct ()))
+                    new NFFDNodeAdapter {sn, this};
     }
-    public: ~NFFDNodeAdapter() { for (auto f : Nodes) delete f; }
+    public: ~NFFDNodeAdapter()
+    {
+        for (auto f : Nodes) delete f;
+        if (! Base && n_) ::FFD_NS::FFD::FreeNode (n_); // a.k.a. root?
+    }
     public: inline QVariant FieldById(int id)
     {
         return id >= 0 and id < fields_.size () ? fields_[id] : "MV";
