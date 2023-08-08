@@ -86,6 +86,7 @@ NMainWindow::NMainWindow()
 
     printf ("arr %d: %d, %d, %d" EOL, arr2.size (), arr2[0], arr2[1], arr2[2]);
     tv_ = new QTreeView {};
+    tv_->setUniformRowHeights (true);
     tv_->setAlternatingRowColors (true);
     // I have to sub-class QTreeView just to set its initial size as a docked
     // tree?! You have got to be nice mountain view kidding me. TODO read
