@@ -76,22 +76,6 @@ class NFFDNodeAdapter
 
             // verbose on purpose
             //TODO
-            /*Dbg.Enabled = true;
-            n_->FieldNode ()->DbgPrint ();
-            if (n_->FieldNode ()->Base) {
-                n_->FieldNode ()->Base->DbgPrint ();
-                if (n_->FieldNode ()->Base->Prev) {
-                    n_->FieldNode ()->Base->Prev->DbgPrint ();
-                    if (n_->FieldNode ()->Base->Prev->IsAttribute ()) {
-                        Dbg << "attr: " << n_->FieldNode ()->Base->Prev->Attribute << EOL;
-                        Dbg << (n_->FieldNode ()->Base->Prev->Attribute == "[Text]") << EOL;
-                        Dbg << "text: " << n_->AsString () << EOL;
-                        fields_.push_back (QString {n_->AsString ().AsZStr ()});
-                        Dbg.Enabled = false;
-                    }
-                }
-            }*/
-            // Dbg.Enabled = false;
             if (n_->FieldNode ()->Base
                 && n_->FieldNode ()->Base->Prev
                 && n_->FieldNode ()->Base->Prev->IsAttribute ()
