@@ -46,7 +46,7 @@ FFD_LDFLAGS = -L${FFDIR} -Wl,-rpath -Wl,${FFDIR}
 CXXFLAGS = -std=c++14 -march=core2 -mtune=core2 \
  -Wall -Wextra -Wshadow -Werror=shadow -Wno-deprecated-copy \
  -fvisibility=hidden -frtti -fno-exceptions -pipe -O0 -g
-SAN = -fsanitize=undefined,leak,address
+SAN = -fsanitize=undefined,leak,address,integer
 CXXFLAGS += $(SAN) -std=c++14 \
  -DNIFWIND_VERSION="\"1.0\"" \
  -I. -Isrc -Isrc/services $(FFD_CFLAGS) \
