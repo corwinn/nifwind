@@ -138,11 +138,8 @@ template <typename NodeAdapter> class NTreeModel final
     {
         //printf ("m: data((%d, %d), %d)\n", n.row (), n.column (), r);
         if (! n.isValid ()) return QVariant {};
-        if (r != Qt::DisplayRole) {
-            if (Qt::BackgroundRole == r)
-                if (n.row () % 2) return QBrush {QColor {234, 234, 234}};
+        if (r != Qt::DisplayRole)
             return QVariant {};
-        }
 
         auto node = static_cast<NodeAdapter *>(n.internalPointer ());
         return node->FieldById (n.column ());
