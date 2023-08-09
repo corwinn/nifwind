@@ -69,11 +69,20 @@ class NFileStream final : public ::FFD_NS::Stream
         NSURE(f_.reset (), "reset() failed")
         return *this;
     }
-    public: NFileStream(const QString & n) : Stream {}, f_ {n}
+    public: NFileStream(const char * n) : Stream {}, f_ {nullptr}
     {
-        if (! QFile::exists (n))
-            qDebug () << "File does not exist: \"" << n;
-        NSURE(f_.open (QIODevice::ReadOnly), "Can't open file")
+        // As it happens QString transcodes its input; e.g. non-Unicode strings
+        // get modified from valid to void file names.
+
+        // There is no choice for QFile::exists - it returns false for existing
+        // files just because QString says so. Same for QFileDialog - it only
+        // shows what QString allows. This was unexpected of "Qt"-like framework
+        // if (! QFile::exists (n))
+        //    qDebug () << "File does not exist: \"" << n;
+
+        // There is a choice for QFile::open
+        NSURE(f_.open (fopen (n, "rb"), QIODevice::ReadOnly,
+            QFileDevice::AutoCloseHandle), "Can't open file")
     }
     public: ~NFileStream() override {}
     private: QFile f_;
