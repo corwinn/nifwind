@@ -88,6 +88,7 @@ class NFFDNodeAdapter
             }
             else if (n_->FieldNode ()->DType
                 && n_->FieldNode ()->DType->IsIntType ()
+                && ! n_->FieldNode ()->HashKey
                 && ! n_->FieldNode ()->Array)
                 fields_.push_back (n_->AsInt ());
             else fields_.push_back ("TODO");
