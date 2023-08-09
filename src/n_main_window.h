@@ -41,6 +41,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMainWindow>
 
 class QTreeView;
+class QTableView;
+class QAbstractTableModel;
 
 NIFWIND_NAMESPACE
 
@@ -82,6 +84,11 @@ class NMainWindow final: public QMainWindow
     private: void InitFFD();
 
     private: QTreeView * tv_{};
+    private: QTableView * hv_{};
+
+    //LATER for some unknown reason this doesn't get freed when hv_ does; unlike
+    //      the model at the tv_
+    private: QAbstractTableModel * cleanup1_{};
 };
 
 NAMESPACE_NIFWIND

@@ -48,10 +48,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QString>
 #include <QDebug>
 #include <QStringList>
+#include <QTableView>
 
 #include "n_tree_model.h"
 #include "n_ffd_node_adapter.h"
 #include "n_file_stream.h"
+
+#include "n_hexviewer_model.h"
 
 NIFWIND_NAMESPACE
 
@@ -95,11 +98,21 @@ NMainWindow::NMainWindow()
     auto foo = new QDockWidget {"TreeView"};
     foo->setWidget (tv_);
     addDockWidget (Qt::LeftDockWidgetArea, foo);
+
+    hv_ = new QTableView {};
+    cleanup1_ = new NHexViewerModel {};
+    hv_->setModel (cleanup1_);
+    foo = new QDockWidget {"HexView"};
+    foo->setWidget (hv_);
+    addDockWidget (Qt::LeftDockWidgetArea, foo);
     // status bar
     statusBar ()->showMessage ("Idle");
 }
 
-NMainWindow::~NMainWindow() {}
+NMainWindow::~NMainWindow()
+{
+    if (cleanup1_) { delete cleanup1_; cleanup1_ = nullptr; }
+}
 
 void NMainWindow::InitFFD()
 {
@@ -112,7 +125,7 @@ NMainWindow::FFDEntry::FFDEntry(const QString & fn)
     : fn_ {fn}
 {
     //TODO do something about this: like ffd.FromStream ()
-    NFileStream ffd_stream {fn};
+    NFileStream ffd_stream {fn.toUtf8 ().constData ()};
     FFD_NS::ByteArray ffd_buf {};
     qDebug () << "Using \"" << fn << "\" (" << ffd_stream.Size ()
         << " bytes) FFD";
@@ -136,7 +149,7 @@ void NMainWindow::HandleFileOpen()
     if (! dlg.exec ()) return;
 
     NSURE(1 == dlg.selectedFiles ().size (), "unexpected number of files")
-    NFileStream data_stream {dlg.selectedFiles ()[0]};
+    NFileStream data_stream {dlg.selectedFiles ()[0].toUtf8 ().constData ()};
     qDebug () << "Parsing " << dlg.selectedFiles ()[0] << ", "
         << data_stream.Size () << " bytes";
     //TODO loop over ffd_ - tryparse()
