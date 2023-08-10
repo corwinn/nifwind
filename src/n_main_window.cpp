@@ -104,29 +104,51 @@ NMainWindow::NMainWindow()
     addDockWidget (Qt::LeftDockWidgetArea, foo);
 
     hv_ = new QTableView {};
-    cleanup1_ = new NHexViewerModel {};
-    hv_->setModel (cleanup1_);
-    // hv_->resizeColumnsToContents (); slow
-    // try setting up mnospace font: this is required for this view
-    auto hvf = QFont {hv_->font ()};
-    hvf.setStyleHint (QFont::Monospace);
-    QFontInfo hvfi {hvf};
-    qDebug() << hvfi.family () << hvfi.fixedPitch ();
-    if (! hvfi.fixedPitch ()) {
-        hvf = QFont {"Liberation mono"};
+        // try setting up mono-space font: this is required for this view
+        auto hvf = QFont {hv_->font ()};
         hvf.setStyleHint (QFont::Monospace);
-        hvfi = QFontInfo {hvf};
-        qDebug() << hvfi.family () << hvfi.fixedPitch ();
-    }
-    hv_->setFont (hvf);
-    // qDebug () << QFontDatabase {}.families ();
+        QFontInfo hvfi {hvf};
+        qDebug () << hvfi.family () << hvfi.fixedPitch ();
+        if (! hvfi.fixedPitch ()) {
+            hvf = QFont {"Liberation mono"};
+            hvf.setStyleHint (QFont::Monospace);
+            hvfi = QFontInfo {hvf};
+            qDebug () << hvfi.family () << hvfi.fixedPitch ();
+        }
+        hv_->setFont (hvf);
+        // qDebug () << QFontDatabase {}.families ();
+        // stay fixed: all rows an all columns
+        //TODO font_changed()
+        hv_->horizontalHeader ()->setSectionResizeMode (QHeaderView::Fixed);
+        hv_->verticalHeader ()->setSectionResizeMode (QHeaderView::Fixed);
+        QFontMetricsF out_of_names {hvf};
+        QRectF br {};
+        for (int i = 0; i < 256; i++) {
+            // Never works as expected - ever. Is it so hard to compute a nice
+            // mountain view rectangle?
+            auto r1 = out_of_names.boundingRect (
+                QString {"%1"}.arg (i, 2, 16, QChar{'0'}));
+            if (r1.width () > br.width ()) br.setWidth (r1.width ());
+            if (r1.height () > br.height ()) br.setHeight (r1.height ());
+        }
+        auto ttw = static_cast<int>(round (br.width () + 1.0));
+        auto tth = static_cast<int>(round (br.height () + 1.0));
+        ttw += ttw & 1; tth += tth & 1;
+        // hv_->resizeRowsToContents (); // unfortunately this isn't ok
+        hv_->horizontalHeader ()->setMinimumSectionSize (ttw);
+        hv_->horizontalHeader ()->setDefaultSectionSize (ttw);
+        hv_->verticalHeader ()->setMinimumSectionSize (tth);
+        hv_->verticalHeader ()->setDefaultSectionSize (tth);
+
+        cleanup1_ = new NHexViewerModel {};
+        hv_->setModel (cleanup1_);
 
     foo = new QDockWidget {"HexView"};
     foo->setWidget (hv_);
     addDockWidget (Qt::LeftDockWidgetArea, foo);
     // status bar
     statusBar ()->showMessage ("Idle");
-}
+} // NMainWindow::NMainWindow()
 
 NMainWindow::~NMainWindow()
 {
