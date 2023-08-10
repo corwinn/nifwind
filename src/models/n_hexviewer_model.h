@@ -89,7 +89,9 @@ class NHexViewerModel final : public QAbstractTableModel
         // I love the output of this statement: well nice mountain view done Qt.
         // printf ("N: %d, M: %d" EOL, n.row (), n.column ());
 
-        return QString {"%L1"}.arg (0xff & ((n.row () << 4) + n.column ()));
+        return QString {"%1"}
+            .arg (0xff & ((n.row () << 4) + n.column ()), 2, 16, QChar{'0'})
+            .toUpper ();
     }
 
     private: inline QVariant headerData(int s, Qt::Orientation o, int r)
