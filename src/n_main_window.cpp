@@ -103,7 +103,12 @@ NMainWindow::NMainWindow()
     foo->setWidget (tv_);
     addDockWidget (Qt::LeftDockWidgetArea, foo);
 
-    hv_ = new QTableView {};
+    hv_ = new QTableView {}; //TODO NHexEditTableView
+        hv_->setSortingEnabled (false);
+        hv_->setWordWrap (false);
+        hv_->horizontalHeader ()->setHighlightSections (false);
+        hv_->horizontalHeader ()->setSectionsClickable (false);
+        hv_->horizontalHeader ()->setSectionsMovable (false);
         // try setting up mono-space font: this is required for this view
         auto hvf = QFont {hv_->font ()};
         hvf.setStyleHint (QFont::Monospace);
