@@ -83,6 +83,8 @@ class NHexViewerModel final : public QAbstractTableModel
         const override
     {
         if (! n.isValid ()) return QVariant {};
+        if (Qt::TextAlignmentRole == r)
+            return Qt::AlignBottom;
         if (r != Qt::DisplayRole)
             return QVariant {};
 
