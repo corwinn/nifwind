@@ -102,6 +102,7 @@ NMainWindow::NMainWindow()
     hv_ = new QTableView {};
     cleanup1_ = new NHexViewerModel {};
     hv_->setModel (cleanup1_);
+    hv_->resizeColumnsToContents ();
     foo = new QDockWidget {"HexView"};
     foo->setWidget (hv_);
     addDockWidget (Qt::LeftDockWidgetArea, foo);
