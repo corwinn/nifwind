@@ -131,6 +131,11 @@ NMainWindow::NMainWindow()
         for (int i = 0; i < 256; i++) {
             // Never works as expected - ever. Is it so hard to compute a nice
             // mountain view rectangle?
+            //TODO add these options for the user:
+            //      * font
+            //      * hex view cell size / or padding/margins
+            //        (to be used when auto-size presents them with a nice empty
+            //         grid of quads)
             auto r1 = out_of_names.boundingRect (
                 QString {"%1"}.arg (i, 2, 16, QChar{'0'}));
             if (r1.width () > br.width ()) br.setWidth (r1.width ());
