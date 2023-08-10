@@ -49,6 +49,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDebug>
 #include <QStringList>
 #include <QTableView>
+#include <QFont>
+#include <QFontInfo>
+// #include <QFontDatabase>
+#include <QHeaderView>
 
 #include "n_tree_model.h"
 #include "n_ffd_node_adapter.h"
@@ -102,7 +106,21 @@ NMainWindow::NMainWindow()
     hv_ = new QTableView {};
     cleanup1_ = new NHexViewerModel {};
     hv_->setModel (cleanup1_);
-    hv_->resizeColumnsToContents ();
+    // hv_->resizeColumnsToContents (); slow
+    // try setting up mnospace font: this is required for this view
+    auto hvf = QFont {hv_->font ()};
+    hvf.setStyleHint (QFont::Monospace);
+    QFontInfo hvfi {hvf};
+    qDebug() << hvfi.family () << hvfi.fixedPitch ();
+    if (! hvfi.fixedPitch ()) {
+        hvf = QFont {"Liberation mono"};
+        hvf.setStyleHint (QFont::Monospace);
+        hvfi = QFontInfo {hvf};
+        qDebug() << hvfi.family () << hvfi.fixedPitch ();
+    }
+    hv_->setFont (hvf);
+    // qDebug () << QFontDatabase {}.families ();
+
     foo = new QDockWidget {"HexView"};
     foo->setWidget (hv_);
     addDockWidget (Qt::LeftDockWidgetArea, foo);
