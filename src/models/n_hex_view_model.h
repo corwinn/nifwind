@@ -41,8 +41,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     qmi - QModelIndex
 */
 
-#ifndef _N_HEXVIEWER_MODEL_H_
-#define _N_HEXVIEWER_MODEL_H_
+#ifndef _N_HEX_VIEW_MODEL_H_
+#define _N_HEX_VIEW_MODEL_H_
 
 #include "nifwind.h"
 
@@ -56,14 +56,14 @@ NIFWIND_NAMESPACE
 // file data with this format: %002X
 // The catch: render exactly the needed amount of data at a time: yes you can
 // view terabyte-sized file - thats the whole idea.
-class NHexViewerModel final : public QAbstractTableModel
+class NHexViewModel final : public QAbstractTableModel
 {
-    public: explicit NHexViewerModel(QIODevice * n = nullptr,
+    public: explicit NHexViewModel(QIODevice * n = nullptr,
         QObject * b = nullptr)
         : QAbstractTableModel {b}, s_{n}
     {
     }
-    public: virtual ~NHexViewerModel() override {}
+    public: virtual ~NHexViewModel() override {}
 
     // mandatory ---------------------------------------------------------------
 
