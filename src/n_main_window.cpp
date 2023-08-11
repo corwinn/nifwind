@@ -58,8 +58,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "n_ffd_node_adapter.h"
 #include "n_file_stream.h"
 
-#include "n_hexviewer_model.h"
-
 NIFWIND_NAMESPACE
 
 NMainWindow::NMainWindow()
