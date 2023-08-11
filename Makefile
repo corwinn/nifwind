@@ -49,7 +49,7 @@ CXXFLAGS = -std=c++14 -march=core2 -mtune=core2 \
 SAN = -fsanitize=undefined,leak,address,integer
 CXXFLAGS += $(SAN) -std=c++14 \
  -DNIFWIND_VERSION="\"1.0\"" \
- -I. -Isrc -Isrc/services -Isrc/models $(FFD_CFLAGS) \
+ -I. -Isrc -Isrc/services -Isrc/models -Isrc/views $(FFD_CFLAGS) \
  -I${QTDIR}/include -I${QTDIR}/include/QtCore -I${QTDIR}/include/QtWidgets \
  -I${QTDIR}/include/QtOpenGL -I${QTDIR}/include/QtGui \
  -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB \

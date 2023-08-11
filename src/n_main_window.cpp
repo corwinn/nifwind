@@ -48,15 +48,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QString>
 #include <QDebug>
 #include <QStringList>
-#include <QTableView>
-#include <QFont>
-#include <QFontInfo>
-// #include <QFontDatabase>
-#include <QHeaderView>
 
 #include "n_tree_model.h"
 #include "n_ffd_node_adapter.h"
 #include "n_file_stream.h"
+#include "n_hex_view.h"
 
 NIFWIND_NAMESPACE
 
@@ -101,55 +97,7 @@ NMainWindow::NMainWindow()
     foo->setWidget (tv_);
     addDockWidget (Qt::LeftDockWidgetArea, foo);
 
-    hv_ = new QTableView {}; //TODO NHexEditTableView
-        hv_->setSortingEnabled (false);
-        hv_->setWordWrap (false);
-        hv_->horizontalHeader ()->setHighlightSections (false);
-        hv_->horizontalHeader ()->setSectionsClickable (false);
-        hv_->horizontalHeader ()->setSectionsMovable (false);
-        // try setting up mono-space font: this is required for this view
-        auto hvf = QFont {hv_->font ()};
-        hvf.setStyleHint (QFont::Monospace);
-        QFontInfo hvfi {hvf};
-        qDebug () << hvfi.family () << hvfi.fixedPitch ();
-        if (! hvfi.fixedPitch ()) {
-            hvf = QFont {"Liberation mono"};
-            hvf.setStyleHint (QFont::Monospace);
-            hvfi = QFontInfo {hvf};
-            qDebug () << hvfi.family () << hvfi.fixedPitch ();
-        }
-        hv_->setFont (hvf);
-        // qDebug () << QFontDatabase {}.families ();
-        // stay fixed: all rows an all columns
-        //TODO font_changed()
-        hv_->horizontalHeader ()->setSectionResizeMode (QHeaderView::Fixed);
-        hv_->verticalHeader ()->setSectionResizeMode (QHeaderView::Fixed);
-        QFontMetricsF out_of_names {hvf};
-        QRectF br {};
-        for (int i = 0; i < 256; i++) {
-            // Never works as expected - ever. Is it so hard to compute a nice
-            // mountain view rectangle?
-            //TODO add these options for the user:
-            //      * font
-            //      * hex view cell size / or padding/margins
-            //        (to be used when auto-size presents them with a nice empty
-            //         grid of quads)
-            auto r1 = out_of_names.boundingRect (
-                QString {"%1"}.arg (i, 2, 16, QChar{'0'}));
-            if (r1.width () > br.width ()) br.setWidth (r1.width ());
-            if (r1.height () > br.height ()) br.setHeight (r1.height ());
-        }
-        auto ttw = static_cast<int>(round (br.width () + 1.0));
-        auto tth = static_cast<int>(round (br.height () + 1.0));
-        ttw += ttw & 1; tth += tth & 1;
-        // hv_->resizeRowsToContents (); // unfortunately this isn't ok
-        hv_->horizontalHeader ()->setMinimumSectionSize (ttw);
-        hv_->horizontalHeader ()->setDefaultSectionSize (ttw);
-        hv_->verticalHeader ()->setMinimumSectionSize (tth);
-        hv_->verticalHeader ()->setDefaultSectionSize (tth);
-
-        cleanup1_ = new NHexViewerModel {};
-        hv_->setModel (cleanup1_);
+    hv_ = new NHexView {};
 
     foo = new QDockWidget {"HexView"};
     foo->setWidget (hv_);
@@ -158,10 +106,7 @@ NMainWindow::NMainWindow()
     statusBar ()->showMessage ("Idle");
 } // NMainWindow::NMainWindow()
 
-NMainWindow::~NMainWindow()
-{
-    if (cleanup1_) { delete cleanup1_; cleanup1_ = nullptr; }
-}
+NMainWindow::~NMainWindow() {}
 
 void NMainWindow::InitFFD()
 {

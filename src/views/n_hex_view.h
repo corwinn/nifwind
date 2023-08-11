@@ -32,59 +32,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-#ifndef _N_MAIN_WINDOW_H_
-#define _N_MAIN_WINDOW_H_
+#ifndef _N_HEX_VIEW_H_
+#define _N_HEX_VIEW_H_
 
 #include "nifwind.h"
-#include "ffd.h"
 
-#include <QMainWindow>
+#include <QTableView>
 
-class QTreeView;
+class QAbstractTableModel;
 
 NIFWIND_NAMESPACE
-class NHexView;
 
-class NMainWindow final: public QMainWindow
+class NHexView final : public QTableView
 {
-    Q_OBJECT
+    public: NHexView(QWidget * = nullptr);
+    public: ~NHexView() override;
 
-    public: NMainWindow();
-    public: ~NMainWindow() override;
-
-    private slots: void HandleFileOpen();
-
-    private: class FFDEntry
-    {
-        public: FFDEntry(const FFDEntry & v) { operator= (v); }
-        public: FFDEntry(FFDEntry && v)
-        {
-            operator= (static_cast<FFDEntry &&>(v));
-        }
-        public: FFDEntry & operator=(const FFDEntry & v)
-        {
-            //TODO make FFD copy-able
-            return ffd_ = v.ffd_, (const_cast<FFDEntry &>(v)).ffd_ = nullptr,
-                fn_ = v.fn_, *this;
-        }
-        public: FFDEntry & operator=(FFDEntry && v)
-        {
-            return ffd_ = v.ffd_, v.ffd_ = nullptr,
-                fn_.operator= (static_cast<QString &&>(v.fn_)), *this;
-        }
-        public: FFDEntry(const QString &);
-        // lets see if QList does auto~() ... it does
-        public: ~FFDEntry() { if (ffd_) { delete ffd_; ffd_ = nullptr; } }
-        private: FFD_NS::FFD * ffd_{};
-        public: inline FFD_NS::FFD * FFD() { return ffd_; }
-        private: QString fn_{}; //LATER remove if useless
-    }; // FFDEntry
-    private: QList<FFDEntry> ffd_ {};
-    private: void InitFFD();
-
-    private: QTreeView * tv_{};
-    private: NHexView * hv_{};
+    private: QAbstractTableModel * cleanup1_{};
 };
 
 NAMESPACE_NIFWIND
+
 #endif
