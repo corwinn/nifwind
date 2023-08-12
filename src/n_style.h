@@ -64,11 +64,23 @@ class NStyle final : public QProxyStyle
                 // |    |    |    |                   |    |
                 // |  --| vs |--  |, really puzzling: |----|
                 // |    |    |    |                   |    |
-                p->setPen (QColor {222,1,1});
+                p->setPen (QColor {222, 1, 1});
+                // expected:
+                // |   /|
+                // |  --|
+                // |    |
                 p->drawLine (mx, my, opt->rect.width (), my);
                 p->drawLine (mx, my, opt->rect.width (), opt->rect.y ());
             }
-
+            if (opt->state & State_Sibling) {
+                // expected:
+                // |\   |
+                // |--  |
+                // |    |
+                p->setPen (QColor {1, 222, 1});
+                p->drawLine (mx, my+2, opt->rect.x (), my+2);
+                p->drawLine (mx, my+2, opt->rect.x (), opt->rect.y ());
+            }
         }
         else
             QProxyStyle::drawPrimitive (pe, opt, p, w);
