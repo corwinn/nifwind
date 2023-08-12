@@ -56,8 +56,19 @@ class NStyle final : public QProxyStyle
         if (QStyle::PE_IndicatorBranch == pe) {
             QProxyStyle::drawPrimitive (pe, opt, p, w);
             //TODO render the usual tree + trace path
-            p->setPen (QColor {1,1,1});
+            p->setPen (QColor {1,1,1}); // clip/bound rectangle
             p->drawRect (opt->rect);
+            int mx = opt->rect.center ().x (), my = opt->rect.center ().y ();
+            if (opt->state & State_Item) {
+                // Some of them are inverted?!
+                // |    |    |    |                   |    |
+                // |  --| vs |--  |, really puzzling: |----|
+                // |    |    |    |                   |    |
+                p->setPen (QColor {222,1,1});
+                p->drawLine (mx, my, opt->rect.width (), my);
+                p->drawLine (mx, my, opt->rect.width (), opt->rect.y ());
+            }
+
         }
         else
             QProxyStyle::drawPrimitive (pe, opt, p, w);
