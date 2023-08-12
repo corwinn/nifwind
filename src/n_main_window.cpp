@@ -53,6 +53,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "n_ffd_node_adapter.h"
 #include "n_file_stream.h"
 #include "n_hex_view.h"
+#include "n_style.h"
 
 NIFWIND_NAMESPACE
 
@@ -87,6 +88,7 @@ NMainWindow::NMainWindow()
 
     printf ("arr %d: %d, %d, %d" EOL, arr2.size (), arr2[0], arr2[1], arr2[2]);
     tv_ = new QTreeView {};
+    tv_->setStyle (cleanup1_ = new NStyle);
     tv_->setUniformRowHeights (true);
     tv_->setAlternatingRowColors (true);
     // I have to sub-class QTreeView just to set its initial size as a docked
@@ -106,7 +108,10 @@ NMainWindow::NMainWindow()
     statusBar ()->showMessage ("Idle");
 } // NMainWindow::NMainWindow()
 
-NMainWindow::~NMainWindow() {}
+NMainWindow::~NMainWindow()
+{
+    if (cleanup1_) delete cleanup1_; cleanup1_ = nullptr;
+}
 
 void NMainWindow::InitFFD()
 {

@@ -32,60 +32,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-#ifndef _N_MAIN_WINDOW_H_
-#define _N_MAIN_WINDOW_H_
+#ifndef _N_STYLE_H_
+#define _N_STYLE_H_
 
 #include "nifwind.h"
-#include "ffd.h"
 
-#include <QMainWindow>
-
-class QTreeView;
+#include <QProxyStyle>
+#include <QPainter>
 
 NIFWIND_NAMESPACE
-class NHexView;
 
-class NMainWindow final: public QMainWindow
+// Custom drawing goes here. I have no idea why would they put their draw procs
+// in giant switch statements, but thats that.
+// Usage: QApplication::setStyle (new NStyle);
+class NStyle final : public QProxyStyle
 {
-    Q_OBJECT
-
-    public: NMainWindow();
-    public: ~NMainWindow() override;
-
-    private slots: void HandleFileOpen();
-
-    private: class FFDEntry final
+    public: inline void drawPrimitive(PrimitiveElement pe,
+        const QStyleOption * opt, QPainter * p, const QWidget * w = nullptr)
+        const override
     {
-        public: FFDEntry(const FFDEntry & v) { operator= (v); }
-        public: FFDEntry(FFDEntry && v)
-        {
-            operator= (static_cast<FFDEntry &&>(v));
-        }
-        public: FFDEntry & operator=(const FFDEntry & v)
-        {
-            //TODO make FFD copy-able
-            return ffd_ = v.ffd_, (const_cast<FFDEntry &>(v)).ffd_ = nullptr,
-                fn_ = v.fn_, *this;
-        }
-        public: FFDEntry & operator=(FFDEntry && v)
-        {
-            return ffd_ = v.ffd_, v.ffd_ = nullptr,
-                fn_.operator= (static_cast<QString &&>(v.fn_)), *this;
-        }
-        public: FFDEntry(const QString &);
-        // lets see if QList does auto~() ... it does
-        public: ~FFDEntry() { if (ffd_) { delete ffd_; ffd_ = nullptr; } }
-        private: FFD_NS::FFD * ffd_{};
-        public: inline FFD_NS::FFD * FFD() { return ffd_; }
-        private: QString fn_{}; //LATER remove if useless
-    }; // FFDEntry
-    private: QList<FFDEntry> ffd_ {};
-    private: void InitFFD();
+        // Q_D(const NStyle); // related to the Q_DECLARE_PRIVATE below
 
-    private: QTreeView * tv_{};
-    private: NHexView * hv_{};
-    private: class NStyle * cleanup1_{};
-}; // NMainWindow
+        if (QStyle::PE_IndicatorBranch == pe) {
+            QProxyStyle::drawPrimitive (pe, opt, p, w);
+            //TODO render the usual tree + trace path
+            p->setPen (QColor {1,1,1});
+            p->drawRect (opt->rect);
+        }
+        else
+            QProxyStyle::drawPrimitive (pe, opt, p, w);
+    }
+    public: bool TreeTracePath{};
+    // private: Q_DECLARE_PRIVATE(NStyle)
+};
 
 NAMESPACE_NIFWIND
+
 #endif
