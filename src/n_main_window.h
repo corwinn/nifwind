@@ -54,7 +54,7 @@ class NMainWindow final: public QMainWindow
 
     private slots: void HandleFileOpen();
 
-    private: class FFDEntry
+    private: class FFDEntry final
     {
         public: FFDEntry(const FFDEntry & v) { operator= (v); }
         public: FFDEntry(FFDEntry && v)
@@ -84,7 +84,7 @@ class NMainWindow final: public QMainWindow
 
     private: QTreeView * tv_{};
     private: NHexView * hv_{};
-};
+}; // NMainWindow
 
 NAMESPACE_NIFWIND
 #endif
