@@ -42,11 +42,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 NIFWIND_NAMESPACE
 
+// layout helper: center "c" againt "b", at offset "a"
+auto center = [](int a, int b, int c) { return a + (b-c) / 2; };
+
 // Custom drawing goes here. I have no idea why would they put their draw procs
 // in giant switch statements, but thats that.
 // Usage: QApplication::setStyle (new NStyle);
 class NStyle final : public QProxyStyle
 {
+    public: NStyle()
+        : QProxyStyle {}
+    {
+        tree_pen_node_dash_.setStyle (Qt::DotLine);
+    }
+
     public: inline void drawPrimitive(PrimitiveElement pe,
         const QStyleOption * opt, QPainter * p, const QWidget * w = nullptr)
         const override
@@ -54,38 +63,48 @@ class NStyle final : public QProxyStyle
         // Q_D(const NStyle); // related to the Q_DECLARE_PRIVATE below
 
         if (QStyle::PE_IndicatorBranch == pe) {
-            QProxyStyle::drawPrimitive (pe, opt, p, w);
-            //TODO render the usual tree + trace path
-            p->setPen (QColor {1,1,1}); // clip/bound rectangle
-            p->drawRect (opt->rect);
-            int mx = opt->rect.center ().x (), my = opt->rect.center ().y ();
-            if (opt->state & State_Item) {
-                // Some of them are inverted?!
-                // |    |    |    |                   |    |
-                // |  --| vs |--  |, really puzzling: |----|
-                // |    |    |    |                   |    |
-                p->setPen (QColor {222, 1, 1});
-                // expected:
-                // |   /|
-                // |  --|
-                // |    |
-                p->drawLine (mx, my, opt->rect.width (), my);
-                p->drawLine (mx, my, opt->rect.width (), opt->rect.y ());
-            }
+            //TODO render non-draft tree + trace path
+            int mx = opt->rect.center ().x (), my = opt->rect.center ().y (),
+                l = opt->rect.x (), r = l + opt->rect.width (),
+                t = opt->rect.y (), b = t + opt->rect.height ();
+            p->setPen (tree_pen_tree_);
             if (opt->state & State_Sibling) {
-                // expected:
-                // |\   |
-                // |--  |
-                // |    |
-                p->setPen (QColor {1, 222, 1});
-                p->drawLine (mx, my+2, opt->rect.x (), my+2);
-                p->drawLine (mx, my+2, opt->rect.x (), opt->rect.y ());
+                p->drawLine (mx, t, mx, b);
+                if (opt->state & State_Children)
+                    p->drawLine (mx, my, r, my);
+            }
+            else {
+                if (opt->state & State_Item) {
+                    p->drawLine (mx, t, mx, my);
+                    p->drawLine (mx, my, r, my);
+                }
+            }
+            if (opt->state & State_Children) {
+                p->setPen (tree_pen_node_dash_);
+                int a = opt->rect.width () > opt->rect.height ()
+                    ? opt->rect.height ()
+                    : opt->rect.width ();
+                a -= 4;
+                p->fillRect (
+                    center (l, opt->rect.width (), a),
+                    center (t, opt->rect.height (), a), a, a, tree_brush_node_);
+                p->drawRect (
+                    center (l, opt->rect.width (), a),
+                    center (t, opt->rect.height (), a), a, a);
+                p->setPen (tree_pen_node_);
+                p->drawLine (mx-2, my, mx + 2, my);
+                if (! (opt->state & State_Open))
+                    p->drawLine (mx, my-2, mx, my + 2);
             }
         }
         else
             QProxyStyle::drawPrimitive (pe, opt, p, w);
     }
     public: bool TreeTracePath{};
+    private: QPen tree_pen_tree_ {QColor {171, 171, 171}};
+    private: QPen tree_pen_node_ {QColor {11, 11, 11}};
+    private: QPen tree_pen_node_dash_ {QColor {11, 11, 11}};
+    private: QBrush tree_brush_node_ {QColor {234, 234, 234}};
     // private: Q_DECLARE_PRIVATE(NStyle)
 };
 
