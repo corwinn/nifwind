@@ -85,12 +85,15 @@ class NStyle final : public QProxyStyle
                     ? opt->rect.height ()
                     : opt->rect.width ();
                 a -= 4;
-                p->fillRect (
-                    center (l, opt->rect.width (), a),
-                    center (t, opt->rect.height (), a), a, a, tree_brush_node_);
-                p->drawRect (
-                    center (l, opt->rect.width (), a),
-                    center (t, opt->rect.height (), a), a, a);
+                int l1 = center (l, opt->rect.width (), a),
+                    t1 = center (t, opt->rect.height (), a),
+                    r1 = l1+a-1, b1 = t1+a-1;
+                p->fillRect (l1, t1, a, a, tree_brush_node_);
+                p->drawLine (l1, t1, l1, b1);
+                p->drawLine (l1, b1, r1, b1);
+                p->drawLine (r1, b1, r1, t1);
+                p->drawLine (r1, t1, l1, t1);
+                // p->drawRect (l1, t1, a-1, a-1);
                 p->setPen (tree_pen_node_);
                 p->drawLine (mx-2, my, mx + 2, my);
                 if (! (opt->state & State_Open))
