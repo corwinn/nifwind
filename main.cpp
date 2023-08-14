@@ -42,6 +42,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QStyle>
 #include <QDesktopWidget>
 #include <QScreen>
+#include <QDebug>
+#include <QDirIterator>
 #include <math.h>
 #include "nifwind.h"
 
@@ -75,6 +77,27 @@ class foo final : public QOpenGLWidget, protected QOpenGLFunctions
 int main(int argc, char **argv)
 {
     QApplication app (argc, argv);
+
+    // test a file path containing non-unicode path names:
+    // confirmed: it doesn't list the non-unicode entry at all
+    //TODO https://bugreports.qt.io/
+    //     1. Make a directory:
+    //        > mkdir a$'\xe9'b
+    //     1. Make a file:
+    //        > echo what the nice mountain view > c$'\xe9'd
+    //     2. let your QDirIterator list it
+    //     2. let File::exists () find it
+    //     2. let your QFile open it
+    //     2. let your QFileDialog show it
+    // Why would you ... I don't know how to define this ... it?
+    if (2 == argc) {
+        qDebug () << "Iterating" << argv[1];
+        QDirIterator foo {argv[1]};
+        while (foo.hasNext ())
+            qDebug () << foo.next ();
+        qDebug () << "Thats not all, unfortunately";
+    }
+
     nifwind::NMainWindow mw {};
     foo bar {};
     mw.setCentralWidget (&bar);

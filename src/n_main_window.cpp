@@ -102,6 +102,7 @@ void NMainWindow::InitFFD()
 {
     //TODO to options (ffd_files = avoid QDirIterator ... (NIFWIND_FFD_DIR))
     //     avoid using anything IO-related that operates with QString;
+    //     (QDirIterator fails miserably - just confirmed by a test at main())
     //     use the OS API directly - see n_file_stream for details
     NMainWindow::FFDEntry one {"nif_ffd"};
     ffd_ << one;
