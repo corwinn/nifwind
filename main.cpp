@@ -90,6 +90,10 @@ int main(int argc, char **argv)
     //     2. let your QFile open it
     //     2. let your QFileDialog show it
     // Why would you ... I don't know how to define this ... it?
+    //
+    // They say they fixed it:
+    //   https://codereview.qt-project.org/c/qt/qtbase/+/67383
+    // Then it got "simd" parsers ... I'm speechless
     if (2 == argc) {
         qDebug () << "Iterating" << argv[1];
         QDirIterator foo {argv[1]};
