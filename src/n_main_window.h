@@ -84,7 +84,6 @@ class NMainWindow final: public QMainWindow
 
     private: QTreeView * tv_{};
     private: NHexView * hv_{};
-    private: class NStyle * cleanup1_{};
 }; // NMainWindow
 
 NAMESPACE_NIFWIND

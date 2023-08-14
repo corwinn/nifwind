@@ -53,7 +53,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "n_ffd_node_adapter.h"
 #include "n_file_stream.h"
 #include "n_hex_view.h"
-#include "n_style.h"
+#include "n_tree_view.h"
 
 NIFWIND_NAMESPACE
 
@@ -75,43 +75,28 @@ NMainWindow::NMainWindow()
     auto miHelp = menuBar ()->addMenu ("&Help");
         miHelp->addAction ("&About Qt", qApp, &QApplication::aboutQt);
 
-    //
-    /*auto root = new NFFDNodeAdapter; // can't be shown
-    new NFFDNodeAdapter {nullptr, root};
-    auto tree = new NTreeModel<NFFDNodeAdapter> (root, this);*/
-
-    // TODO to a unit test:
-    int arr[] = {1,2,3};
+    /*// TODO to a unit test:
+    int arr[] = {1, 2, 3};
     NOptions::PutIntArr ("foo", QVector<int> {arr, arr+3});
     auto arr2 = NOptions::GetIntArr ("foo");
     qDebug () << arr2;
-
     printf ("arr %d: %d, %d, %d" EOL, arr2.size (), arr2[0], arr2[1], arr2[2]);
-    tv_ = new QTreeView {};
-    tv_->setStyle (cleanup1_ = new NStyle);
-    tv_->setUniformRowHeights (true);
-    tv_->setAlternatingRowColors (true);
-    // I have to sub-class QTreeView just to set its initial size as a docked
-    // tree?! You have got to be nice mountain view kidding me. TODO read
-    // QDockWidget
-    // tv->setModel (tree);
+    */
+
+    tv_ = new NTreeView {};
     auto foo = new QDockWidget {"TreeView"};
     foo->setWidget (tv_);
     addDockWidget (Qt::LeftDockWidgetArea, foo);
 
     hv_ = new NHexView {};
-
     foo = new QDockWidget {"HexView"};
     foo->setWidget (hv_);
-    addDockWidget (Qt::LeftDockWidgetArea, foo);
-    // status bar
+    addDockWidget (Qt::RightDockWidgetArea, foo);
+
     statusBar ()->showMessage ("Idle");
 } // NMainWindow::NMainWindow()
 
-NMainWindow::~NMainWindow()
-{
-    if (cleanup1_) delete cleanup1_; cleanup1_ = nullptr;
-}
+NMainWindow::~NMainWindow() {}
 
 void NMainWindow::InitFFD()
 {
@@ -149,6 +134,7 @@ void NMainWindow::HandleFileOpen()
     //     unicode file paths at all; no error, no warning - you just won't see
     //     them; perhaps NFileDialog is the best option: NTableView +
     //     NFileSystemModel
+    //TODO https://bugreports.qt.io/
     QFileDialog dlg {this};
     dlg.setFileMode (QFileDialog::ExistingFile);
     dlg.setNameFilter ("Nif files (*.nif *.nifcache *.texcache)");
