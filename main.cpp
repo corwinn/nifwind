@@ -35,6 +35,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //c make
 //r LSAN_OPTIONS=suppressions="${PWD}/asan_supp" ./nifwind
 
+struct QUnreliable {};
+
+//TODO re-design; decouple as much as possible from "Qt" because its unreliable.
+
 #include <QApplication>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -80,7 +84,7 @@ int main(int argc, char **argv)
 
     // test a file path containing non-unicode path names:
     // confirmed: it doesn't list the non-unicode entry at all
-    //TODO https://bugreports.qt.io/
+    //TODONT https://bugreports.qt.io/
     //     1. Make a directory:
     //        > mkdir a$'\xe9'b
     //     1. Make a file:
@@ -89,11 +93,12 @@ int main(int argc, char **argv)
     //     2. let File::exists () find it
     //     2. let your QFile open it
     //     2. let your QFileDialog show it
-    // Why would you ... I don't know how to define this ... it?
+    // Why would you ... I don't know how to define the above ... it?
+    // This ^ makes your FILE IO completely unreliable Mr. "rare enough to not
+    // be worth"; - Why is this level of "reasoning" even allowed at "Qt"?!
     //
-    // They say they fixed it:
-    //   https://codereview.qt-project.org/c/qt/qtbase/+/67383
-    // Then it got "simd" parsers ... I'm speechless
+    // The ... calls for a bridge; I can not guess what else these people have
+    // "decided" to "force" for no apparent reason.
     if (2 == argc) {
         qDebug () << "Iterating" << argv[1];
         QDirIterator foo {argv[1]};
