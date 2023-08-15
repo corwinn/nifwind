@@ -68,18 +68,18 @@ class NStyle final : public QProxyStyle
                 l = opt->rect.x (), r = l + opt->rect.width (),
                 t = opt->rect.y (), b = t + opt->rect.height ();
             p->setPen (tree_pen_tree_);
-            if (opt->state & State_Sibling) {
+            if (opt->state & QStyle::StateFlag::State_Sibling) {
                 p->drawLine (mx, t, mx, b);
-                if (opt->state & State_Children)
+                if (opt->state & QStyle::StateFlag::State_Children)
                     p->drawLine (mx, my, r, my);
             }
             else {
-                if (opt->state & State_Item) {
+                if (opt->state & QStyle::StateFlag::State_Item) {
                     p->drawLine (mx, t, mx, my);
                     p->drawLine (mx, my, r, my);
                 }
             }
-            if (opt->state & State_Children) {
+            if (opt->state & QStyle::StateFlag::State_Children) {
                 p->setPen (tree_pen_node_dash_);
                 int a = opt->rect.width () > opt->rect.height ()
                     ? opt->rect.height ()
@@ -96,7 +96,7 @@ class NStyle final : public QProxyStyle
                 // p->drawRect (l1, t1, a-1, a-1);
                 p->setPen (tree_pen_node_);
                 p->drawLine (mx-2, my, mx + 2, my);
-                if (! (opt->state & State_Open))
+                if (! (opt->state & QStyle::StateFlag::State_Open))
                     p->drawLine (mx, my-2, mx, my + 2);
             }
         }
