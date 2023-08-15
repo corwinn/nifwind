@@ -46,7 +46,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 NIFWIND_NAMESPACE
 
 //LATER this is unreliable due to QString rendering arbitrary files non-existent.
-//      delete it
+//      delete it;
+//      For now NTextCodec solves the artificial issue.
 // Read-only, for now.
 class NFileStream final : public ::FFD_NS::Stream
 {

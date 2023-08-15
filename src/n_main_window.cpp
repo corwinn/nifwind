@@ -100,16 +100,16 @@ NMainWindow::~NMainWindow() {}
 
 void NMainWindow::InitFFD()
 {
-    //TODO to options (ffd_files = avoid QDirIterator ... (NIFWIND_FFD_DIR))
-    //     avoid using anything IO-related that operates with QString;
-    //     (QDirIterator fails miserably - just confirmed by a test at main())
-    //     use the OS API directly - see n_file_stream for details
+    //LATER to options (ffd_files = avoid QDirIterator ... (NIFWIND_FFD_DIR))
+    //      avoid using anything IO-related that operates with QString;
+    //      use the OS API directly - see n_file_stream for details
+    //      For now NTextCodec solves the artificial issue.
     NMainWindow::FFDEntry one {"nif_ffd"};
     ffd_ << one;
 }
 
-//TODO remove QString from here; replace with "const char *" - see n_file_stream
-//     for details
+//TODONT remove QString from here; replace with "const char *"
+//       For now NTextCodec solves the artificial issue.
 NMainWindow::FFDEntry::FFDEntry(const QString & fn)
     : fn_ {fn}
 {
@@ -131,11 +131,8 @@ void NMainWindow::HandleFileOpen()
 {
     NSURE(! ffd_.empty (), "bug: Open File shall be disabled when no FFDs")
 
-    //TODO I'm not sure what has to be done here - this won't show you non-
-    //     unicode file paths at all; no error, no warning - you just won't see
-    //     them; perhaps NFileDialog is the best option: NTableView +
-    //     NFileSystemModel
-    //TODO https://bugreports.qt.io/
+    //LATER NFileDialog is the best option: NTableView + NFileSystemModel
+    //      For now NTextCodec solves the artificial issue.
     QFileDialog dlg {this};
     dlg.setFileMode (QFileDialog::ExistingFile);
     dlg.setNameFilter ("Nif files (*.nif *.nifcache *.texcache)");
