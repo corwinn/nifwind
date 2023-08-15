@@ -47,7 +47,6 @@ struct QUnreliable {};
 #include <QDesktopWidget>
 #include <QScreen>
 #include <QDebug>
-#include <QDirIterator>
 #include <math.h>
 #include "nifwind.h"
 
@@ -87,31 +86,6 @@ int main(int argc, char **argv)
     QTextCodec::setCodecForLocale (QTextCodec::codecForName ("DoNotTouchTC"));
 
     QApplication app (argc, argv);
-
-    // test a file path containing non-unicode path names:
-    // confirmed: it doesn't list the non-unicode entry at all
-    //TODONT https://bugreports.qt.io/
-    //     1. Make a directory:
-    //        > mkdir a$'\xe9'b
-    //     1. Make a file:
-    //        > echo what the nice mountain view > c$'\xe9'd
-    //     2. let your QDirIterator list it
-    //     2. let File::exists () find it
-    //     2. let your QFile open it
-    //     2. let your QFileDialog show it
-    // Why would you ... I don't know how to define the above ... it?
-    // This ^ makes your FILE IO completely unreliable Mr. "rare enough to not
-    // be worth"; - Why is this level of "reasoning" even allowed at "Qt"?!
-    //
-    // The ... calls for a bridge; I can not guess what else these people have
-    // "decided" to "force" for no apparent reason.
-    if (2 == argc) {
-        qDebug () << "Iterating" << argv[1];
-        QDirIterator foo {argv[1]};
-        while (foo.hasNext ())
-            qDebug () << foo.next ();
-        qDebug () << "Thats not all, unfortunately";
-    }
 
     nifwind::NMainWindow mw {};
     foo bar {};
