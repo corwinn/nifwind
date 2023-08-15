@@ -32,8 +32,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-#ifndef _N_OPTIONS_H_
-#define _N_OPTIONS_H_
+#ifndef _N_TEXT_CODEC_H_
+#define _N_TEXT_CODEC_H_
 
 #include "nifwind.h"
 #include <QTextCodec>
