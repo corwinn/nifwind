@@ -45,6 +45,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 NIFWIND_NAMESPACE
 
+//LATER this is unreliable due to QString rendering arbitrary files non-existent.
+//      delete it
 // Read-only, for now.
 class NFileStream final : public ::FFD_NS::Stream
 {
@@ -69,7 +71,7 @@ class NFileStream final : public ::FFD_NS::Stream
         NSURE(f_.reset (), "reset() failed")
         return *this;
     }
-    public: NFileStream(const char * n) : Stream {}, f_ {nullptr}
+    public: NFileStream(const QString & n) : Stream {}, f_ {n}
     {
         // As it happens QString transcodes its input; e.g. non-Unicode strings
         // get modified from valid to void file names.
@@ -77,12 +79,11 @@ class NFileStream final : public ::FFD_NS::Stream
         // There is no choice for QFile::exists - it returns false for existing
         // files just because QString says so. Same for QFileDialog - it only
         // shows what QString allows. This was unexpected of "Qt"-like framework
-        // if (! QFile::exists (n))
-        //    qDebug () << "File does not exist: \"" << n;
+         if (! QFile::exists (n))
+            qDebug () << "File does not exist: \"" << n;
 
         // There is a choice for QFile::open
-        NSURE(f_.open (fopen (n, "rb"), QIODevice::ReadOnly,
-            QFileDevice::AutoCloseHandle), "Can't open file")
+        NSURE(f_.open (QIODevice::ReadOnly), "Can't open file")
     }
     public: ~NFileStream() override {}
     private: QFile f_;

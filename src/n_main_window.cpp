@@ -143,7 +143,7 @@ void NMainWindow::HandleFileOpen()
     if (! dlg.exec ()) return;
 
     NSURE(1 == dlg.selectedFiles ().size (), "unexpected number of files")
-    NFileStream data_stream {dlg.selectedFiles ()[0].toUtf8 ().constData ()};
+    NFileStream data_stream {dlg.selectedFiles ()[0]};
     qDebug () << "Parsing " << dlg.selectedFiles ()[0] << ", "
         << data_stream.Size () << " bytes";
     //TODO loop over ffd_ - tryparse()
