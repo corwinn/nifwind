@@ -52,6 +52,7 @@ struct QUnreliable {};
 #include "nifwind.h"
 
 #include "n_main_window.h"
+#include "n_text_codec.h"
 
 class foo final : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -80,6 +81,11 @@ class foo final : public QOpenGLWidget, protected QOpenGLFunctions
 
 int main(int argc, char **argv)
 {
+    // This is a temporary solution. The moment they break this, the "Qt" File
+    // IO related code shall become unreliable again.
+    (void)new NIFWIND_NS::NTextCodec; // a.k.a. register()
+    QTextCodec::setCodecForLocale (QTextCodec::codecForName ("DoNotTouchTC"));
+
     QApplication app (argc, argv);
 
     // test a file path containing non-unicode path names:
