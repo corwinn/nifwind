@@ -70,7 +70,8 @@ class NStyle final : public QProxyStyle
             p->setPen (tree_pen_tree_);
             if (opt->state & QStyle::StateFlag::State_Sibling) {
                 p->drawLine (mx, t, mx, b);
-                if (opt->state & QStyle::StateFlag::State_Children)
+                if (opt->state & QStyle::StateFlag::State_Children
+                    || opt->state & QStyle::StateFlag::State_Item)
                     p->drawLine (mx, my, r, my);
             }
             else {
