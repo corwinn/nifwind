@@ -92,13 +92,13 @@ class NTextCodec final : public QTextCodec
     QString convertToUnicode(const char * ch, int len,
         QTextCodec::ConverterState * cs) const override
     {
-        printf ("convertToUnicode(%s)" EOL, ch);
+        // printf ("convertToUnicode(%s)" EOL, ch);
         static auto UTF8 = QTextCodec::codecForName ("UTF-8");
         // courtesy of QTextCodec::canEncode()
         QTextCodec::ConverterState state {};
         state.flags = QTextCodec::ConversionFlag::ConvertInvalidToNull;
         UTF8->toUnicode (ch, len, &state);
-        printf ("convertToUnicode.invalidChars: %d" EOL, state.invalidChars);
+        // printf ("convertToUnicode.invalidChars: %d" EOL, state.invalidChars);
         if (0 == state.invalidChars)
             return UTF8->toUnicode (ch, len, cs);
 
