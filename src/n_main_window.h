@@ -82,7 +82,7 @@ class NMainWindow final: public QMainWindow
     private: QList<FFDEntry> ffd_ {};
     private: void InitFFD();
 
-    private: QTreeView * tv_{};
+    private: QTreeView * tv_{}, * stv_{};
     private: NHexView * hv_{};
 }; // NMainWindow
 

@@ -51,6 +51,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "n_tree_model.h"
 #include "n_ffd_node_adapter.h"
+#include "n_snode_adapter.h"
 #include "n_file_stream.h"
 #include "n_hex_view.h"
 #include "n_tree_view.h"
@@ -86,6 +87,11 @@ NMainWindow::NMainWindow()
     tv_ = new NTreeView {};
     auto foo = new QDockWidget {"TreeView"};
     foo->setWidget (tv_);
+    addDockWidget (Qt::LeftDockWidgetArea, foo);
+
+    stv_ = new NTreeView {};
+    foo = new QDockWidget {"STreeView"};
+    foo->setWidget (stv_);
     addDockWidget (Qt::LeftDockWidgetArea, foo);
 
     hv_ = new NHexView {};
@@ -152,6 +158,9 @@ void NMainWindow::HandleFileOpen()
     auto root = new NFFDNodeAdapter {tree}; // can't be shown
     auto tree_model = new NTreeModel<NFFDNodeAdapter> (root, this);
     tv_->setModel (tree_model);
+    auto stree_model = new NTreeModel<NSNodeAdapter> (
+        new NSNodeAdapter {ffd_[0].FFD ()->Root ()}, this);
+    stv_->setModel (stree_model);
 }
 
 NAMESPACE_NIFWIND
