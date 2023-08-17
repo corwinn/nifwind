@@ -159,7 +159,7 @@ void NMainWindow::HandleFileOpen()
     auto tree_model = new NTreeModel<NFFDNodeAdapter> (root, this);
     tv_->setModel (tree_model);
     auto stree_model = new NTreeModel<NSNodeAdapter> (
-        new NSNodeAdapter {ffd_[0].FFD ()->Root ()}, this);
+        new NSNodeAdapter {ffd_[0].FFD ()->Head ()}, this);
     stv_->setModel (stree_model);
 }
 
