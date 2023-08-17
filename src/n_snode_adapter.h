@@ -82,7 +82,13 @@ class NSNodeAdapter
             fields_.push_back ("Field 3");
         }
         // the node transforms to a tree
-        if (n_) for (auto sn : n_->Fields)
+        if (! n_) return;
+        if (! Base)
+            n_->WalkForward ([&](SNode * n) -> bool {
+                if (nullptr != n && n_ != n) new NSNodeAdapter {n, this};
+                return true;
+            });
+        else for (auto sn : n_->Fields)
             if (sn) new NSNodeAdapter {sn, this};
     }
     public: ~NSNodeAdapter()
