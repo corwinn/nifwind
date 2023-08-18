@@ -1,20 +1,10 @@
 Or what happens while I'm waiting for the test-suite to complete:
 
 How would the monolithic nif_ffd will be transformed into multiple simple ffd?
-"Version" expressions and duplicated field names shall be reduced to 0.
 
-Initially I shall group the sample files by version number; perhaps there shall
-be per-program structure collisions:
-  {version 42, program 1} could differ {version 42, program 2}
-These shall be grouped by program, then by version:
-  program_1_version_42
-  program_2_version_42
-Given the above criterion, create sample file groups, then: begin extracting
-syntax nodes (from nif_ffd) for the target group, until all files from that
-group are being parsed successfully.
+  1. Parse a set of files - say per program.
+  2. Print the syntax tree that was used.
 
-When the transform is complete, the test should parse the entire sample set, by
-trying all simple ffd against each file.
-
-Then its up to you to advance and extend your favorite ffd; all of the ffd at
-this project shall remain frozen forever - as a historical reference.
+The above creates the foundation of the file forge: the FFD is gaining the
+ability to generate itself based on an instance tree - a tree you should be able
+to build at the visual FFD editor.
