@@ -1,0 +1,776 @@
+/**** BEGIN LICENSE BLOCK ****
+
+BSD 3-Clause License
+
+Copyright (c) 2023, the wind.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+**** END LICENCE BLOCK ****/
+
+// Origin: "nif.xml" checkout f265c56482c728c6877e45d5b5993d3bff83670a at
+//         https://github.com/niftools/nifxml.git
+//
+// Later modifications are ineligible and plain wrong IMHO. You could create
+// independent projects for each one of the new versions you're interested in.
+
+// Highlighter: C#
+
+// https://github.com/corwinn/h3r/blob/main/ffd/h3r_ffd_formal_description
+
+// This should handle all "TES3" ".nif"
+// "NetImmerse File Format, Version 4.0.0.2"
+
+// Transforming it to this alone lowered the parsing time from 42 to 12 min.
+// 34063 samples.
+
+type uint    4
+type int    -4
+type short  -2
+type ushort  2
+type byte    1
+type char  byte
+type bool  int
+type float  .4
+type Flags ushort
+type Ptr   int // -ptr
+type Ref   int // +ptr
+
+enum TextureAlphaFormat uint
+    NONE
+    BINARY
+    SMOOTH
+    DEFAULT
+
+enum TextureApplyMode uint
+    REPLACE
+    DECAL
+    MODULATE
+    HILIGHT
+    HILIGHT2
+
+enum TextureType uint
+    BASE
+    DARK
+    DETAIL
+    GLOSS
+    GLOW
+    BUMP
+    NORMAL
+    UNKNOWN2
+    DECAL_0
+    DECAL_1
+    DECAL_2
+    DECAL_3
+
+enum AnimInterpolation uint
+    LINEAR       1
+    QUADRATIC
+    TBC
+    XYZ_ROTATION
+    CONST
+
+enum LightMode uint
+    EMISSIVE
+    EMI_AMB_DIF
+
+enum MipMaps uint
+    NO
+    YES
+    DEFAULT
+
+enum PixelFormat uint
+    RGB8
+    RGBA8
+    PAL8
+    DXT1 4
+    DXT5
+    DXT5_ALT
+
+enum PixelLayout uint
+    PAL8
+    HIGH_COLOR_16
+    TRUE_COLOR_32
+    COMPRESSED
+    BUMPMAP
+    PAL4
+    DEFAULT
+
+enum TextureClampMode uint
+    CLAMP_S_CLAMP_T
+    CLAMP_S_WRAP_T
+    WRAP_S_CLAMP_T
+    WRAP_S_WRAP_T
+
+enum TextureFilter uint
+    NEAREST
+    BILERP
+    TRILERP
+    NEAREST_MIPNEAREST
+    NEAREST_MIPLERP
+    BILERP_MIPNEAREST
+
+enum VertMode uint
+    IGNORE
+    EMISSIVE
+    AMB_DIF
+
+enum FieldType uint
+    WIND
+    POINT
+
+enum StencilCompareMode uint
+    NEVER
+    LESS
+    EQUAL
+    LEQUAL
+    GREATER
+    NEQUAL
+    GEQUAL
+    ALWAYS
+
+enum StencilAction uint
+    KEEP
+    ZERO
+    REPLACE
+    INCREMENT
+    DECREMENT
+    INVERT
+
+enum FaceDrawMode uint
+    CCW_OR_BOTH
+    CCW
+    CW
+    DOUBLE_SIDED
+
+enum EffectType uint
+    PROJECTED_LIGHT
+    PROJECTED_SHADOW
+    ENVIRONMENT_MAP
+    FOG_MAP
+
+enum TextureCoordGenType uint
+    WORLD_PARALLEL
+    WORLD_PERSPECTIVE
+    SPHERE_MAP
+    SPECULAR_CUBE_MAP
+    DIFFUSE_CUBE_MAP
+
+struct HeaderString
+    char Chars[-10]
+
+struct SizedString
+    char Value[uint]
+
+struct String
+    SizedString Value
+
+struct Color3
+    float Value[3]
+
+struct Color4
+    float Value[4]
+
+struct FilePath
+    SizedString Value
+
+struct Footer
+    Ref Root[uint]
+
+struct MatchGroup
+    ushort Indices[ushort]
+
+struct Vector3
+    float Value[3]
+
+struct Quaternion
+    float Value[4]
+
+struct Matrix22
+    float Value[2][2]
+
+struct Matrix33
+    float Value[3][3]
+
+struct TBC
+    float Value[3]
+
+struct Key<T,A>
+    float Time
+    T     Value
+    T     Forward  (A == 2)
+    T     Backward (A == 2)
+    TBC   TBC      (A == 3)
+
+struct KeyGroup<T>
+    uint NumKeys
+    AnimInterpolation Interpolation (NumKeys)
+    Key<T,Interpolation> Keys[NumKeys]
+
+struct QuatKey<A>
+    float Time
+    Quaternion Value (A != 00000004)
+    TBC TBC (A == 00000003)
+
+struct TextureCoord //TODO ffd-gen failed
+    float Value[2] // u,v
+
+struct Triangle //TODO ffd-gen failed
+    ushort Value[3] // v1,v2,v3
+
+struct MipMap //TODO ffd-gen failed
+    uint Width  // [?] - pixels/apples/pears ?
+    uint Height // [?]
+    uint Offset // [?]
+
+struct TextureDesc
+    [NifRef(NiSourceTexture)]
+    Ref Source
+    TextureClampMode ClampMode
+    TextureFilter FilterMode
+    uint UVSet
+    short PS2_L
+    short PS2_K
+    ushort Unknown2
+
+struct TexSource
+    byte UseExternal
+    FilePath FileName (UseExternal == 00000001)
+    byte Unknown2 (UseExternal == 00000000)
+    Ref Bitmap (UseExternal == 00000000)
+
+struct Transform
+    Vector3 Translation
+    Matrix33 Rotation
+    float Scale
+
+struct SkinTransform
+    Matrix33 Rotation
+    Vector3 Translation
+    float Scale
+
+struct BoundingBox
+    uint Unknown1
+    Vector3 Translation
+    Matrix33 Rotation
+    Vector3 Radius
+
+struct Morph<A>
+    uint KNum
+    AnimInterpolation Interpolation
+    Key<float,Interpolation> Keys[KNum]
+    Vector3 Vectors[A]
+
+struct Particle
+    Vector3 Velocity
+    Vector3 Unknown1
+    float Lifetime
+    float Lifespan
+    float Timestamp
+    ushort Unknown2
+    ushort VertexID
+
+struct NiParticleModifier
+    Ref Next
+    Ptr Controller
+
+struct NiExtraData
+    Ref NextExtraData
+
+struct NiObjectNET
+    String Name
+    Ref ExtraData
+    Ref Controller
+
+struct NiAVObject
+    NiObjectNET
+    Flags Flags
+    Transform Transform
+    Vector3 Velocity
+    Ref Properties[uint]
+    bool HasBB
+    BoundingBox BB (HasBB)
+
+struct NiDynamicEffect
+    NiAVObject
+    uint AffectedNodeListPointers[uint]
+
+struct NiLight
+    NiDynamicEffect
+    float Dimmer
+    Color3 Colors[3]
+
+struct NiProperty
+    NiObjectNET
+
+struct NiTimeController
+    Ref NextController
+    Flags Flags
+    float Frequency
+    float Phase
+    float StartTime
+    float StopTime
+    Ptr Target
+
+struct NiInterpController
+    NiTimeController
+
+struct NiGeomMorpherController
+    NiInterpController
+    Ref Data
+    byte AlwaysUpdate
+
+struct NiSingleInterpController
+    NiInterpController
+
+struct NiKeyframeController
+    NiSingleInterpController
+    Ref Data
+
+struct NiFloatInterpController
+    NiSingleInterpController
+
+struct NiFlipController
+    NiFloatInterpController
+    TextureType TextureSlot
+    uint Unknown1
+    float Delta
+    Ref Sources[uint]
+
+struct NiAlphaController
+    NiFloatInterpController
+    Ref Data
+
+struct NiBoolInterpController
+    NiSingleInterpController
+
+struct NiVisController
+    NiBoolInterpController
+    Ref Data
+
+struct NiPoint3InterpController
+    NiSingleInterpController
+    Ref Data
+
+struct NiMaterialColorController
+    NiPoint3InterpController
+
+struct NiGeometry
+    NiAVObject
+    Ref Data
+    Ref SkinInstance
+
+struct NiTriBasedGeom
+    NiGeometry
+
+struct NiGeometryData
+    ushort VNum
+    bool HasVertices
+    [mesh3d(vertices)]
+    Vector3 Vertices[VNum] (HasVertices)
+    bool HasNormals
+    [mesh3d(normals)]
+    Vector3 Normals[VNum] (HasNormals)
+    [mesh3d(noidea_1)]
+    [mesh3d(noidea_2)]
+    Vector3 Center
+    float Radius
+    bool HasVColors
+    [mesh3d(colors)]
+    Color4 VColors[VNum] (HasVColors)
+    ushort UVSetNum
+    bool HasUV
+    [mesh3d(uv)]
+    TextureCoord UVSets[1][VNum] (UVSetNum & 1)
+    TextureCoord UVSets[2][VNum] (UVSetNum & 2)
+
+struct NiTriBasedGeomData
+    NiGeometryData
+    ushort TNum
+
+struct NiAlphaProperty
+    NiProperty
+    Flags Flags
+    byte Threshold
+
+struct NiAmbientLight
+    NiLight
+
+struct NiParticlesData
+    NiGeometryData
+    ushort PNum
+    float Radius
+    ushort ANum
+    bool HasSizes
+    float Sizes[VNum] (HasSizes)
+
+struct NiRotatingParticlesData
+    NiParticlesData
+    bool HasR2
+    Quaternion Rotations2[VNum] (HasR2)
+
+struct NiAutoNormalParticlesData
+    NiParticlesData
+
+struct NiCamera
+    NiAVObject
+    float Frustum[6]
+    float Viewport[4]
+    float LODAdjust
+    Ref Unknown2
+    uint Unknown3
+
+struct NiColorData
+    KeyGroup<Color4> Data
+
+struct NiDirectionalLight
+    NiLight
+
+struct NiDitherProperty
+    NiProperty
+    Flags Flags
+
+struct NiFloatData
+    KeyGroup<float> Data
+
+struct NiGravity
+    NiParticleModifier
+    float Unknown
+    float Force
+    FieldType Type
+    Vector3 Position
+    Vector3 Direction
+
+struct NiKeyframeData
+    uint RKNum
+    AnimInterpolation RType (RKNum)
+    QuatKey<RType> QKeys[RKNum] (RType != 4)
+    float Unknown1 (RType == 4)
+    KeyGroup<float>   XYZRotations[3] (RType == 4)
+    KeyGroup<Vector3> Translation
+    KeyGroup<float>   Scale
+
+struct NiLookAtController
+    NiTimeController
+    Ptr LookAt
+
+struct NiMaterialProperty
+    NiProperty
+    Flags Flags
+    Color3 Ambient
+    Color3 Diffuse
+    Color3 Specular
+    Color3 Emissive
+    float Glossiness
+    float Alpha
+
+struct NiMorphData
+    uint MNum
+    uint VNum
+    byte RelativeTargets
+    Morph<VNum> Morphs[MNum]
+
+struct NiNode
+    NiAVObject
+    Ref Nodes[uint]
+    Ref Effects[uint]
+
+struct AvoidNode
+    NiNode
+
+struct NiBillboardNode
+    NiNode
+
+struct NiBSAnimationNode
+    NiNode
+
+struct NiBSParticleNode
+    NiNode
+
+struct NiParticleColorModifier
+    NiParticleModifier
+    Ref Data
+
+struct NiParticleGrowFade
+    NiParticleModifier
+    float Grow
+    float Fade
+
+struct NiParticleRotation
+    NiParticleModifier
+    byte RandomInitialAxis
+    Vector3 InitialAxis
+    float RotationSpeed
+
+struct NiParticles
+    NiGeometry
+
+struct NiAutoNormalParticles
+    NiParticles
+
+struct NiParticleSystemController
+    NiTimeController
+    float Speed
+    float SpeedRnd
+    float VDirection
+    float VAngle
+    float HDirection
+    float HAngle
+    Vector3 NormalX
+    Color4 ColorX
+    float Size
+    float EmitStartTime
+    float EmitStopTime
+    byte Unknown1
+    float EmitRate
+    float Lifetime
+    float LifetimeRnd
+    ushort EmitFlags
+    Vector3 StartRnd
+    Ptr Emitter
+    ushort Unknown2
+    float Unknown3
+    uint Unknown4[2]
+    ushort Unknown5
+    ushort PNum
+    ushort NumValid
+    Particle Particles[PNum]
+    Ref Unknown8
+    Ref ParticleExtra
+    Ref Unknown9
+    byte Trailer
+
+struct NiBSPArrayController
+    NiParticleSystemController
+
+struct NiPathController
+    NiTimeController
+    uint Unknown2
+    float Unknown3[2]
+    ushort Unknown4
+    Ref PosData
+    Ref FloatData
+
+struct ATextureRenderData
+    PixelFormat PFormat
+    uint RedMask
+    uint GreenMask
+    uint BlueMask
+    uint AlphaMask
+    byte BitsPerPixel
+    byte Unknown1[3]
+    byte Unknown2[8]
+    Ref Palette
+    uint MMNum
+    uint BitsPerPixel
+    MipMap MM[MMNum]
+
+struct NiPixelData
+    ATextureRenderData
+    uint PNum
+    byte Bitmap[PNum]
+
+struct NiPlanarCollider
+    NiParticleModifier
+    float Unknown2[2]
+    float Unknown4[14]
+
+struct NiPointLight
+    NiLight
+    float Attenuation[3]
+
+struct NiPosData
+    KeyGroup<Vector3> Data
+
+struct NiRotatingParticles
+    NiParticles
+
+struct NiShadeProperty
+    NiProperty
+    Flags Flags
+
+struct SkinWeight
+    ushort Index
+    float  Weight
+
+struct SkinData
+    SkinTransform STransform
+    Vector3    BoundingSphereOffset
+    float      BoundingSphereRadius
+    ushort     VNum
+    SkinWeight VertexWeights[VNum]
+
+struct NiSkinData
+    SkinTransform STransform
+    uint BNum
+    Ref SPartition
+    SkinData BoneList[BNum]
+
+struct NiSkinInstance
+    Ref Data
+    Ptr SkeletonRoot
+    Ptr Bones[uint]
+
+struct NiTexture
+    NiObjectNET
+
+struct NiSourceTexture
+    NiTexture
+    TexSource
+    PixelLayout PLayout
+    MipMaps UseMipmaps
+    TextureAlphaFormat AlphaFormat
+    byte IsStatic
+
+struct NiSpecularProperty
+    NiProperty
+    Flags Flags
+
+struct NiSphericalCollider
+    NiParticleModifier
+    float Unknown1
+    ushort Unknown2
+    float Unknown3
+    ushort Unknown4
+    float Unknown6[2]
+
+struct NiSpotLight
+    NiPointLight
+    float CutoffAngle
+    float Exponent
+
+struct NiStencilProperty
+    NiProperty
+    Flags Flags
+    byte StencilEnabled
+    StencilCompareMode StencilFunction
+    uint StencilRef
+    uint StencilMask
+    StencilAction FailAction
+    StencilAction ZFailAction
+    StencilAction PassAction
+    FaceDrawMode DrawMode
+
+struct NiStringExtraData
+    NiExtraData
+    uint BytesRemaining
+    String StringData
+
+struct NiTextKeyExtraData
+    NiExtraData
+    uint Unknown
+    Key<String,1> Keys[uint]
+
+struct NiTextureEffect
+    NiDynamicEffect
+    Matrix33 Projection
+    Vector3 PTransform
+    TextureFilter TFilter
+    TextureClampMode TClamping
+    EffectType TType
+    TextureCoordGenType CGType
+    Ref SrcTexture
+    byte CPlane
+    Vector3 Unknown2
+    float Unknown3
+    short PS2_L
+    short PS2_K
+    ushort Unknown4
+
+struct NiTPTexture
+    TextureDesc Texture (bool)
+
+struct NiTexturingProperty
+    NiProperty
+    Flags Flags
+    TextureApplyMode AMode
+    uint TCount
+    NiTPTexture Diffuse
+    NiTPTexture Dark
+    NiTPTexture Detail
+    NiTPTexture Gloss
+    NiTPTexture Glow
+    bool HasBump
+    TextureDesc Bump (HasBump)
+    float BumpMapLumaScale (HasBump)
+    float BumpMapLumaOffset (HasBump)
+    Matrix22 BumpMapLumaMatrix (HasBump)
+    NiTPTexture Decal0
+
+struct NiTriShape
+    NiTriBasedGeom
+
+struct NiTriShapeData
+    NiTriBasedGeomData
+    uint TPNum
+    Triangle Triangles[TNum]
+    MatchGroup MGroups[ushort]
+
+struct NiUVController
+    NiTimeController
+    ushort Unknown
+    Ref Data
+
+struct NiUVData
+    KeyGroup<float> UVGroups[4]
+
+struct NiVertexColorProperty
+    NiProperty
+    Flags Flags
+    VertMode VMode
+    LightMode LMode
+
+struct NiVertWeightsExtraData
+    NiExtraData
+    uint BNum
+    float Weight[ushort]
+
+struct NiVisData
+    Key<byte,1> Keys[uint]
+
+struct NiWireframeProperty
+    NiProperty
+    Flags Flags
+
+struct NiZBufferProperty
+    NiProperty
+    Flags Flags
+
+struct RootCollisionNode
+    NiNode
+
+struct Block
+    SizedString Name
+    ... struct.Name
+
+format nif
+    [NifVersionString]
+    HeaderString Signature
+    uint Version
+    uint NumBlocks
+    Block Blocks[NumBlocks]
+    Footer Footer
