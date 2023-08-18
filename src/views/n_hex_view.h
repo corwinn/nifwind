@@ -38,6 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "nifwind.h"
 
 #include <QTableView>
+#include <QScopedPointer>
 
 class QAbstractTableModel;
 
@@ -48,7 +49,7 @@ class NHexView final : public QTableView
     public: NHexView(QWidget * = nullptr);
     public: ~NHexView() override;
 
-    private: QAbstractTableModel * cleanup1_{};
+    private: QScopedPointer<QAbstractTableModel> cleanup1_;
 };
 
 NAMESPACE_NIFWIND

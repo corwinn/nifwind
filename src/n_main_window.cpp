@@ -106,16 +106,17 @@ NMainWindow::~NMainWindow() {}
 
 void NMainWindow::InitFFD()
 {
-    //LATER to options (ffd_files = avoid QDirIterator ... (NIFWIND_FFD_DIR))
-    //      avoid using anything IO-related that operates with QString;
-    //      use the OS API directly - see n_file_stream for details
+    //LATER To options (ffd_files = avoid QDirIterator ... (NIFWIND_FFD_DIR)).
+    //      Avoid using anything IO-related that operates with QString.
+    //      Use the OS API directly - see n_file_stream for details.
     //      For now NTextCodec solves the artificial issue.
     NMainWindow::FFDEntry one {"nif_ffd"};
     ffd_ << one;
 }
 
-//TODONT remove QString from here; replace with "const char *"
-//       For now NTextCodec solves the artificial issue.
+//LATER remove QString from the File IO; "chromium" has a separate type for file
+//      paths - so am I.
+//      For now NTextCodec solves the artificial issue.
 NMainWindow::FFDEntry::FFDEntry(const QString & fn)
     : fn_ {fn}
 {
@@ -161,6 +162,6 @@ void NMainWindow::HandleFileOpen()
     auto stree_model = new NTreeModel<NSNodeAdapter> (
         new NSNodeAdapter {ffd_[0].FFD ()->Head ()}, this);
     stv_->setModel (stree_model);
-}
+}// NMainWindow::HandleFileOpen()
 
 NAMESPACE_NIFWIND

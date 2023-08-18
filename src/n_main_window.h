@@ -78,13 +78,13 @@ class NMainWindow final: public QMainWindow
         private: FFD_NS::FFD * ffd_{};
         public: inline FFD_NS::FFD * FFD() { return ffd_; }
         private: QString fn_{}; //LATER remove if useless
-    }; // FFDEntry
+    };// FFDEntry
     private: QList<FFDEntry> ffd_ {};
     private: void InitFFD();
 
     private: QTreeView * tv_{}, * stv_{};
     private: NHexView * hv_{};
-}; // NMainWindow
+};// NMainWindow
 
 NAMESPACE_NIFWIND
 #endif

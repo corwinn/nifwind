@@ -62,14 +62,9 @@ class NSNodeAdapter
         // These are configured by the user: e.g. ensure the unnamed-yet method
         // reflects that.
         if (n_) {
-            // TODO map to Options; diagram time: is adapter role to
-            //      do such mapping? also, this shouldn't happen for each Node:
-            //      there is no use case yet: where the user wants different
-            //      set of fields shown per node?
-            //      I'm really missing reflection here.
-            // Otherwise this is exacly this adapter job: code like this should
-            // happen here only: when FFDNode gets its interface modified,
-            // only this file shall be updated.
+            // TODO see the NFFDNodeAdapter TODO
+            // When SNode gets its interface modified, only this file shall be
+            // updated.
             fields_.push_back (QString {n_->Name.AsZStr ()});
             if (n_->DType)
                 fields_.push_back (QString {n_->DType->Name.AsZStr ()});
@@ -94,7 +89,6 @@ class NSNodeAdapter
     public: ~NSNodeAdapter()
     {
         for (auto f : Nodes) delete f;
-        // if (! Base && n_) ::FFD_NS::FFD::FreeNode (n_); // a.k.a. root?
     }
     public: inline QVariant FieldById(int id)
     {

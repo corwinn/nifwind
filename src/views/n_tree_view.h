@@ -38,6 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "nifwind.h"
 
 #include <QTreeView>
+#include <QScopedPointer>
 
 NIFWIND_NAMESPACE
 
@@ -54,7 +55,7 @@ class NTreeView final : public QTreeView
         return QSize {320, QTreeView::sizeHint ().height ()};
     }
 
-    private: class NStyle * cleanup1_{};
+    private: QScopedPointer<class NStyle> cleanup1_;
 };
 
 NAMESPACE_NIFWIND

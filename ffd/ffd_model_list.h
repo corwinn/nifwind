@@ -89,6 +89,6 @@ template <typename T> class MyList final
         return nullptr;
     }
     private: QVector<T> _p {};
-};
+};// MyList
 
 #endif

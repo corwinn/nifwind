@@ -38,16 +38,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 NIFWIND_NAMESPACE
 
 NTreeView::NTreeView(QWidget * base)
-    : QTreeView {base}
+    : QTreeView {base}, cleanup1_ {new NStyle}
 {
-    this->setStyle (cleanup1_ = new NStyle);
+    this->setStyle (cleanup1_.data ());
     this->setUniformRowHeights (true);
     this->setAlternatingRowColors (true);
 }
 
-NTreeView::~NTreeView()
-{
-    if (cleanup1_) delete cleanup1_; cleanup1_ = nullptr;
-}
+NTreeView::~NTreeView() {}
 
 NAMESPACE_NIFWIND

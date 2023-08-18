@@ -76,7 +76,7 @@ template <typename T> class MyString final
     }
     public: const char * AsZStr() const
     {
-        // nope; whatever this is it ain't UTF-8:
+        // this is UTF-8: ("Unicode" has changed)
         //  * return reinterpret_cast<const char *>(_p.unicode ());
         //  * return reinterpret_cast<const char *>(_p.constData ());
 
@@ -95,6 +95,6 @@ template <typename T> class MyString final
         return r;
     }
     private: QString _p;
-};
+};// MyString
 
 #endif

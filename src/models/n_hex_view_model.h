@@ -52,7 +52,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 NIFWIND_NAMESPACE
 
-// Show file binary data as a table NxM where each cell render one byte of the
+// Show file binary data as a table NxM where each cell renders one byte of the
 // file data with this format: %002X
 // The catch: render exactly the needed amount of data at a time: yes you can
 // view terabyte-sized file - thats the whole idea.
@@ -105,7 +105,7 @@ class NHexViewModel final : public QAbstractTableModel
     }
 
     private: QIODevice * s_{};
-};// NHexViewerModel
+};// NHexViewModel
 
 NAMESPACE_NIFWIND
 #endif

@@ -44,7 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 NIFWIND_NAMESPACE
 
 NHexView::NHexView(QWidget * base)
-    : QTableView::QTableView {base}
+    : QTableView::QTableView {base}, cleanup1_ {new NHexViewModel}
 {
     this->setSortingEnabled (false);
     this->setWordWrap (false);
@@ -92,13 +92,9 @@ NHexView::NHexView(QWidget * base)
     this->verticalHeader ()->setMinimumSectionSize (tth);
     this->verticalHeader ()->setDefaultSectionSize (tth);
 
-    cleanup1_ = new NHexViewModel {};
-    this->setModel (cleanup1_);
-} // NHexView::NHexView()
+    this->setModel (cleanup1_.data ());
+}// NHexView::NHexView()
 
-NHexView::~NHexView()
-{
-    if (cleanup1_) { delete cleanup1_; cleanup1_ = nullptr; }
-}
+NHexView::~NHexView() {}
 
 NAMESPACE_NIFWIND

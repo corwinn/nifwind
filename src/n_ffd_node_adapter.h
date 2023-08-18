@@ -62,14 +62,11 @@ class NFFDNodeAdapter
         // These are configured by the user: e.g. ensure the unnamed-yet method
         // reflects that.
         if (n_) {
-            // TODO map to Options; diagram time: is adapter role to
-            //      do such mapping? also, this shouldn't happen for each Node:
-            //      there is no use case yet: where the user wants different
-            //      set of fields shown per node?
-            //      I'm really missing reflection here.
-            // Otherwise this is exacly this adapter job: code like this should
-            // happen here only: when FFDNode gets its interface modified,
-            // only this file shall be updated.
+            // TODO map to Options; nifwind.dia: is adapter role to
+            //      do such mapping? Just provide available columns: TODO
+            //      at the base NNodeAdapter class.
+            // When FFDNode gets its interface modified, only this file shall
+            // be updated.
             fields_.push_back (QString {n_->FieldNode ()->Name.AsZStr ()});
             fields_.push_back (QString {n_->FieldNode ()->TypeToString ()
                 .AsZStr ()});
@@ -118,7 +115,7 @@ class NFFDNodeAdapter
     private: QVector<QVariant> fields_;
     //TODO update _fields on set()
     private: FFDNode * n_{};
-};// FFDNodeAdapter
+};// NFFDNodeAdapter
 
 NAMESPACE_NIFWIND
 #endif

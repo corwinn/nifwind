@@ -58,7 +58,7 @@ class NTextCodec final : public QTextCodec
         return n;
     }
     public: inline int mibEnum() const override { return -10000; }
-    // Courtesy of: qtbase/src/corelib/codecs/qisciicodec.cpp
+    // Courtesy of: "qtbase/src/corelib/codecs/qisciicodec.cpp".
     // Packing these tightly results in an application that is unable to start:
     //   "__cxa_guard_acquire detected recursive initialization"
     // e.g. the loops.
@@ -66,13 +66,6 @@ class NTextCodec final : public QTextCodec
         QTextCodec::ConverterState * cs) const override
     {
         static auto UTF8 = QTextCodec::codecForName ("UTF-8");
-        // courtesy of QTextCodec::canEncode()
-        /*QTextCodec::ConverterState state {};
-        state.flags = QTextCodec::ConversionFlag::ConvertInvalidToNull;
-        UTF8->fromUnicode (uc, len, &state);
-        // printf ("convertFromUnicode.invalidChars: %d" EOL, state.invalidChars);
-        if (0 == state.invalidChars)
-            return UTF8->fromUnicode (uc, len, cs);*/
 
         QByteArray result {len, Qt::Uninitialized};
         uchar * ch = reinterpret_cast<uchar *>(result.data ());
@@ -108,7 +101,7 @@ class NTextCodec final : public QTextCodec
             *uc++ = static_cast<uchar>(ch[i]);
         return result;
     }
-}; // NTextCodec
+};// NTextCodec
 
 NAMESPACE_NIFWIND
 
@@ -118,6 +111,7 @@ NAMESPACE_NIFWIND
     // test a file path containing non-unicode path names:
     // confirmed: it doesn't list the non-unicode entry at all
     //TODONT https://bugreports.qt.io/
+    //       (QString overrides the FS - I doubt they know not.)
     //     1. Make a directory:
     //        > mkdir a$'\xe9'b
     //     1. Make a file:
@@ -139,4 +133,4 @@ NAMESPACE_NIFWIND
             qDebug () << foo.next ();
         qDebug () << "Thats not all, unfortunately";
     }
- */
+*/
