@@ -32,19 +32,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **** END LICENCE BLOCK ****/
 
-// Origin: "nif.xml" checkout f265c56482c728c6877e45d5b5993d3bff83670a at
-//         https://github.com/niftools/nifxml.git
-//
-// Later modifications are ineligible and plain wrong IMHO. You could create
-// independent projects for each one of the new versions you're interested in.
-
+// Origin: "nif_ffd"
 // Highlighter: C#
-
 // https://github.com/corwinn/h3r/blob/main/ffd/h3r_ffd_formal_description
-
+//
 // This should handle all "TES3" ".nif"
 // "NetImmerse File Format, Version 4.0.0.2"
-
+//
 // Transforming it to this alone lowered the parsing time from 42 to 12 min.
 // 34063 samples.
 
