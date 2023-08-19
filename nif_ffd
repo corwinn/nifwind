@@ -40,7 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Highlighter: C#
 
-// https://github.com/corwinn/h3r/blob/main/ffd/h3r_ffd_formal_description
+// https://github.com/corwinn/libwind-ffd/blob/main/formal_description
 
 // Describe a .nif. This is the common ground from which the different variants
 // shall be formed.
