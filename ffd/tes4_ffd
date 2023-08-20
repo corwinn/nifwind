@@ -38,14 +38,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 // This should handle all "TES4" ".nif" - now that is a challenge:
 //  - "Gamebryo File Format, Version 10.1.0.101"
-//  - "Gamebryo File Format, Version 10.1.0.106"
-//  - "Gamebryo File Format, Version 10.2.0.0"
-//  - "Gamebryo File Format, Version 20.0.0.4"
-//  - "Gamebryo File Format, Version 20.0.0.5"
-//  - "NetImmerse File Format, Version 10.0.1.0"
-//  - "NetImmerse File Format, Version 10.0.1.2"
-//  - "NetImmerse File Format, Version 3.3.0.13"
-//  - "NetImmerse File Format, Version 4.2.1.0"
+//      furnituremarker01.nif
+//      furnituremarker02.nif
+//      furnituremarker11.nif
+//      furnituremarker12.nif
+//      furnituremarker13.nif
+//      furnituremarker14.nif
+//      landscape/vine01.nif
+//      landscape/vine02.nif
+//  - "Gamebryo File Format, Version 10.1.0.106" - few
+//  - "Gamebryo File Format, Version 10.2.0.0" - 2*few
+//  - "Gamebryo File Format, Version 20.0.0.4" - maj
+//  - "Gamebryo File Format, Version 20.0.0.5" - maj
+//  - "NetImmerse File Format, Version 10.0.1.0" - few
+//  - "NetImmerse File Format, Version 10.0.1.2" - few
+//  - "NetImmerse File Format, Version 3.3.0.13" - marker_radius.nif
+//  - "NetImmerse File Format, Version 4.2.1.0"  - marker_map.nif
 
 //TODO naming convention
 //TODO are all of the above actually used by the game engine?!
