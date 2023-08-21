@@ -60,42 +60,7 @@ enum AnimInterpolation uint
     XYZ_ROTATION
     CONST
 
-//LATER odd presence
-enum Fallout3HavokMaterial uint
-    STONE
-    CLOTH
-    DIRT
-    GLASS
-    GRASS
-    METAL
-    ORGANIC
-    SKIN
-    WATER
-    WOOD
-    HEAVY_STONE
-    HEAVY_METAL
-    HEAVY_WOOD
-    CHAIN
-    BOTTLECAP
-    ELEVATOR
-    HOLLOW_METAL
-    SHEET_METAL
-    SAND
-    BROKEN_CONCRETE
-    VEHICLE_BODY
-    VEHICLE_PART_SOLID
-    VEHICLE_PART_HOLLOW
-    BARREL
-    BOTTLE
-    SODA_CAN
-    PISTOL
-    RIFLE
-    SHOPPING_CART
-    LUNCHBOX
-    BABY_RATTLE
-    RUBBER_BALL
-
-enum SkyrimHavokMaterial int //TODO misprinted: uint != unt
+enum HavokMaterial int //TODO misprinted: uint != unt
     STONE -553455049
     CLOTH -455893853
     DIRT -1188872534
@@ -868,10 +833,6 @@ struct HavokColFilter
     byte FlagsPartNumber
     ushort Unknown1
 
-struct HavokMaterial
-    Fallout3HavokMaterial Material ((UVersion == 0x0000000B) && (UVersion2 == 0x00000022))
-    SkyrimHavokMaterial Material ((UVersion == 0x0000000C) && (UVersion2 == 0x00000053))
-
 struct RagdollDescriptor
     Vector4 Value[8] (UVersion2 > 0x00000010)
     float ConeMaxAngle
@@ -918,7 +879,7 @@ struct BoneLOD
     String Name
 
 struct bhkCMSDMaterial
-    SkyrimHavokMaterial Material
+    HavokMaterial Material
     SkyrimLayer Layer
     byte Unknown1
     ushort Unknown2
