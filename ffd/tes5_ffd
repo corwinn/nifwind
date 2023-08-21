@@ -120,82 +120,6 @@ enum HavokMaterial int //TODO misprinted: uint != unt
     UNKNOWN_3 1574477864
     UNKNOWN_4 1591009235
 
-//LATER again?!
-enum Fallout3Layer byte
-    UNIDENTIFIED
-    STATIC
-    ANIM_STATIC
-    TRANSPARENT
-    CLUTTER
-    WEAPON
-    PROJECTILE
-    SPELL
-    BIPED
-    TREES
-    PROPS
-    WATER
-    TRIGGER
-    TERRAIN
-    TRAP
-    NONCOLLIDABLE
-    CLOUD_TRAP
-    GROUND
-    PORTAL
-    DEBRIS_SMALL
-    DEBRIS_LARGE
-    ACOUSTIC_SPACE
-    ACTORZONE
-    PROJECTILEZONE
-    GASTRAP
-    SHELLCASING
-    TRANSPARENT_SMALL
-    INVISIBLE_WALL
-    TRANSPARENT_SMALL_ANIM
-    BIPED
-    CHARCONTROLLER
-    AVOIDBOX
-    COLLISIONBOX
-    CAMERASPHERE
-    DOORDETECTION
-    CAMERAPICK
-    ITEMPICK
-    LINEOFSIGHT
-    PATHPICK
-    CUSTOMPICK1
-    CUSTOMPICK2
-    SPELLEXPLOSION
-    DROPPINGPICK
-    NULL
-    OTHER
-    HEAD
-    BODY
-    SPINE1
-    SPINE2
-    L_UPPER_ARM
-    L_FORE_ARM
-    L_HAND
-    L_THIGH
-    L_CALF
-    L_FOOT
-    R_UPPER_ARM
-    R_FORE_ARM
-    R_HAND
-    R_THIGH
-    R_CALF
-    R_FOOT
-    TAIL
-    SHIELD
-    QUIVER
-    WEAPON
-    PONYTAIL
-    WING
-    PACK
-    CHAIN
-    ADDONHEAD
-    ADDONCHEST
-    ADDONARM
-    ADDONLEG
-
 enum SkyrimLayer byte
     UNIDENTIFIED
     STATIC
@@ -828,8 +752,7 @@ struct SkinData<A>
     SkinWeight VertexWeights[VNum] (A != 0x00000000)
 
 struct HavokColFilter
-    Fallout3Layer Layer ((UVersion == 0x0000000B) && (UVersion2 == 0x00000022))
-    SkyrimLayer Layer ((UVersion == 0x0000000C) && (UVersion2 == 0x00000053))
+    SkyrimLayer Layer
     byte FlagsPartNumber
     ushort Unknown1
 
