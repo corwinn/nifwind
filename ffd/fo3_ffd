@@ -1,0 +1,1796 @@
+/**** BEGIN LICENSE BLOCK ****
+
+BSD 3-Clause License
+
+Copyright (c) 2023, the wind.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+**** END LICENCE BLOCK ****/
+
+// Origin: "nif_ffd"
+// Highlighter: C#
+// https://github.com/corwinn/libwind-ffd/blob/main/formal_description
+//
+// This should handle all "FO3" ".nif"
+// "Gamebryo File Format, Version 20.2.0.7"
+//
+//TODO check all UVersion expressions
+
+type uint 4
+type int -4
+type short -2
+type ushort 2
+type byte 1
+type char 1
+type bool 1
+type float .4
+type Flags ushort
+type Ptr int
+type Ref int
+
+enum TextureAlphaFormat uint
+    NONE
+    BINARY
+    SMOOTH
+    DEFAULT
+
+enum TextureType uint
+    BASE
+    DARK
+    DETAIL
+    GLOSS
+    GLOW
+    BUMP
+    NORMAL
+    UNKNOWN2
+    DECAL_0
+    DECAL_1
+    DECAL_2
+    DECAL_3
+
+enum AnimInterpolation uint
+    LINEAR
+    QUADRATIC
+    TBC
+    XYZ_ROTATION
+    CONST
+
+enum HavokMaterial uint
+    STONE
+    CLOTH
+    DIRT
+    GLASS
+    GRASS
+    METAL
+    ORGANIC
+    SKIN
+    WATER
+    WOOD
+    HEAVY_STONE
+    HEAVY_METAL
+    HEAVY_WOOD
+    CHAIN
+    BOTTLECAP
+    ELEVATOR
+    HOLLOW_METAL
+    SHEET_METAL
+    SAND
+    BROKEN_CONCRETE
+    VEHICLE_BODY
+    VEHICLE_PART_SOLID
+    VEHICLE_PART_HOLLOW
+    BARREL
+    BOTTLE
+    SODA_CAN
+    PISTOL
+    RIFLE
+    SHOPPING_CART
+    LUNCHBOX
+    BABY_RATTLE
+    RUBBER_BALL
+
+enum Fallout3Layer byte
+    UNIDENTIFIED
+    STATIC
+    ANIM_STATIC
+    TRANSPARENT
+    CLUTTER
+    WEAPON
+    PROJECTILE
+    SPELL
+    BIPED
+    TREES
+    PROPS
+    WATER
+    TRIGGER
+    TERRAIN
+    TRAP
+    NONCOLLIDABLE
+    CLOUD_TRAP
+    GROUND
+    PORTAL
+    DEBRIS_SMALL
+    DEBRIS_LARGE
+    ACOUSTIC_SPACE
+    ACTORZONE
+    PROJECTILEZONE
+    GASTRAP
+    SHELLCASING
+    TRANSPARENT_SMALL
+    INVISIBLE_WALL
+    TRANSPARENT_SMALL_ANIM
+    BIPED
+    CHARCONTROLLER
+    AVOIDBOX
+    COLLISIONBOX
+    CAMERASPHERE
+    DOORDETECTION
+    CAMERAPICK
+    ITEMPICK
+    LINEOFSIGHT
+    PATHPICK
+    CUSTOMPICK1
+    CUSTOMPICK2
+    SPELLEXPLOSION
+    DROPPINGPICK
+    NULL
+    OTHER
+    HEAD
+    BODY
+    SPINE1
+    SPINE2
+    L_UPPER_ARM
+    L_FORE_ARM
+    L_HAND
+    L_THIGH
+    L_CALF
+    L_FOOT
+    R_UPPER_ARM
+    R_FORE_ARM
+    R_HAND
+    R_THIGH
+    R_CALF
+    R_FOOT
+    TAIL
+    SHIELD
+    QUIVER
+    WEAPON
+    PONYTAIL
+    WING
+    PACK
+    CHAIN
+    ADDONHEAD
+    ADDONCHEST
+    ADDONARM
+    ADDONLEG
+
+enum MipMaps uint
+    NO
+    YES
+    DEFAULT
+
+enum PixelLayout uint
+    PAL8
+    HIGH_COLOR_16
+    TRUE_COLOR_32
+    COMPRESSED
+    BUMPMAP
+    PAL4
+    DEFAULT
+
+enum TextureClampMode uint
+    CLAMP_S_CLAMP_T
+    CLAMP_S_WRAP_T
+    WRAP_S_CLAMP_T
+    WRAP_S_WRAP_T
+
+enum CycleType uint
+    LOOP
+    REVERSE
+    CLAMP
+
+enum BillboardMode ushort
+    ALWAYS_FACE_CAMERA
+    ROTATE_ABOUT_UP
+    RIGID_FACE_CAMERA
+    ALWAYS_FACE_CENTER
+    RIGID_FACE_CENTER
+    BSROTATE_ABOUT_UP
+    ROTATE_ABOUT_UP2 9
+
+enum MotionSystem byte
+    INVALID
+    DYNAMIC
+    SPHERE
+    SPHERE_INERTIA
+    BOX
+    BOX_STABILIZED
+    KEYFRAMED
+    FIXED
+    THIN_BOX
+    CHARACTER
+
+enum DeactivatorType byte
+    INVALID
+    NEVER
+    SPATIAL
+
+enum SolverDeactivation byte
+    INVALID
+    OFF
+    LOW
+    MEDIUM
+    HIGH
+    MAX
+
+enum MotionQuality byte
+    INVALID
+    FIXED
+    KEYFRAMED
+    DEBRIS
+    MOVING
+    CRITICAL
+    BULLET
+    USER
+    CHARACTER
+    KEYFRAMED_REPORT
+
+enum ForceType uint
+    PLANAR
+    SPHERICAL
+    UNKNOWN
+
+enum TextureTransform uint
+    TRANSLATE_U
+    TRANSLATE_V
+    ROTATE
+    SCALE_U
+    SCALE_V
+
+enum DecayType uint
+    NONE
+    LINEAR
+    EXPONENTIAL
+
+enum SymmetryType uint
+    SPHERICAL
+    CYLINDRICAL
+    PLANAR
+
+enum VelocityType uint
+    NORMALS
+    RANDOM
+    DIRECTION
+
+enum EmitFrom uint
+    VERTICES
+    FACE_CENTER
+    EDGE_CENTER
+    FACE_SURFACE
+    EDGE_SURFACE
+
+enum Endianess byte
+    BIG
+    LITTLE
+
+enum TargetColor ushort
+    AMBIENT
+    DIFFUSE
+    SPECULAR
+    SELF_ILLUM
+
+enum ConsistencyType ushort
+    MUTABLE 0
+    STATIC 16384
+    VOLATILE 32768
+
+enum hkResponseType byte
+    INVALID
+    SIMPLE_CONTACT
+    REPORTING
+    NONE
+
+//TODO wasn't generated
+enum BSBodyPartType ushort
+    BP_TORSO
+    BP_HEAD
+    BP_HEAD2
+    BP_LEFTARM
+    BP_LEFTARM2
+    BP_RIGHTARM
+    BP_RIGHTARM2
+    BP_LEFTLEG
+    BP_LEFTLEG2
+    BP_LEFTLEG3
+    BP_RIGHTLEG
+    BP_RIGHTLEG2
+    BP_RIGHTLEG3
+    BP_BRAIN
+    SBP_HEAD 30
+    SBP_HAIR
+    SBP_BODY
+    SBP_HANDS
+    SBP_FOREARMS
+    SBP_AMULET
+    SBP_RING
+    SBP_FEET
+    SBP_CALVES
+    SBP_SHIELD
+    SBP_TAIL
+    SBP_LONGHAIR
+    SBP_CIRCLET
+    SBP_EARS
+    SBP_DRAGON_BLOODHEAD_OR_MOD_MOUTH
+    SBP_DRAGON_BLOODWINGL_OR_MOD_NECK
+    SBP_DRAGON_BLOODWINGR_OR_MOD_CHEST_PRIMARY
+    SBP_DRAGON_BLOODTAIL_OR_MOD_BACK
+    SBP_MOD_MISC1
+    SBP_MOD_PELVIS_PRIMARY
+    SBP_DECAPITATEDHEAD
+    SBP_DECAPITATE
+    SBP_MOD_PELVIS_SECONDARY
+    SBP_MOD_LEG_RIGHT
+    SBP_MOD_LEG_LEFT
+    SBP_MOD_FACE_JEWELRY
+    SBP_MOD_CHEST_SECONDARY
+    SBP_MOD_SHOULDER
+    SBP_MOD_ARM_LEFT
+    SBP_MOD_ARM_RIGHT
+    SBP_MOD_MISC2
+    SBP_FX01
+    BP_SECTIONCAP_HEAD 101
+    BP_SECTIONCAP_HEAD2
+    BP_SECTIONCAP_LEFTARM
+    BP_SECTIONCAP_LEFTARM2
+    BP_SECTIONCAP_RIGHTARM
+    BP_SECTIONCAP_RIGHTARM2
+    BP_SECTIONCAP_LEFTLEG
+    BP_SECTIONCAP_LEFTLEG2
+    BP_SECTIONCAP_LEFTLEG3
+    BP_SECTIONCAP_RIGHTLEG
+    BP_SECTIONCAP_RIGHTLEG2
+    BP_SECTIONCAP_RIGHTLEG3
+    BP_SECTIONCAP_BRAIN
+    SBP_130_HEAD 130
+    SBP_131_HAIR
+    SBP_141_LONGHAIR 141
+    SBP_142_CIRCLET
+    SBP_143_EARS
+    SBP_150_DECAPITATEDHEAD 150
+    BP_TORSOCAP_HEAD 201
+    BP_TORSOCAP_HEAD2
+    BP_TORSOCAP_LEFTARM
+    BP_TORSOCAP_LEFTARM2
+    BP_TORSOCAP_RIGHTARM
+    BP_TORSOCAP_RIGHTARM2
+    BP_TORSOCAP_LEFTLEG
+    BP_TORSOCAP_LEFTLEG2
+    BP_TORSOCAP_LEFTLEG3
+    BP_TORSOCAP_RIGHTLEG
+    BP_TORSOCAP_RIGHTLEG2
+    BP_TORSOCAP_RIGHTLEG3
+    BP_TORSOCAP_BRAIN
+    SBP_230_HEAD 230
+    BP_TORSOSECTION_HEAD       1000
+    BP_TORSOSECTION_HEAD2      2000
+    BP_TORSOSECTION_LEFTARM    3000
+    BP_TORSOSECTION_LEFTARM2   4000
+    BP_TORSOSECTION_RIGHTARM   5000
+    BP_TORSOSECTION_RIGHTARM2  6000
+    BP_TORSOSECTION_LEFTLEG    7000
+    BP_TORSOSECTION_LEFTLEG2   8000
+    BP_TORSOSECTION_LEFTLEG3   9000
+    BP_TORSOSECTION_RIGHTLEG  10000
+    BP_TORSOSECTION_RIGHTLEG2 11000
+    BP_TORSOSECTION_RIGHTLEG3 12000
+    BP_TORSOSECTION_BRAIN     13000 // BSBodyPartType
+
+enum BSSegmentFlags uint //TODO wassn't generated
+    BSSEG_WATER 9
+
+enum ExtraVectorsFlags byte
+    None 0
+    Tangents_Bitangents 16
+
+enum hkConstraintType uint
+    BallAndSocket
+    Hinge
+    Limited_Hinge
+    Prismatic 6
+    Ragdoll
+    StiffSpring
+
+//TODO wasn't generated
+enum BSPartFlag ushort // bitflags
+    EDITOR_VISIBLE
+    START_NET_BONESET 8
+
+enum BSShaderType uint
+    TALL_GRASS
+    DEFAULT
+    SKY 10
+    SKIN 14
+    WATER 17
+    LIGHTING30 29
+    TILE 32
+    NOLIGHTING
+
+enum BSShaderFlags uint
+    Specular
+    Skin
+    LowDetail
+    Vertex_Alpha
+    Unknown_1
+    Single_Pass
+    Empty
+    Environment_Mapping
+    Alpha_Texture
+    Unknown_2
+    FaceGen
+    Parallax_Shader_Index_15
+    Unknown_3
+    Non_Projective_Shadows
+    Unknown_4
+    Refraction
+    Fire_Refraction
+    Eye_Environment_Mapping
+    Hair
+    Dynamic_Alpha
+    Localmap_Hide_Secret
+    Window_Environment_Mapping
+    Tree_Billboard
+    Shadow_Frustum
+    Multiple_Textures
+    Remappable_Textures
+    Decal_Single_Pass
+    Dynamic_Decal_Single_Pass
+    Parallax_Occulsion
+    External_Emittance
+    Shadow_Map
+    ZBuffer_Test
+
+enum BSShaderFlags2 uint
+    ZBuffer_Write
+    LOD_Landscape
+    LOD_Building
+    No_Fade
+    Refraction_Tint
+    Vertex_Colors
+    Unknown1
+    first_Light_is_Point_Light
+    second_Light
+    trhird_Light
+    Vertex_Lighting
+    Uniform_Scale
+    Fit_Slope
+    Billboard_and_Envmap_Light_Fade
+    No_LOD_Land_Blend
+    Envmap_Light_Fade
+    Wireframe
+    VATS_Selection
+    Show_in_Local_Map
+    Premult_Alpha
+    Skip_Normal_Maps
+    Alpha_Decal
+    No_Transparecny_Multisampling
+    Unknown2
+    Unknown3
+    Unknown4
+    Unknown5
+    Unknown6
+    Unknown7
+    Unknown8
+    Unknown9
+    Unknown10
+
+enum SkyObjectType uint
+    TEXTURE
+    SUNGLARE
+    BSSM_SKY
+    CLOUDS
+    STARS 5
+    MOON_STARS_MASK 7
+
+struct HeaderString
+    char Chars[-10]
+
+struct SizedString
+    char Value[uint]
+
+struct String
+    int Value
+
+struct ByteArray
+    byte Data[uint]
+
+struct Color3
+    float Value[3]
+
+struct Color4
+    float Value[4]
+
+struct FilePath
+    int Value
+
+struct Footer
+    Ref Root[uint]
+
+struct MatchGroup
+    ushort Indices[ushort]
+
+struct Vector3
+    float Value[3]
+
+struct Vector4
+    float Value[4]
+
+struct Quaternion
+    float Value[4]
+
+struct QuaternionXYZW
+    float Value[4]
+
+struct Matrix33
+    float Value[3][3]
+
+struct Matrix44
+    float Value[4][4]
+
+struct NodeGroup
+    Ptr Nodes[uint]
+
+struct ShortString
+    char Value[byte]
+
+struct SkinWeight
+    ushort Index
+    float Weight
+
+struct AVObject
+    SizedString Name
+    Ptr AVObject
+
+struct StringPaletteEntry
+    String Name
+
+struct ControllerLink
+    Ref Interpolator
+    Ref Controller
+    byte Priority (UVersion >= 0x0000000A)
+    StringPaletteEntry SPEntries[5]
+
+struct ExportInfo
+    ShortString Value[3]
+
+struct TBC
+    float Value[3]
+
+struct Key<T,A>
+    float Time
+    T Value
+    T Forward (A == 0x00000002)
+    T Backward (A == 0x00000002)
+    TBC TBC (A == 0x00000003)
+
+struct KeyGroup<T>
+    uint NumKeys
+    AnimInterpolation Interpolation (NumKeys)
+    Key<T,Interpolation> Keys[NumKeys]
+
+struct QuatKey<A>
+    float Time (A != 0x00000004)
+    Quaternion Value (A != 0x00000004)
+    TBC TBC (A == 0x00000003)
+
+struct TextureCoord
+    float Value[2]
+
+struct TDTextureTransform
+    TextureCoord Translation
+    TextureCoord Tiling
+    float WRotation
+    uint TType
+    TextureCoord Center
+
+struct TextureDesc
+    [NifRef(NiSourceTexture)]
+    Ref Source
+    Flags Flags
+    bool HasTT
+    TDTextureTransform (HasTT)
+
+//TODO wasn't generated
+struct ShaderTexDesc
+    bool        IsUsed
+    TextureDesc TextureData (IsUsed)
+    uint        MapIndex    (IsUsed)
+
+struct TexSource
+    byte UseExternal
+    FilePath FileName (UseExternal == 0x00000001)
+    Ref Unknown1 (UseExternal == 0x00000001)
+
+struct Triangle
+    ushort Value[3]
+
+struct SkinPartition
+    ushort VNum
+    ushort TNum
+    ushort BNum
+    ushort SNum
+    ushort WNum
+    ushort Bones[BNum]
+    bool HasVertexMap
+    ushort VMap[VNum] (HasVertexMap)
+    bool HasVertexWeights
+    float VWeights[VNum][WNum] (HasVertexWeights)
+    ushort StripLengths[SNum]
+    bool HasFaces
+    ushort Strips[SNum][StripLengths] ((SNum != 0x00000000) && (HasFaces))
+    Triangle Triangles[TNum] ((SNum == 0x00000000) && (HasFaces))
+    byte BoneIndices[VNum][WNum] (bool)
+
+struct Transform<T>
+    Vector3 Translation
+    T Rotation
+    float Scale
+
+struct SkinTransform
+    Matrix33 Rotation
+    Vector3 Translation
+    float Scale
+
+struct FurniturePosition
+    Vector3 Offset
+    ushort Orientation (UVersion <= 0x0000000B)
+    byte PositionRef1 (UVersion <= 0x0000000B)
+    byte PositionRef2 (UVersion <= 0x0000000B)
+
+struct hkTriangle
+    Triangle Triangle
+    ushort WeldingInfo
+
+struct Morph<A>
+    String Name
+    Vector3 Vectors[A]
+
+struct SkinData<A>
+    SkinTransform STransform
+    Vector3 BoundingSphereOffset
+    float BoundingSphereRadius
+    ushort VNum
+    SkinWeight VertexWeights[VNum] (A != 0x00000000)
+
+struct HavokColFilter
+    Fallout3Layer Layer ((UVersion == 0x0000000B) && (UVersion2 == 0x00000022))
+    byte FlagsPartNumber
+    ushort Unknown1
+
+struct OblivionSubShape
+    HavokColFilter HavokColFilter
+    uint VNum
+    HavokMaterial Material
+
+struct MotorDescriptor
+    float Unknown1[6]
+    byte Unknown2
+
+struct RagdollDescriptor
+    Vector4 Value[8] (UVersion2 > 0x00000010)
+    float ConeMaxAngle
+    float PlaneMinAngle
+    float PlaneMaxAngle
+    float TwistMinAngle
+    float TwistMaxAngle
+    float MaxFriction
+    bool MdIsOn (UVersion2 > 0x00000010)
+    MotorDescriptor Md (MdIsOn)
+
+struct LimitedHingeDescriptor
+    Vector4 Value[8] (UVersion2 > 0x00000010)
+    float MinAngle
+    float MaxAngle
+    float MaxFriction
+    bool MdIsOn (UVersion2 > 0x00000010)
+    MotorDescriptor Md (MdIsOn)
+
+struct HingeDescriptor
+    Vector4 Value[8]
+
+struct PrismaticDescriptor
+    Vector4 Value[8]
+    float MinDistance
+    float MaxDistance
+    float Friction
+    byte Unknown
+
+struct StiffSpringDescriptor
+    Vector4 Value[2]
+    float Length
+
+struct MorphWeight
+    Ref Interpolator
+    float Weight
+
+struct InertiaMatrix
+    float Value[3][4]
+
+struct DecalVectorArray
+    short VNum
+    Vector3 Points[VNum]
+    Vector3 Normals[VNum]
+
+struct BodyPartList
+    BSPartFlag PartFlag
+    BSBodyPartType BodyPart
+
+struct BSSegment
+    int Index
+    BSSegmentFlags Flags
+    byte Unknown
+
+struct SubConstraint
+    hkConstraintType Type
+    Ptr Entities[uint]
+    uint Priority
+    HingeDescriptor Hinge (Type == 0x00000001)
+    LimitedHingeDescriptor LHinge (Type == 0x00000002)
+    RagdollDescriptor Ragdoll (Type == 0x00000007)
+
+struct NiPSysCollider
+    float Bounce
+    bool CreateOnCollide
+    bool FreeOnCollide
+    Ref Modifier
+    Ptr Base
+    Ref Next
+    Ptr Collider
+
+struct bhkWorldObject
+    Ref Shape
+    HavokColFilter HavokColFilter
+
+struct bhkShapePhantom
+    bhkWorldObject
+
+struct bhkSimpleShapePhantom
+    bhkWorldObject
+    float Unknown1[7]
+    float Unknown2[3][5]
+    float Unknown3
+
+struct bhkRigidBody
+    bhkWorldObject
+    int Unknown1
+    int Unknown2
+    int Unknown3[3]
+    hkResponseType CResponse
+    byte Unknown4
+    ushort ProcessContactCallbackDelay
+    ushort Unknown5[2]
+    HavokColFilter HavokColFilterCopy
+    ushort Unknown6[6]
+    Vector4 Translation
+    QuaternionXYZW Rotation
+    Vector4 LinearVelocity
+    Vector4 AngularVelocity
+    InertiaMatrix Inertia
+    Vector4 Center
+    float Mass
+    float LinearDamping
+    float AngularDamping
+    float Friction
+    float Restitution
+    float MaxLinearVelocity
+    float MaxAngularVelocity
+    float PenetrationDepth
+    MotionSystem MSystem
+    DeactivatorType DType
+    SolverDeactivation SDeactivation
+    MotionQuality QType
+    uint Unknown7[3]
+    Ref Constraints[uint]
+    uint Unknown9 (UVersion <= 0x0000000B)
+
+struct bhkRigidBodyT
+    bhkRigidBody
+
+struct bhkConstraint
+    Ptr Entities[uint]
+    uint Priority
+
+struct bhkLimitedHingeConstraint
+    bhkConstraint
+    LimitedHingeDescriptor
+
+struct bhkMalleableConstraint
+    bhkConstraint
+    SubConstraint
+    float Strength
+
+struct bhkStiffSpringConstraint
+    bhkConstraint
+    StiffSpringDescriptor
+
+struct bhkRagdollConstraint
+    bhkConstraint
+    RagdollDescriptor
+
+struct bhkPrismaticConstraint
+    bhkConstraint
+    PrismaticDescriptor
+
+struct bhkHingeConstraint
+    bhkConstraint
+    HingeDescriptor
+
+struct bhkTransformShape
+    Ref Shape
+    HavokMaterial Material
+    float Unknown1
+    byte Unknown2[8]
+    Matrix44 Transform
+
+struct bhkSphereRepShape
+    HavokMaterial Material
+    float Radius
+
+struct bhkSphereShape
+    bhkSphereRepShape
+
+struct bhkCapsuleShape
+    bhkSphereRepShape
+    byte Unknown[8]
+    Vector3 First
+    float Radius
+    Vector3 Second
+    float Radius2
+
+struct bhkBoxShape
+    bhkSphereRepShape
+    byte Unknown[8]
+    Vector3 Dimensions
+    float MinSize
+
+struct bhkConvexVerticesShape
+    bhkSphereRepShape
+    float Unknown[6]
+    Vector4 Vertices[uint]
+    Vector4 Normals[uint]
+
+struct bhkConvexTransformShape
+    bhkTransformShape
+
+struct bhkMoppBvTreeShape
+    Ref Shape
+    uint Unknown1
+    byte Unknown2[8]
+    float Unknown3
+    uint MOPPDataSize
+    Vector3 Origin
+    float Scale
+    byte MOPPData[MOPPDataSize]
+
+struct bhkListShape
+    Ref SubShapes[uint]
+    HavokMaterial Material
+    float Unknown1[6]
+    uint Unknown2[uint]
+
+struct bhkPackedNiTriStripsShape
+    uint Unknown1[2]
+    float Unknown2
+    uint Unknown3
+    Vector3 ScaleCopy
+    float Unknown4
+    float Unknown5
+    Vector3 Scale
+    float Unknown6
+    Ref Data
+
+struct bhkNiTriStripsShape
+    HavokMaterial Material
+    float Unknown1
+    uint Unknown2
+    uint Unknown3[4]
+    uint Unknown4
+    Vector3 Scale
+    uint Unknown5
+    Ref StripsData[uint]
+    HavokColFilter DataLayers[uint]
+
+struct NiExtraData
+    String Name
+
+struct NiFloatInterpolator
+    float Value
+    Ref Data
+
+struct NiTransformInterpolator
+    Transform<Quaternion>
+    Ref Data
+
+struct NiPoint3Interpolator
+    Vector3 Value
+    Ref Data
+
+struct NiPathInterpolator
+    ushort Unknown1
+    uint Unknown2
+    float Unknown3[2]
+    ushort Unknown4
+    Ref PosData
+    Ref FloatData
+
+struct NiBoolInterpolator
+    bool Value
+    Ref Data
+
+struct NiBoolTimelineInterpolator
+    NiBoolInterpolator
+
+struct NiBlendInterpolator
+    ushort Unknown1
+    uint Unknown2
+
+struct NiObjectNET
+    String Name
+    Ref ExtraDataList[uint]
+    Ref Controller
+
+struct NiCollisionObject
+    Ptr Target
+
+struct bhkNiCollisionObject
+    NiCollisionObject
+    Flags Flags
+    Ref Body
+
+struct bhkCollisionObject
+    bhkNiCollisionObject
+
+struct bhkBlendCollisionObject
+    bhkNiCollisionObject
+    float Unknown1[2]
+
+struct bhkPCollisionObject
+    bhkNiCollisionObject
+
+struct bhkSPCollisionObject
+    bhkNiCollisionObject
+
+struct NiAVObject
+    NiObjectNET
+    Flags Flags
+    ushort Unknown1 ((UVersion >= 0x0000000B) && (UVersion2 > 0x0000001A))
+    Transform<Matrix33> Transform
+    Ref Properties[uint] (UVersion <= 0x0000000B)
+    Ref CObject (Version >= 0x0A000100)
+
+struct NiDynamicEffect
+    NiAVObject
+    bool SwitchState
+    Ref AffectedNodes[uint]
+
+struct NiLight
+    NiDynamicEffect
+    float Dimmer
+    Color3 Colors[3]
+
+struct NiProperty
+    NiObjectNET
+
+struct NiPSysModifier
+    String Name
+    uint Order
+    Ptr Target
+    bool Active
+
+struct NiPSysEmitter
+    NiPSysModifier
+    float Speed
+    float SpeedVariation
+    float Declination
+    float DeclinationV
+    float PlanarAngle
+    float PlanarAngleV
+    Color4 Color
+    float Radius
+    float RadiusV
+    float LifeSpan
+    float LifeSpanV
+
+struct NiPSysVolumeEmitter
+    NiPSysEmitter
+    Ptr EmitterObject
+
+struct NiTimeController
+    Ref NextController
+    Flags Flags
+    float Frequency
+    float Phase
+    float StartTime
+    float StopTime
+    Ptr Target
+
+struct NiInterpController
+    NiTimeController
+
+struct NiMultiTargetTransformController
+    NiInterpController
+    Ptr ExtraTargets[ushort]
+
+struct NiGeomMorpherController
+    NiInterpController
+    Flags ExtraFlags
+    Ref Data
+    byte AlwaysUpdate
+    uint INum
+    MorphWeight IWeights[INum]
+
+struct NiSingleInterpController
+    NiInterpController
+    Ref Interpolator
+
+struct NiKeyframeController
+    NiSingleInterpController
+
+struct NiTransformController
+    NiKeyframeController
+
+struct NiPSysModifierCtlr
+    NiSingleInterpController
+    String Name
+
+struct NiPSysEmitterCtlr
+    NiPSysModifierCtlr
+    Ref VisibilityInterpolator
+
+struct NiPSysModifierBoolCtlr
+    NiPSysModifierCtlr
+
+struct NiPSysModifierActiveCtlr
+    NiPSysModifierBoolCtlr
+
+struct NiPSysModifierFloatCtlr
+    NiPSysModifierCtlr
+
+struct NiPSysEmitterDeclinationVarCtlr
+    NiPSysModifierFloatCtlr
+
+struct NiPSysEmitterInitialRadiusCtlr
+    NiPSysModifierFloatCtlr
+
+struct NiPSysEmitterLifeSpanCtlr
+    NiPSysModifierFloatCtlr
+
+struct NiPSysEmitterSpeedCtlr
+    NiPSysModifierFloatCtlr
+
+struct NiPSysGravityStrengthCtlr
+    NiPSysModifierFloatCtlr
+
+struct NiFloatInterpController
+    NiSingleInterpController
+
+struct NiAlphaController
+    NiFloatInterpController
+
+struct NiTextureTransformController
+    NiFloatInterpController
+    byte Unknown
+    TextureType TextureSlot
+    TextureTransform Operation
+
+struct NiLightDimmerController
+    NiFloatInterpController
+
+struct NiBoolInterpController
+    NiSingleInterpController
+
+struct NiVisController
+    NiBoolInterpController
+
+struct NiPoint3InterpController
+    NiSingleInterpController
+    TargetColor Color
+
+struct NiMaterialColorController
+    NiPoint3InterpController
+
+struct NiLightColorController
+    NiPoint3InterpController
+
+struct NiExtraDataController
+    NiSingleInterpController
+
+struct NiFloatExtraDataController
+    NiExtraDataController
+    String ControllerData
+
+struct NiBoneLODController
+    NiTimeController
+    uint Unknown1
+    uint GNum1
+    uint GNum2
+    NodeGroup NGroups[GNum1]
+
+struct NiBSBoneLODController
+    NiBoneLODController
+
+struct NiGeometry
+    NiAVObject
+    Ref Data
+    Ref SkinInstance
+    uint MNum
+    String MName[MNum]
+    int MEData[MNum]
+    int MActive
+    bool Dirty
+
+struct NiTriBasedGeom
+    NiGeometry
+
+struct NiGeometryData
+    int Unknown1
+    ushort VNum
+    byte KeepFlags
+    byte CompressFlags
+    bool HasVertices
+    [mesh3d(vertices)]
+    Vector3 Vertices[VNum] (HasVertices)
+    byte UVSetNum
+    ExtraVectorsFlags X
+    bool HasNormals
+    [mesh3d(normals)]
+    Vector3 Normals[VNum] (HasNormals)
+    [mesh3d(noidea_1)]
+    Vector3 Tangents[VNum] ((HasNormals) && (X & 0x00000030))
+    [mesh3d(noidea_2)]
+    Vector3 Bitangents[VNum] ((HasNormals) && (X & 0x00000030))
+    Vector3 Center
+    float Radius
+    bool HasVColors
+    [mesh3d(colors)]
+    Color4 VColors[VNum] (HasVColors)
+    [mesh3d(uv)]
+    TextureCoord UVSets[1][VNum] (UVSetNum & 0x00000001)
+    ConsistencyType CFlags
+    Ref Data
+
+struct NiTriBasedGeomData
+    NiGeometryData
+    ushort TNum
+
+struct bhkBlendController
+    NiTimeController
+    uint Unknown
+
+struct BSBound
+    NiExtraData
+    Vector3 Center
+    Vector3 Dimensions
+
+struct BSFurnitureMarker
+    NiExtraData
+    FurniturePosition Positions[uint]
+
+struct BSParentVelocityModifier
+    NiPSysModifier
+    float Damping
+
+struct BSWindModifier
+    NiPSysModifier
+    float Strength
+
+struct hkPackedNiTriStripsData
+    hkTriangle Triangles[uint]
+    uint VNum
+    byte Unknown
+    Vector3 Vertices[VNum]
+    OblivionSubShape SubShapes[ushort]
+
+struct NiAlphaProperty
+    NiProperty
+    Flags Flags
+    byte Threshold
+
+struct NiAmbientLight
+    NiLight
+
+struct NiPSysData
+    int Unknown1
+    ushort VNum
+    byte KeepFlags
+    byte CompressFlags
+    bool HasVertices
+    [mesh3d(vertices)]
+    byte UVSetNum
+    ExtraVectorsFlags X
+    bool HasNormals
+    [mesh3d(normals)]
+    Vector3 Center
+    float Radius
+    bool HasVColors
+    [mesh3d(colors)]
+    [mesh3d(uv)]
+    ConsistencyType CFlags (UVersion < 0x0000000C)
+    Ref Data (UVersion < 0x0000000C)
+    bool HasRadii
+    ushort ANum
+    bool HasSizes
+    bool HasRotations
+    bool HasRAngles
+    bool HasRAxes
+    bool HasUVQ (UVersion == 0x0000000B)
+    byte NumUVQ (UVersion == 0x0000000B)
+    Vector4 UVQs[NumUVQ] (HasUVQ)
+    byte Unknown3 (UVersion >= 0x0000000B)
+
+struct NiBinaryExtraData
+    NiExtraData
+    ByteArray Data
+
+struct NiBlendBoolInterpolator
+    NiBlendInterpolator
+    byte Value
+
+struct NiBlendFloatInterpolator
+    NiBlendInterpolator
+    float Value
+
+struct NiBlendPoint3Interpolator
+    NiBlendInterpolator
+    Vector3 Value
+
+struct NiBoolData
+    KeyGroup<byte> Data
+
+struct NiCamera
+    NiAVObject
+    ushort Unknown1
+    float Frustum[6]
+    bool UseOrtho
+    float Viewport[4]
+    float LODAdjust
+    Ref Unknown2
+    uint Unknown3
+    uint Unknown4
+
+struct NiControllerManager
+    NiTimeController
+    bool Cumulative
+    Ref ControllerSequences[uint]
+    Ref ObjectPalette
+
+struct NiSequence
+    String Name
+    uint CBNum
+    uint Unknown2
+    ControllerLink CBlocks[CBNum]
+
+struct NiControllerSequence
+    NiSequence
+    float Weight
+    Ref Keys
+    CycleType CType
+    float Frequency
+    float StartTime
+    float StopTime
+    Ptr Manager
+    String TargetName
+    short Unknown4 ((UVersion >= 0x0000000B) && (UVersion2 > 0x0000001C))
+
+struct NiDefaultAVObjectPalette
+    uint Unknown
+    AVObject Objs[uint]
+
+struct NiFloatData
+    KeyGroup<float> Data
+
+struct NiFloatExtraData
+    NiExtraData
+    float Data
+
+struct NiFogProperty
+    NiProperty
+    Flags Flags
+    float Depth
+    Color3 Color
+
+struct NiIntegerExtraData
+    NiExtraData
+    uint Data
+
+struct BSXFlags
+    NiIntegerExtraData
+
+struct NiKeyframeData
+    uint RKNum
+    AnimInterpolation RType (RKNum)
+    QuatKey<RType> QKeys[RKNum] (RType != 0x00000004)
+    KeyGroup<float> XYZRotations[3] (RType == 0x00000004)
+    KeyGroup<Vector3> Translation
+    KeyGroup<float> Scale
+
+struct NiMaterialProperty
+    NiProperty
+    Color3 Ambient (!((UVersion >= 0x0000000B) && (UVersion2 > 0x00000015)))
+    Color3 Diffuse (!((UVersion >= 0x0000000B) && (UVersion2 > 0x00000015)))
+    Color3 Specular
+    Color3 Emissive
+    float Glossiness
+    float Alpha
+    float EmitMulti ((UVersion >= 0x0000000B) && (UVersion2 > 0x00000015))
+
+struct NiMorphData
+    uint MNum
+    uint VNum
+    byte RelativeTargets
+    Morph<VNum> Morphs[MNum]
+
+struct NiNode
+    NiAVObject
+    Ref Nodes[uint]
+    Ref Effects[uint]
+
+struct NiBillboardNode
+    NiNode
+    BillboardMode BMode
+
+struct NiParticles
+    NiGeometry
+
+struct NiParticleSystem
+    NiParticles
+    bool WorldSpace
+    Ref Modifiers[uint]
+
+struct NiPointLight
+    NiLight
+    float Attenuation[3]
+
+struct NiPosData
+    KeyGroup<Vector3> Data
+
+struct NiPSysAgeDeathModifier
+    NiPSysModifier
+    bool ReSpawn
+    Ref Modifier
+
+struct NiPSysBombModifier
+    NiPSysModifier
+    Ptr BombObject
+    Vector3 BombAxis
+    float Decay
+    float DeltaV
+    DecayType DType
+    SymmetryType SType
+
+struct NiPSysBoundUpdateModifier
+    NiPSysModifier
+    ushort UpdateSkip
+
+struct NiPSysBoxEmitter
+    NiPSysVolumeEmitter
+    float Width
+    float Height
+    float Depth
+
+struct NiPSysColliderManager
+    NiPSysModifier
+    Ref Collider
+
+struct NiPSysCylinderEmitter
+    NiPSysVolumeEmitter
+    float Radius
+    float Height
+
+struct NiPSysDragModifier
+    NiPSysModifier
+    Ptr Base
+    Vector3 DragAxis
+    float Percentage
+    float Range
+    float RangeFalloff
+
+struct NiPSysGravityModifier
+    NiPSysModifier
+    Ptr GravityObject
+    Vector3 GravityAxis
+    float Decay
+    float Strength
+    ForceType FType
+    float Turbulence
+    float TurbulenceScale
+    byte Unknown (UVersion >= 0x0000000B)
+
+struct NiPSysGrowFadeModifier
+    NiPSysModifier
+    float GrowTime
+    ushort GrowGeneration
+    float FadeTime
+    ushort FadeGeneration
+    float BaseScale (UVersion == 0x0000000B)
+
+struct NiPSysMeshEmitter
+    NiPSysEmitter
+    Ref EmitterMeshes[uint]
+    VelocityType InitialVelocityType
+    EmitFrom EmissionType
+    Vector3 EmissionAxis
+
+struct NiPSysPlanarCollider
+    NiPSysCollider
+    float Width
+    float Height
+    Vector3 XAxis
+    Vector3 YAxis
+
+struct NiPSysSphericalCollider
+    NiPSysCollider
+    float Radius
+
+struct NiPSysPositionModifier
+    NiPSysModifier
+
+struct NiPSysRotationModifier
+    NiPSysModifier
+    float InitialRotationSpeed
+    float InitialRotationSpeedVariation
+    float InitialRotationAngle
+    float InitialRotationAngleVariation
+    bool RandomRotSpeedSign
+    bool RandomInitialAxis
+    Vector3 InitialAxis
+
+struct NiPSysSpawnModifier
+    NiPSysModifier
+    ushort NumSpawnGenerations
+    float PercentageSpawned
+    ushort MinNumtoSpawn
+    ushort MaxNumtoSpawn
+    float SpawnSpeedChaos
+    float SpawnDirChaos
+    float LifeSpan
+    float LifeSpanVariation
+
+struct NiPSysSphereEmitter
+    NiPSysVolumeEmitter
+    float Radius
+
+struct NiPSysUpdateCtlr
+    NiTimeController
+
+struct NiPSysEmitterPlanarAngleVarCtlr
+    NiPSysModifierFloatCtlr
+
+struct NiSkinData
+    SkinTransform STransform
+    uint BNum
+    byte HasVertexWeights
+    SkinData<HasVertexWeights> BoneList[BNum]
+
+struct NiSkinInstance
+    Ref Data
+    Ref SkinPartition
+    Ptr SkeletonRoot
+    Ptr Bones[uint]
+
+struct NiSkinPartition
+    SkinPartition Blocks[uint]
+
+struct NiTexture
+    NiObjectNET
+
+struct NiSourceTexture
+    NiTexture
+    TexSource
+    PixelLayout PLayout
+    MipMaps UseMipmaps
+    TextureAlphaFormat AlphaFormat
+    byte IsStatic
+    bool DirectRender
+    bool PersistRenderData
+
+struct NiSpecularProperty
+    NiProperty
+    Flags Flags
+
+struct NiStencilProperty
+    NiProperty
+    Flags Flags
+    uint StencilRef
+    uint StencilMask
+
+struct NiStringExtraData
+    NiExtraData
+    String StringData
+
+struct NiTextKeyExtraData
+    NiExtraData
+    Key<String,1> Keys[uint]
+
+struct NiTPTexture
+    TextureDesc Texture (bool)
+
+struct NiTexturingProperty
+    NiProperty
+    Flags Flags
+    uint TCount
+    NiTPTexture Diffuse
+    NiTPTexture Dark
+    NiTPTexture Detail
+    NiTPTexture Gloss
+    NiTPTexture Glow
+    bool HasBump
+    NiTPTexture Normal
+    bool HasUknown1
+    NiTPTexture Decal0
+    ShaderTexDesc ShaderTextures[uint]
+
+struct NiTransformData
+    NiKeyframeData
+
+struct NiTriShape
+    NiTriBasedGeom
+
+struct NiTriShapeData
+    NiTriBasedGeomData
+    uint TPNum
+    bool HasTriangles
+    Triangle Triangles[TNum] (HasTriangles)
+    MatchGroup MGroups[ushort]
+
+struct NiTriStrips
+    NiTriBasedGeom
+
+struct NiTriStripsData
+    NiTriBasedGeomData
+    ushort SNum
+    ushort SLengths[SNum]
+    bool HasPoints
+    ushort Points[SNum][SLengths] (HasPoints)
+
+struct BSFadeNode
+    NiNode
+
+struct BSShaderProperty
+    NiProperty
+    Flags Smooth
+    BSShaderType Shader
+    BSShaderFlags ShaderF
+    BSShaderFlags2 ShaderF2
+    float EnvMapScale (UVersion == 0x0000000B)
+
+struct BSShaderLightingProperty
+    BSShaderProperty
+    TextureClampMode TCMode (UVersion <= 0x0000000B)
+
+struct BSShaderNoLightingProperty
+    BSShaderLightingProperty
+    SizedString FileName
+    float FalloffStartAngle ((UVersion >= 0x0000000B) && (UVersion2 > 0x0000001A))
+    float FalloffStopAngle ((UVersion >= 0x0000000B) && (UVersion2 > 0x0000001A))
+    float FalloffStartOpacity ((UVersion >= 0x0000000B) && (UVersion2 > 0x0000001A))
+    float FalloffStopOpacity ((UVersion >= 0x0000000B) && (UVersion2 > 0x0000001A))
+
+struct BSShaderPPLightingProperty
+    BSShaderLightingProperty
+    Ref TextureSet
+    float RefractionStrength ((UVersion == 0x0000000B) && (UVersion2 > 0x0000000E))
+    int RefractionFirePeriod ((UVersion == 0x0000000B) && (UVersion2 > 0x0000000E))
+    float Unknown[2] ((UVersion == 0x0000000B) && (UVersion2 > 0x00000018))
+
+struct BSShaderTextureSet
+    SizedString Textures[int]
+
+struct WaterShaderProperty
+    BSShaderProperty
+
+struct SkyShaderProperty
+    BSShaderLightingProperty
+    SizedString FileName
+    SkyObjectType SOType
+
+struct TileShaderProperty
+    BSShaderLightingProperty
+    SizedString FileName
+
+struct TallGrassShaderProperty
+    BSShaderProperty
+    SizedString FileName
+
+struct Lighting30ShaderProperty
+    BSShaderPPLightingProperty
+
+struct BSDismemberSkinInstance
+    NiSkinInstance
+    BodyPartList Partitions[int]
+
+struct BSDecalPlacementVectorExtraData
+    NiExtraData
+    float Unknown
+    DecalVectorArray VectorBlocks[short]
+
+struct BSPSysSimpleColorModifier
+    NiPSysModifier
+    float FadeInPercent
+    float FadeOutPercent
+    float Color1EndPercent
+    float Color1StartPercent
+    float Color2EndPercent
+    float Color2StartPercent
+    Color4 Colors[3]
+
+struct BSValueNode
+    NiNode
+    int Value
+    byte Unknown
+
+struct BSStripParticleSystem
+    NiParticleSystem
+
+struct BSStripPSysData
+    NiPSysData
+    short Unknown1
+    byte Unknown2
+    int Unknown3
+    float Unknown4
+
+struct BSPSysStripUpdateModifier
+    NiPSysModifier
+    float UpdateDeltaTime
+
+struct BSMaterialEmittanceMultController
+    NiFloatInterpController
+
+struct BSMasterParticleSystem
+    NiNode
+    ushort MaxEmitterObjects
+    Ref ParticleSystems[int]
+
+struct BSPSysMultiTargetEmitterCtlr
+    NiPSysModifierCtlr
+    Ref VInterpolator
+    short Unknown1
+    int Unknown2
+
+struct BSRefractionStrengthController
+    NiFloatInterpController
+
+struct BSOrderedNode
+    NiNode
+    Vector4 AlphaSortBound
+    byte IsStaticBound
+
+struct BSBlastNode
+    NiNode
+    byte Unknown1
+    short Unknown2
+
+struct BSDamageStage
+    NiNode
+    byte Unknown1
+    short Unknown2
+
+struct bhkConvexListShape
+    Ref SubShapes[uint]
+    HavokMaterial Material
+    float Unknown1[6]
+    byte Unknown2
+    float Unknown3
+
+struct bhkLiquidAction
+    int Unknown1[3]
+    float Unknown2[4]
+
+struct BSMultiBoundNode
+    NiNode
+    Ref MultiBound
+
+struct BSMultiBound
+    Ref Data
+
+struct BSSegmentedTriShape
+    NiTriShape
+    BSSegment Segment[int]
+
+struct BSMultiBoundAABB
+    Vector3 Position
+    Vector3 Extent
+
+struct AdditionalDataInfo
+    int DataType
+    int NumChannelBytesPerElement
+    int NumChannelBytes
+    int NumTotalBytesPerElement
+    int BlockIndex
+    int ChannelOffset
+    byte Unknown
+
+struct AdditionalDataBlock
+    bool HasData
+    int BlockSize (HasData)
+    int BlockOffsets[int] (HasData)
+    int NumData (HasData)
+    int DataSizes[NumData] (HasData)
+    byte Data[NumData][BlockSize] (HasData)
+
+struct NiAdditionalGeometryData
+    ushort VNum
+    AdditionalDataInfo BlockInfos[uint]
+    AdditionalDataBlock Blocks[int]
+
+struct BSWArray
+    NiExtraData
+    int Items[int]
+
+struct bhkAabbPhantom
+    bhkShapePhantom
+    int Unknown[15]
+
+struct BSFrustumFOVController
+    NiTimeController
+    Ref Interpolator
+
+struct BSDebrisNode
+    NiNode
+    byte Unknown1
+    short Unknown2
+
+struct bhkBreakableConstraint
+    bhkConstraint
+    SubConstraint SC
+    float Threshold
+    bool RemoveIfBroken
+
+struct bhkOrientHingedBodyAction
+    int Unknown[17]
+
+struct Block
+    ... struct.BlockName.BlockHash
+
+format nif
+    [NifVersionString]
+    HeaderString Signature
+    uint Version
+    Endianess Endianess
+    uint UVersion
+    uint NumBlocks
+    uint UVersion2 ((UVersion >= 0x0000000A) || (UVersion == 0x00000001))
+    ExportInfo Info ((UVersion >= 0x0000000A) || (UVersion == 0x00000001))
+    SizedString BlockName[ushort]
+    ushort BlockHash[NumBlocks]
+    uint BlockSize[NumBlocks]
+    uint NumStrings
+    uint MaxStringLength
+    SizedString Strings[NumStrings]
+    uint Unknown2
+    Block Blocks[NumBlocks]
+    Footer Footer
