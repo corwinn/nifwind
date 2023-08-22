@@ -410,7 +410,7 @@ enum BSBodyPartType ushort
     BP_TORSOSECTION_RIGHTLEG3 12000
     BP_TORSOSECTION_BRAIN     13000 // BSBodyPartType
 
-enum BSSegmentFlags uint //TODO wassn't generated
+enum BSSegmentFlags uint //TODO wasn't generated
     BSSEG_WATER 9
 
 enum ExtraVectorsFlags byte
